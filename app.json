@@ -18,12 +18,12 @@
     ],
     	"description": "",
 		"ios": {
-			"bundleIdentifier": "jgb.solutions.tiptoe",
+			"bundleIdentifier": "jgb.solutions.tiptoep.app",
 			"buildNumber": "1",
 			"supportsTablet": true
 		},
 		"android": {
-			"package": "jgb.solutions.tiptoe",
+			"package": "jgb.solutions.tiptoe.app",
 			"versionCode": 1
 		},
     "web": {

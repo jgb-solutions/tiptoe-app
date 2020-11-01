@@ -1,25 +1,41 @@
 import React from "react"
 import Constants from 'expo-constants'
-import { View, StyleSheet, Image, TouchableOpacity, ScrollView, Text, Platform, SafeAreaView } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Text,
+  Platform,
+  SafeAreaView
+} from 'react-native'
+import { Container, Header, Content, Item, Input } from 'native-base'
 import { useNavigation } from '@react-navigation/native'
 
-import FormInput from '../components/FormInput';
+import FormInput from '../components/FormInput'
 // @ts-ignore
-import TipToeLogo from '../../assets/images/TipToeLogo.png';
-import FormButton from '../components/FormButton';
-import { colors } from "../utils/colors";
+import TipToeLogo from '../../assets/images/TipToeLogo.png'
+import FormButton from '../components/FormButton'
+import { colors } from "../utils/colors"
 
 export default function LogInWithEmailScreen() {
   const navigation = useNavigation()
 
   return (
     <SafeAreaView style={styles.container}>
+      <Item rounded style={{ backgroundColor: colors.black, borderColor: colors.black }} placeholderLabel>
+        <Input placeholder='Rounded Textbox' style={{ color: colors.white, textAlign: 'center' }} />
+      </Item>
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <Image style={styles.image} source={TipToeLogo} />
 
         <Text style={styles.login}>LOG IN</Text>
 
         <View style={styles.inputsContainer}>
+          <Item rounded style={{ backgroundColor: colors.black }} placeholderLabel>
+            <Input placeholder='Rounded Textbox' style={{ color: colors.white, textAlign: 'center' }} />
+          </Item>
           <FormInput placeholder="Please Enter Your Email Or Username" />
           <FormInput placeholder="Please Enter Your Password" />
         </View>
@@ -81,4 +97,4 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 12,
   },
-});
+})

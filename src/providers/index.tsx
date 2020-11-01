@@ -15,7 +15,7 @@ export const APP_CACHE_KEY = "app_state"
 
 // To be updated
 const initialState = {
-	isLoggedIn: false,
+	isLoggedIn: true,
 	loadingDataFromStorage: false,
 	userData: {},
 }
