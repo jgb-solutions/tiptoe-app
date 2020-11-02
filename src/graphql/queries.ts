@@ -7,7 +7,7 @@ export const FETCH_HOME = gql`
       data {
         hash
         title
-        poster_url
+        posterUrl
         artist {
           stage_name
           hash
@@ -29,7 +29,7 @@ export const FETCH_HOME = gql`
       data {
         stage_name
         hash
-        poster_url
+        posterUrl
       }
     }
 
@@ -42,7 +42,7 @@ export const FETCH_HOME = gql`
         artist {
           stage_name
           hash
-          poster_url
+          posterUrl
         }
       }
     }
@@ -56,7 +56,7 @@ export const FETCH_MANAGE_SCREEN = gql`
         data {
           hash
           title
-          poster_url
+          posterUrl
           artist {
             stage_name
             hash
@@ -76,7 +76,7 @@ export const FETCH_MANAGE_SCREEN = gql`
         data {
           stage_name
           hash
-          poster_url
+          posterUrl
         }
       }
 
@@ -88,7 +88,7 @@ export const FETCH_MANAGE_SCREEN = gql`
           artist {
             stage_name
             hash
-            poster_url
+            posterUrl
           }
         }
       }
@@ -104,11 +104,32 @@ export const FETCH_PHOTOS = gql`
         hash
         caption
         url
+        likeCount
         model {
-          name
+          stageName
           hash
+          posterUrl
         }
       }
+      paginationInfo {
+        hasMorePages
+        currentPage
+      }
+    }
+  }
+`
+
+export const FETCH_MODELS = gql`
+  query modelsData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
+    # Latest 10 Models
+    models(take: $take, page: $page, orderBy: $orderBy) {
+      data {
+        hash
+        posterUrl
+        stageName
+        name
+      }
+
       paginationInfo {
         hasMorePages
         currentPage
@@ -127,7 +148,7 @@ export const FETCH_TRACKS_BY_GENRE = gql`
       data {
         hash
         title
-        poster_url
+        posterUrl
         artist {
           stage_name
           hash
@@ -146,7 +167,7 @@ export const FETCH_RELATED_TRACKS = gql`
     relatedTracks(input: $input) {
       hash
       title
-      poster_url
+      posterUrl
       artist {
         stage_name
         hash
@@ -160,7 +181,7 @@ export const FETCH_RANDOM_ARTISTS = gql`
     randomArtists(input: $input) {
       hash
       name
-      poster_url
+      posterUrl
     }
   }
 `
@@ -205,7 +226,7 @@ export const FETCH_ARTISTS = gql`
       data {
         hash
         stage_name
-        poster_url
+        posterUrl
       }
       paginationInfo {
         hasMorePages
@@ -243,7 +264,7 @@ export const FETCH_ALBUMS = gql`
         artist {
           hash
           stage_name
-          poster_url
+          posterUrl
         }
       }
       paginationInfo {
@@ -313,7 +334,7 @@ export const FETCH_TRACK = gql`
       hash
       allowDownload
       audio_url
-      poster_url
+      posterUrl
       featured
       detail
       lyrics
@@ -342,7 +363,7 @@ export const FETCH_ARTIST = gql`
       hash
       name
       stage_name
-      poster_url
+      posterUrl
       bio
       facebook_url
       twitter_url
@@ -351,7 +372,7 @@ export const FETCH_ARTIST = gql`
       tracks {
         hash
         title
-        poster_url
+        posterUrl
       }
       albums {
         hash
@@ -374,7 +395,7 @@ export const FETCH_ALBUM = gql`
       tracks {
         hash
         title
-        poster_url
+        posterUrl
         audio_url
         number
         play_count
@@ -398,7 +419,7 @@ export const FETCH_PLAYLIST = gql`
       tracks {
         hash
         title
-        poster_url
+        posterUrl
         audio_url
         number
         play_count
@@ -455,7 +476,7 @@ export const SEARCH_QUERY = gql`
       tracks {
         hash
         title
-        poster_url
+        posterUrl
         artist {
           hash
           stage_name
@@ -464,7 +485,7 @@ export const SEARCH_QUERY = gql`
       artists {
         hash
         stage_name
-        poster_url
+        posterUrl
       }
       albums {
         hash

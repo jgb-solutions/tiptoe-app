@@ -1,18 +1,67 @@
-import React from "react"
-import { View, Text, StyleSheet } from "react-native"
+import React, { useState } from 'react'
+import {
+	Container,
+	Header,
+	Content,
+	Button,
+	ListItem,
+	Text,
+	Icon,
+	Left,
+	Body,
+	Right,
+	Switch
+} from 'native-base'
+
+import Page from 'components/layouts/Page'
+
 
 export default function ProfileScreen() {
+	const [switchValue, setSwitchValue] = useState(false)
+
 	return (
-		<View style={styles.container}>
-			<Text>Some default text for the profilescreen</Text>
-		</View>
+		<Page>
+			<ListItem icon>
+				<Left>
+					<Button style={{ backgroundColor: "#FF9501" }}>
+						<Icon active name="airplane" />
+					</Button>
+				</Left>
+				<Body>
+					<Text>Airplane Mode</Text>
+				</Body>
+				<Right>
+					<Switch value={switchValue} onValueChange={value => setSwitchValue(value)} />
+				</Right>
+			</ListItem>
+			<ListItem icon>
+				<Left>
+					<Button style={{ backgroundColor: "#007AFF" }}>
+						<Icon active name="wifi" />
+					</Button>
+				</Left>
+				<Body>
+					<Text>Wi-Fi</Text>
+				</Body>
+				<Right>
+					<Text>GeekyAnts</Text>
+					<Icon active name="arrow-forward" />
+				</Right>
+			</ListItem>
+			<ListItem icon>
+				<Left>
+					<Button style={{ backgroundColor: "#007AFF" }}>
+						<Icon active name="bluetooth" />
+					</Button>
+				</Left>
+				<Body>
+					<Text>Bluetooth</Text>
+				</Body>
+				<Right>
+					<Text>On</Text>
+					<Icon active name="arrow-forward" />
+				</Right>
+			</ListItem>
+		</Page>
 	)
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-})

@@ -35,11 +35,11 @@ export default function App() {
 
   return (
     <ApolloProvider client={client}>
-      <AppProvider>
-        {/* <StyleProvider style={getTheme()}> */}
-        <MainNavigation />
-        {/* </StyleProvider> */}
-      </AppProvider>
+      {/* <AppProvider> */}
+      {/* <StyleProvider style={getTheme()}> */}
+      <MainNavigation />
+      {/* </StyleProvider> */}
+      {/* </AppProvider> */}
     </ApolloProvider>
   )
 }
