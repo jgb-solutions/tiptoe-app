@@ -15,6 +15,7 @@ import PhotoInterface from "../interfaces/PhotoInterface"
 import PhotoCard from "../components/PhotoCard"
 import ThumbnailScrollList from "../components/ThumbnailScrollList"
 import ModelInterface from "../interfaces/ModelInterface"
+import { colors } from "../utils/colors"
 
 export default function HomeScreen() {
 	const { loading: photoLoading, error: photoError, data: photoData } = useQuery(FETCH_PHOTOS)
@@ -27,7 +28,7 @@ export default function HomeScreen() {
 	return (
 		<Page>
 			{photoLoading || modelLoading ? (
-				<Spinner color='red' />
+				<Spinner color={colors.pink} />
 			) : photoError || modelError ? (
 				<Text>An error occurred</Text>
 			) : (

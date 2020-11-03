@@ -1,9 +1,8 @@
-import { AppLoading } from "expo"
-import React, { useContext } from "react"
+import React from "react"
+import { Icon } from "native-base"
 import { NavigationContainer } from "@react-navigation/native"
 import { createStackNavigator } from "@react-navigation/stack"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import { Ionicons } from '@expo/vector-icons'
 
 // Screens
 import HomeScreen from "../screens/HomeScreen"
@@ -14,14 +13,10 @@ import FavoritesScreen from "../screens/FavoritesScreen"
 import AddPhotoScreen from "../screens/AddPhotoScreen"
 import SettingsScreen from "../screens/SettingsScreen"
 import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen."
-import AsyncStorage from "@react-native-community/async-storage"
-
-
-AsyncStorage.clear()
 
 // Other stuff
-import { AppContext } from "../providers"
 import { colors } from "../utils/colors"
+import useStore, { AppStateInterface } from "../store"
 
 // Navigators setup
 const Stack = createStackNavigator()
@@ -46,7 +41,10 @@ function TabNavigation() {
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="ios-home" color={color} size={size} />
+            <Icon name="home" style={{
+              fontSize: size,
+              color: color
+            }} />
           ),
         }}
       />
@@ -56,7 +54,10 @@ function TabNavigation() {
         options={{
           tabBarLabel: 'Search',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="ios-search" color={color} size={size} />
+            <Icon name="search" style={{
+              fontSize: size,
+              color: color
+            }} />
           ),
         }}
       />
@@ -64,9 +65,14 @@ function TabNavigation() {
         name="Add"
         component={AddPhotoScreen}
         options={{
-          tabBarLabel: '',
+          tabBarLabel: 'Add Photo',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="ios-add-circle-outline" color={color} size={size * 1.9} />
+            <Icon
+              name="add-circle"
+              style={{
+                fontSize: size * 1.9,
+                color: color
+              }} />
           ),
         }}
       />
@@ -76,9 +82,12 @@ function TabNavigation() {
         options={{
           tabBarLabel: 'Favorites',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="ios-heart" color={color} size={size} />
+            <Icon name="heart" style={{
+              fontSize: size,
+              color: color
+            }} />
           ),
-          tabBarBadge: 3
+          // tabBarBadge: 3
         }}
       />
       <Tab.Screen
@@ -87,7 +96,10 @@ function TabNavigation() {
         options={{
           tabBarLabel: 'Profile',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="ios-person" color={color} size={size} />
+            <Icon name="person" style={{
+              fontSize: size,
+              color: color
+            }} />
           ),
         }}
       />
@@ -96,9 +108,7 @@ function TabNavigation() {
 }
 
 function MainNavigation() {
-  const { isLoggedIn, loadingDataFromStorage } = useContext(AppContext)
-
-  if (loadingDataFromStorage) return <AppLoading />
+  const isLoggedIn = useStore((state: AppStateInterface) => state.user.isLoggedIn)
 
   return (
     <NavigationContainer>

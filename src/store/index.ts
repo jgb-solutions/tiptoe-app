@@ -1,26 +1,44 @@
 import { Socket } from "phoenix"
-import create from "zustand";
+import createStore from "zustand";
+import { configurePersist} from 'zustand-persist'
+import AsyncStorage from "@react-native-community/async-storage"
 
-import socket from "../services/socket";
-type State = {
+// Sonfigure storage
+export const { persist, purge } = configurePersist({
+  storage: AsyncStorage,
+  rootKey: 'tiptoeCacheRoot', // optional, default value is `root`
+})
+
+
+export type AppStateInterface = {
   user: {
     isLoggedIn: boolean,
     data?: null,
     token?: string
   },
-  socket: Socket
-  // increase: (by: number) => void
+  socket?: Socket
+  login: (username: string, password: string) => void
 }
 
-const useStore = create<State>(set => ({
-   user: {
+const useStore = createStore<AppStateInterface>(
+  persist({
+    key: 'tiptoe-local-storage', // required, child key of storage
+    allowlist: [], // optional, will save everything if allowlist is undefined
+    denylist: [], // optional, if allowlist set, denylist will be ignored
+  }, (set) => ({
+    user: {
     isLoggedIn: false,
     data: null
   },
-  socket,
-  // increase: (by) => set(state => ({
-  //   bears: state.bears + by
-  // })
-}))
+    login: async (username, password) => {
+      // const { user } = await webLogin(username, password)
+      set((state) => ({
+        user: {
+          isLoggedIn: true
+        }
+      }))
+    }
+  }))
+)
 
 export default useStore;

@@ -18,9 +18,12 @@ import FormInput from '../components/FormInput'
 import TipToeLogo from '../../assets/images/TipToeLogo.png'
 import FormButton from '../components/FormButton'
 import { colors } from "../utils/colors"
+import useStore, { AppStateInterface } from "../store"
 
 export default function LogInWithEmailScreen() {
   const navigation = useNavigation()
+  const { login } = useStore((state: AppStateInterface) =>
+    ({ login: state.login }))
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,7 +51,7 @@ export default function LogInWithEmailScreen() {
         <FormButton
           btnStyle={{ marginBottom: 12 }}
           label="Log in"
-          onPress={() => ""} />
+          onPress={() => login('services@jgb.solutions', 'password')} />
 
         <Text style={styles.smallText}>DON'T HAVE AN ACCOUNT?</Text>
         <TouchableOpacity
