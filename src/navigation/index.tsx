@@ -12,7 +12,8 @@ import SearchScreen from "../screens/SearchScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
 import AddPhotoScreen from "../screens/AddPhotoScreen"
 import SettingsScreen from "../screens/SettingsScreen"
-import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen."
+import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen"
+import ChatScreen from "../screens/ChatScreen"
 
 // Other stuff
 import { colors } from "../utils/colors"
@@ -118,7 +119,10 @@ function MainNavigation() {
         }}
       >
         {isLoggedIn ? (
-          <Stack.Screen name="TabNavigation" component={TabNavigation} />
+          <>
+            <Stack.Screen name="Chat" component={ChatScreen} />
+            <Stack.Screen name="TabNavigation" component={TabNavigation} />
+          </>
         ) : (
             <>
               <Stack.Screen name="LogIn" component={LogInWithEmailScreen} />

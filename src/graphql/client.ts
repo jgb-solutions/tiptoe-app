@@ -1,6 +1,6 @@
 import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache } from "@apollo/client"
-import useStore from "store"
-import { API_URL } from "utils/constants"
+import useStore from "../store"
+import { API_URL } from "../utils/constants"
 
 const client = new ApolloClient({
   // link: ApolloLink.from([

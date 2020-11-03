@@ -13,7 +13,7 @@ import {
 	Switch
 } from 'native-base'
 
-import Page from 'components/layouts/Page'
+import Page from '../components/layouts/Page'
 
 
 export default function ProfileScreen() {
