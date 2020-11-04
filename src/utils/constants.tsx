@@ -5,7 +5,7 @@ export const API_URL = `http://localhost:4000/api`
 export const SOCKET_URL = `ws://localhost:4000/socket`
 export const SOCKET_EVENTS = {
   SHOW_TOAST: "show_toast",
-  NEW_MESSAGE: "new_msg"
+  NEW_MESSAGE: "new_message"
 }
 export const CHANNELS = {
   ROOM: "room"

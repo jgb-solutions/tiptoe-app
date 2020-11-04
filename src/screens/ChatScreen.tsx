@@ -19,18 +19,20 @@ import { useChannel } from '../hooks/useChannel'
 import { CHANNELS, SOCKET_EVENTS } from '../utils/constants'
 import IMessageInterface from '../interfaces/IMessageInterface'
 
+const userId = Math.floor(Math.random() * 2) + 1
+
 export default function ChatScreen() {
   const [messages, setMessages] = useState<IMessage[]>([])
-  const [RoomGeenralChannel] = useChannel(`${CHANNELS.ROOM}:general`)
+  const [RoomGeneralChannel] = useChannel(`${CHANNELS.ROOM}:general`)
 
   // useEffect(() => {
   //   alert(messages.length)
   // }, [messages])
 
   useEffect(() => {
-    if (!RoomGeenralChannel) return
+    if (!RoomGeneralChannel) return
 
-    const channelEvent = RoomGeenralChannel.on(SOCKET_EVENTS.NEW_MESSAGE, (newMessage) => {
+    const channelEvent = RoomGeneralChannel.on(SOCKET_EVENTS.NEW_MESSAGE, newMessage => {
       const iMessage = {
         _id: newMessage.id,
         text: newMessage.text,
@@ -38,8 +40,7 @@ export default function ChatScreen() {
         user: {
           _id: newMessage.user.id,
           name: newMessage.user.name,
-          avatar: 'https://previews.123rf.com/images/webstocker/webstocker1711/webstocker171100043/89827827-gold-coin-with-letter-j-design-.jpg',
-          // https://placeimg.com/140/140/any
+          avatar: "https://placeimg.com/140/140/any"
         }
       }
 
@@ -47,32 +48,36 @@ export default function ChatScreen() {
     })
 
     return () => {
-      RoomGeenralChannel.off(SOCKET_EVENTS.NEW_MESSAGE, channelEvent)
+      RoomGeneralChannel.off(SOCKET_EVENTS.NEW_MESSAGE, channelEvent)
     }
-  }, [RoomGeenralChannel])
+  }, [RoomGeneralChannel])
 
   const onSend = useCallback((newMessages = []) => {
     // alert(JSON.stringify(newMessages))
     newMessages.forEach((message: IMessageInterface) => {
-      RoomGeenralChannel?.push(SOCKET_EVENTS.NEW_MESSAGE, {
+      // alert('run')
+      RoomGeneralChannel?.push(SOCKET_EVENTS.NEW_MESSAGE, {
         text: message.text,
         userId: message.user._id,
         createdAt: message.createdAt
       })
+        .receive("ok", (msg) => console.log("created message", msg))
+        .receive("error", (reasons) => console.log("create failed", reasons))
+        .receive("timeout", () => console.log("Networking issue..."))
     })
     setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
-  }, [])
+  }, [RoomGeneralChannel])
 
   return (
-    // <Page noLeft noRight contentStyle={{ flex: 1 }}>
-    <GiftedChat
-      // messagesContainerStyle={{ flex: 1 }}
-      messages={messages}
-      onSend={messages => onSend(messages)}
-      user={{
-        _id: 1,
-      }}
-    />
-    // </Page>
+    <Page noLeft noRight contentStyle={{ flex: 1 }}>
+      <GiftedChat
+        // messagesContainerStyle={{ flex: 1 }}
+        messages={messages}
+        onSend={messages => onSend(messages)}
+        user={{
+          _id: userId
+        }}
+      />
+    </Page>
   )
 }
