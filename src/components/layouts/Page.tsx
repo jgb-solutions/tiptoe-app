@@ -20,6 +20,7 @@ type Props = {
   noLeft?: boolean
   noRight?: boolean
   contentStyle?: object
+  pageStyle?: object
 }
 
 
@@ -27,13 +28,14 @@ export default function Page({
   children,
   noLeft,
   noRight,
-  contentStyle
+  contentStyle,
+  pageStyle
 }: Props) {
   return (
-    <Container>
+    <Container style={[{ ...pageStyle }]}>
       <Header
         iosBarStyle="light-content"
-        androidStatusBarColor={colors.white}
+        androidStatusBarColor={colors.black}
         style={{ backgroundColor: colors.pink }}>
         {!noLeft && (
           <Left style={{ flex: 1 }}>
@@ -59,6 +61,6 @@ export default function Page({
       <Content contentContainerStyle={[{ ...contentStyle }]}>
         {children}
       </Content>
-    </Container>
+    </Container >
   )
 }

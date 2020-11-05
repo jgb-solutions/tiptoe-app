@@ -2,7 +2,7 @@ import React from "react"
 import { AppLoading } from "expo"
 import * as Font from "expo-font"
 import { Ionicons } from "@expo/vector-icons"
-import { ApolloProvider } from "@apollo/client"
+import { ApolloProvider } from '@apollo/react-hooks'
 
 
 import { MainNavigation } from "./src/navigation"

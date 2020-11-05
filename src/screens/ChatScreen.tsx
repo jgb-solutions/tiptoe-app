@@ -19,30 +19,52 @@ import { useChannel } from '../hooks/useChannel'
 import { CHANNELS, SOCKET_EVENTS } from '../utils/constants'
 import IMessageInterface from '../interfaces/IMessageInterface'
 
-const userId = Math.floor(Math.random() * 2) + 1
+const userId = Math.floor(Math.random() * 3) + 1
+
+type ReponseMessage = {
+  id: number
+  text: string
+  createdAt: Date
+  user: {
+    id: number
+    name: string
+    avatar?: string
+  }
+}
+
+export const mapMessageCollectionFromResponse = (messages: ReponseMessage[]) => messages.map(message => mapMessageFromResponse(message))
+
+export const mapMessageFromResponse = (message: ReponseMessage) => ({
+  _id: message.id,
+  text: message.text,
+  createdAt: new Date(message.createdAt),
+  user: {
+    _id: message.user.id,
+    name: message.user.name,
+    avatar: message.user.avatar || "https://placeimg.com/140/140/any"
+  }
+})
 
 export default function ChatScreen() {
   const [messages, setMessages] = useState<IMessage[]>([])
-  const [RoomGeneralChannel] = useChannel(`${CHANNELS.ROOM}:general`)
+  const [RoomGeneralChannel, okReponse] = useChannel(`${CHANNELS.ROOM}:general`)
 
-  // useEffect(() => {
-  //   alert(messages.length)
-  // }, [messages])
+  useEffect(() => {
+    // alert(`last twenty message ${JSON.stringify(okReponse)}`)
+    if (okReponse.messages) {
+      setMessages(previousMessages => GiftedChat.prepend(
+        previousMessages,
+        mapMessageCollectionFromResponse(
+          JSON.parse(okReponse.messages)
+        )))
+    }
+  }, [okReponse])
 
   useEffect(() => {
     if (!RoomGeneralChannel) return
 
     const channelEvent = RoomGeneralChannel.on(SOCKET_EVENTS.NEW_MESSAGE, newMessage => {
-      const iMessage = {
-        _id: newMessage.id,
-        text: newMessage.text,
-        createdAt: new Date(),
-        user: {
-          _id: newMessage.user.id,
-          name: newMessage.user.name,
-          avatar: "https://placeimg.com/140/140/any"
-        }
-      }
+      const iMessage = mapMessageFromResponse(newMessage)
 
       setMessages(previousMessages => GiftedChat.append(previousMessages, [iMessage]))
     })
@@ -53,17 +75,15 @@ export default function ChatScreen() {
   }, [RoomGeneralChannel])
 
   const onSend = useCallback((newMessages = []) => {
-    // alert(JSON.stringify(newMessages))
     newMessages.forEach((message: IMessageInterface) => {
-      // alert('run')
       RoomGeneralChannel?.push(SOCKET_EVENTS.NEW_MESSAGE, {
         text: message.text,
         userId: message.user._id,
-        createdAt: message.createdAt
+        // roomID:
       })
-        .receive("ok", (msg) => console.log("created message", msg))
-        .receive("error", (reasons) => console.log("create failed", reasons))
-        .receive("timeout", () => console.log("Networking issue..."))
+      // .receive("ok", (msg) => console.log("created message", msg))
+      // .receive("error", (reasons) => console.log("create failed", reasons))
+      // .receive("timeout", () => console.log("Networking issue..."))
     })
     setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
   }, [RoomGeneralChannel])
@@ -75,7 +95,8 @@ export default function ChatScreen() {
         messages={messages}
         onSend={messages => onSend(messages)}
         user={{
-          _id: userId
+          _id: userId,
+          name: "Jean Gérard"
         }}
       />
     </Page>

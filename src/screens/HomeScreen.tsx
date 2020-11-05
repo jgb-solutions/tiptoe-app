@@ -6,7 +6,7 @@ import {
 	Text,
 	Spinner
 } from 'native-base'
-import { useQuery } from "@apollo/client"
+import { useQuery } from '@apollo/react-hooks'
 
 // Local imports
 import { FETCH_MODELS, FETCH_PHOTOS } from "../graphql/queries"
