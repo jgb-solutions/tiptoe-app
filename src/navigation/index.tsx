@@ -109,7 +109,7 @@ function TabNavigation() {
 }
 
 function MainNavigation() {
-  const isLoggedIn = useStore((state: AppStateInterface) => state.user.isLoggedIn)
+  const isLoggedIn = useStore((state: AppStateInterface) => state.authData.isLoggedIn)
 
   return (
     <NavigationContainer>

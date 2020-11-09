@@ -1,17 +1,24 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react'
+import { StyleSheet, View, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native'
 
-import { colors } from '../utils/colors';
+import { colors } from '../utils/colors'
 
-const FormButton = ({ btnStyle, label, labelStyle, icon, onPress }) => {
+type Props = {
+  btnStyle?: ViewStyle,
+  label: string,
+  labelStyle?: TextStyle,
+  icon?: ReactNode,
+  onPress: () => void
+}
+
+const FormButton = ({ btnStyle, label, labelStyle, icon, onPress }: Props) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.btn, btnStyle]}>
       {icon}
       <Text style={[styles.label, labelStyle]}>{label}</Text>
     </TouchableOpacity>
   )
-};
+}
 
 const styles = StyleSheet.create({
   btn: {
@@ -25,22 +32,8 @@ const styles = StyleSheet.create({
   },
   label: {
     textTransform: 'uppercase',
-    color: 'white',
+    // color: 'white',
   },
-});
+})
 
-FormButton.propTypes = {
-  btnStyle: PropTypes.object,
-  label: PropTypes.string.isRequired,
-  labelStyle: PropTypes.object,
-  icon: PropTypes.node,
-  onPress: PropTypes.func.isRequired,
-};
-
-FormButton.defaultProps = {
-  buttonStyle: {},
-  labelStyle: {},
-  icon: <View />,
-};
-
-export default FormButton;
+export default FormButton

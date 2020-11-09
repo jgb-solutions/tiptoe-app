@@ -3,40 +3,45 @@ import createStore from "zustand"
 import { configurePersist } from "zustand-persist"
 import AsyncStorage from "@react-native-community/async-storage"
 
+import UserInterface from "../interfaces/UserInterface"
+
 // Sonfigure storage
 export const { persist, purge } = configurePersist({
 	storage: AsyncStorage,
 	rootKey: "tiptoeCacheRoot", // optional, default value is `root`
 })
 
+export interface UserDataInterface {
+	data?: UserInterface
+	token?: string
+}
+
+export interface AuthDataInterface extends UserDataInterface {
+	isLoggedIn: boolean
+}
+
 export type AppStateInterface = {
-	user: {
-		isLoggedIn: boolean
-		data?: null
-		token?: string
-	}
+	authData: AuthDataInterface
 	socket?: Socket
-	login: (username: string, password: string) => void
+	doLogin: (userData: UserDataInterface) => void
 }
 
 export const INITIAL_USER_STATE = {
-	isLoggedIn: true,
-	data: null,
+	isLoggedIn: false,
 }
 
 const useStore = createStore<AppStateInterface>(
 	persist(
 		{
 			key: "tiptoe-local-storage", // required, child key of storage
-			allowlist: [], // optional, will save everything if allowlist is undefined
-			denylist: [], // optional, if allowlist set, denylist will be ignored
+			allowlist: ["authData"], // optional, will save everything if allowlist is undefined
 		},
 		(set) => ({
-			user: INITIAL_USER_STATE,
-			login: async (username, password) => {
-				// const { user } = await webLogin(username, password)
-				set((state) => ({
-					user: {
+			authData: INITIAL_USER_STATE,
+			doLogin: async (userData) => {
+				set((_) => ({
+					authData: {
+						...userData,
 						isLoggedIn: true,
 					},
 				}))
@@ -44,5 +49,7 @@ const useStore = createStore<AppStateInterface>(
 		})
 	)
 )
+
+// purge()
 
 export default useStore

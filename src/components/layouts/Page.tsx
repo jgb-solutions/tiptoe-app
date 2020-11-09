@@ -1,5 +1,5 @@
-import React, { CSSProperties, ReactNode } from 'react'
-import { Image, StyleSheetProperties } from 'react-native'
+import React, { ReactNode } from 'react'
+import { Image, ViewStyle, } from 'react-native'
 import {
   Container,
   Header,
@@ -19,8 +19,8 @@ type Props = {
   children: ReactNode
   noLeft?: boolean
   noRight?: boolean
-  contentStyle?: object
-  pageStyle?: object
+  contentStyle?: ViewStyle
+  pageStyle?: ViewStyle
 }
 
 

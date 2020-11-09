@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import Constants from 'expo-constants'
 import {
   View,
@@ -12,46 +12,103 @@ import {
 } from 'react-native'
 import { Container, Header, Content, Item, Input } from 'native-base'
 import { useNavigation } from '@react-navigation/native'
+import { useForm, Controller } from "react-hook-form"
+import { useApolloClient } from "@apollo/react-hooks"
 
+
+const TipToeLogo = require('../../assets/images/TipToeLogo.png')
 import FormInput from '../components/FormInput'
-// @ts-ignore
-import TipToeLogo from '../../assets/images/TipToeLogo.png'
 import FormButton from '../components/FormButton'
 import { colors } from "../utils/colors"
 import useStore, { AppStateInterface } from "../store"
+import { LOG_USER_IN } from "../graphql/queries"
+
+export interface Credentials {
+  email: string
+  password: string
+}
 
 export default function LogInWithEmailScreen() {
+  const { control, handleSubmit, errors } = useForm<Credentials>({ mode: 'onBlur' })
   const navigation = useNavigation()
-  const { login } = useStore((state: AppStateInterface) =>
-    ({ login: state.login }))
+  const client = useApolloClient()
+  const [loginError, setLoginError] = useState("")
+  const { doLogin } = useStore((state: AppStateInterface) =>
+    ({ doLogin: state.doLogin }))
+
+  const handleLogin = async (credentials: Credentials) => {
+    try {
+      const { data: { login: userData }, errors } = await client.query({
+        query: LOG_USER_IN,
+        variables: { input: credentials },
+        fetchPolicy: 'network-only'
+      })
+
+      if (errors) {
+        setLoginError("Your email or password is not valid.")
+      }
+
+      if (userData) {
+        doLogin(userData)
+      }
+    } catch (error) {
+      setLoginError(error.graphQLErrors[0].message)
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Item rounded style={{ backgroundColor: colors.black, borderColor: colors.black }} placeholderLabel>
-        <Input placeholder='Rounded Textbox' style={{ color: colors.white, textAlign: 'center' }} />
-      </Item>
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <Image style={styles.image} source={TipToeLogo} />
 
         <Text style={styles.login}>LOG IN</Text>
+        <Text style={styles.loginError}>{loginError}</Text>
 
         <View style={styles.inputsContainer}>
-          <Item rounded style={{ backgroundColor: colors.black }} placeholderLabel>
-            <Input placeholder='Rounded Textbox' style={{ color: colors.white, textAlign: 'center' }} />
-          </Item>
-          <FormInput placeholder="Please Enter Your Email Or Username" />
-          <FormInput placeholder="Please Enter Your Password" />
+          <Controller
+            control={control}
+            render={({ onChange, onBlur, value }) => (
+              <FormInput
+                onBlur={onBlur}
+                autoCapitalize="none"
+                onChangeText={value => onChange(value)}
+                value={value}
+                placeholder="Enter Your Email"
+                error={errors.email} />
+            )}
+            name="email"
+            rules={{ required: "The email is required" }}
+            defaultValue=""
+          />
+
+          <Controller
+            control={control}
+            render={({ onChange, onBlur, value }) => (
+              <FormInput
+                autoCapitalize="none"
+                onBlur={onBlur}
+                onChangeText={value => onChange(value)}
+                value={value}
+                placeholder="Enter Your Password"
+                error={errors.password} />
+            )}
+            name="password"
+            rules={{ required: "The password is required" }}
+            defaultValue=""
+          />
         </View>
 
         <View style={{ flexDirection: 'row', marginBottom: 24 }}>
           <Text style={styles.smallText}>FORGOT YOUR PASSWORD? {' '}</Text>
-          <Text style={[styles.smallText, { fontWeight: 'bold' }]}>SIGN UP</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Reset')}>
+            <Text style={[styles.smallText, { fontWeight: 'bold' }]}>Reset it</Text>
+          </TouchableOpacity>
         </View>
 
         <FormButton
           btnStyle={{ marginBottom: 12 }}
           label="Log in"
-          onPress={() => login('services@jgb.solutions', 'password')} />
+          onPress={handleSubmit(handleLogin)} />
 
         <Text style={styles.smallText}>DON'T HAVE AN ACCOUNT?</Text>
         <TouchableOpacity
@@ -67,7 +124,7 @@ export default function LogInWithEmailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.blackB,
+    // backgroundColor: colors.blackB,
   },
   contentContainer: {
     alignItems: 'center',
@@ -87,8 +144,14 @@ const styles = StyleSheet.create({
   },
   login: {
     textTransform: 'uppercase',
-    color: colors.lightGrey,
+    // color: colors.lightGrey,
     fontSize: 24,
+    marginVertical: 20,
+  },
+  loginError: {
+    textTransform: 'uppercase',
+    color: colors.red,
+    fontSize: 18,
     marginVertical: 20,
   },
   inputsContainer: {
@@ -97,7 +160,7 @@ const styles = StyleSheet.create({
   },
   smallText: {
     textTransform: 'uppercase',
-    color: colors.white,
+    // color: colors.white,
     fontSize: 12,
   },
 })

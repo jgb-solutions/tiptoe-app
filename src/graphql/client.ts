@@ -13,13 +13,12 @@ const client = new ApolloClient({
 	link: ApolloLink.from([
 		onError(({ graphQLErrors, networkError }) => {
 			if (graphQLErrors) {
-				graphQLErrors.forEach(
-					({ message, extensions: { statusCode } }: any) => {
-						if (statusCode === 401) {
-							useStore.setState({ user: INITIAL_USER_STATE })
-						}
+				console.log(graphQLErrors)
+				graphQLErrors.forEach(({ message, code }: any) => {
+					if (code === 401) {
+						useStore.setState({ authData: INITIAL_USER_STATE })
 					}
-				)
+				})
 			}
 
 			if (networkError) {
@@ -35,7 +34,7 @@ const client = new ApolloClient({
 		// auth link
 		setContext((_, { headers }) => {
 			// get the authentication token from local storage if it exists
-			const token = useStore.getState().user.token
+			const token = useStore.getState().authData.token
 			// return the headers to the context so httpLink can read them
 			return {
 				headers: {
@@ -46,7 +45,7 @@ const client = new ApolloClient({
 		}),
 		// http link
 		createHttpLink({
-			uri: API_URL,
+			uri: `${API_URL}/graphql`,
 		}),
 	]),
 	cache: new InMemoryCache(),

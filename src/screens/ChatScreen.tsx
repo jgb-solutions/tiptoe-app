@@ -1,34 +1,32 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { GiftedChat, IMessage } from 'react-native-gifted-chat'
 import {
   Container,
   Header,
   Content,
   Button,
-  ListItem,
-  Text,
   Icon,
   Left,
   Body,
   Right,
-  Switch
+  Thumbnail,
+  Text,
 } from 'native-base'
-import { GiftedChat, IMessage } from 'react-native-gifted-chat'
 
-import Page from '../components/layouts/Page'
 import { useChannel } from '../hooks/useChannel'
 import { CHANNELS, SOCKET_EVENTS } from '../utils/constants'
 import IMessageInterface from '../interfaces/IMessageInterface'
+import useStore, { AppStateInterface } from '../store'
+import { colors } from '../utils/colors'
 
-const userId = Math.floor(Math.random() * 3) + 1
-
-type ReponseMessage = {
+export type ReponseMessage = {
   id: number
   text: string
   createdAt: Date
   user: {
     id: number
     name: string
-    avatar?: string
+    avatarUrl?: string
   }
 }
 
@@ -41,13 +39,14 @@ export const mapMessageFromResponse = (message: ReponseMessage) => ({
   user: {
     _id: message.user.id,
     name: message.user.name,
-    avatar: message.user.avatar || "https://placeimg.com/140/140/any"
+    avatar: message.user.avatarUrl || "https://placeimg.com/140/140/any"
   }
 })
 
 export default function ChatScreen() {
   const [messages, setMessages] = useState<IMessage[]>([])
   const [RoomGeneralChannel, okReponse] = useChannel(`${CHANNELS.ROOM}:general`)
+  const userData = useStore((state: AppStateInterface) => state.authData.data)
 
   useEffect(() => {
     // alert(`last twenty message ${JSON.stringify(okReponse)}`)
@@ -89,16 +88,42 @@ export default function ChatScreen() {
   }, [RoomGeneralChannel])
 
   return (
-    <Page noLeft noRight contentStyle={{ flex: 1 }}>
-      <GiftedChat
-        // messagesContainerStyle={{ flex: 1 }}
-        messages={messages}
-        onSend={messages => onSend(messages)}
-        user={{
-          _id: userId,
-          name: "Jean Gérard"
-        }}
-      />
-    </Page>
+    <Container>
+      <Header
+        iosBarStyle="light-content"
+        androidStatusBarColor={colors.black}
+        style={{ backgroundColor: colors.pink }}>
+        <Left style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {/* <Button transparent>
+            <Icon name='chatbubbles' style={{ color: colors.white }} />
+          </Button> */}
+          <Thumbnail
+            small
+            source={{ uri: "https://placeimg.com/140/140/any" }}
+            style={{ marginRight: 5, }}
+          />
+          <Text style={{
+            fontWeight: 'bold', color: colors.white
+          }}>Some User</Text>
+        </Left>
+        <Right style={{ flex: 1 }}>
+          <Button transparent onPress={() => alert('pressed more')}>
+            <Icon name='more' style={{ color: colors.white }} />
+          </Button>
+        </Right>
+      </Header>
+      {userData && (
+        <GiftedChat
+          // messagesContainerStyle={{ flex: 1 }}
+          messages={messages}
+          onSend={messages => onSend(messages)}
+          user={{
+            _id: userData.id,
+            name: userData.name,
+            avatar: userData.avatarUrl
+          }}
+        />
+      )}
+    </Container >
   )
 }

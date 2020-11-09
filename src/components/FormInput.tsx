@@ -1,43 +1,43 @@
-import React from 'react';
-import { StyleSheet, TextInput, View, Text } from 'react-native';
-import PropTypes from 'prop-types';
+import React from 'react'
+import { StyleSheet, View, Text, TextInputProps } from 'react-native'
+import { Item, Input } from 'native-base'
 
-import { colors } from '../utils/colors';
+import { colors } from '../utils/colors'
 
-const FormInput = ({ error, success, ...rest }) => {
-  const borderColor = error ? colors.error : success ? colors.success : null;
+type Props = {
+  error?: any
+  success?: boolean
+  placeholder?: string
+} & TextInputProps
+
+const FormInput = ({ error, success, placeholder, ...rest }: Props) => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.inputContainer, { borderColor: borderColor }]}>
-        <TextInput
-          style={styles.input}
-          placeholderTextColor={colors.lightGrey}
-          blurOnSubmit={false}
-          returnKeyType="next"
-          keyboardAppearance="dark"
-          {...rest} />
-      </View>
-      {error && (
-        <Text style={styles.errorText}>There Was An Error With Your Input</Text>
-      )}
+      <Item rounded style={{
+        borderColor: error ? colors.error : success ? colors.success : colors.black
+      }} placeholderLabel>
+        <Input
+          placeholder={placeholder}
+          style={[styles.input]}
+          {...rest}
+        />
+      </Item>
+      {
+        !!error && (
+          <Text style={styles.errorText}>{error.message}</Text>
+        )}
     </View>
   )
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     marginBottom: 15,
   },
-  inputContainer: {
-    borderRadius: 24,
-    backgroundColor: colors.black,
-    alignItems: 'center',
-    borderWidth: 1,
-  },
   input: {
     height: 50,
-    color: 'white',
+    textAlign: 'center'
   },
   errorText: {
     color: colors.error,
@@ -45,16 +45,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
   },
-});
+})
 
-FormInput.propTypes = {
-  error: PropTypes.bool,
-  success: PropTypes.bool,
-};
-
-FormInput.defaultProps = {
-  error: false,
-  success: false,
-};
-
-export default FormInput;
+export default FormInput

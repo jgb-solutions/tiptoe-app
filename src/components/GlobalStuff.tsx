@@ -10,9 +10,9 @@ import { SOCKET_URL } from "../utils/constants"
 export default function GlobalStuff() {
   const { isLoggedIn, socket, token } = useStore((state: AppStateInterface) =>
     ({
-      isLoggedIn: state.user.isLoggedIn,
+      isLoggedIn: state.authData.isLoggedIn,
       socket: state.socket,
-      token: state.user.token
+      token: state.authData.token
     }))
 
   const [notificationsChannel] = useChannel('notifications')
