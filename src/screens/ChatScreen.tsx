@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { GiftedChat, IMessage } from 'react-native-gifted-chat'
+import { Bubble, GiftedChat, IMessage } from 'react-native-gifted-chat'
 import {
   Container,
   Header,
@@ -20,13 +20,13 @@ import useStore, { AppStateInterface } from '../store'
 import { colors } from '../utils/colors'
 
 export type ReponseMessage = {
-  id: number
+  id: string
   text: string
   createdAt: Date
   user: {
-    id: number
+    id: string
     name: string
-    avatarUrl?: string
+    avatar_url?: string
   }
 }
 
@@ -36,10 +36,12 @@ export const mapMessageFromResponse = (message: ReponseMessage) => ({
   _id: message.id,
   text: message.text,
   createdAt: new Date(message.createdAt),
+  // image: "https://hexdocs.pm/phoenix/assets/logo.png",
+  // system: true,
   user: {
-    _id: message.user.id,
+    _id: `${message.user.id}`,
     name: message.user.name,
-    avatar: message.user.avatarUrl || "https://placeimg.com/140/140/any"
+    avatar: message.user.avatar_url
   }
 })
 
@@ -49,7 +51,6 @@ export default function ChatScreen() {
   const userData = useStore((state: AppStateInterface) => state.authData.data)
 
   useEffect(() => {
-    // alert(`last twenty message ${JSON.stringify(okReponse)}`)
     if (okReponse.messages) {
       setMessages(previousMessages => GiftedChat.prepend(
         previousMessages,
@@ -122,6 +123,35 @@ export default function ChatScreen() {
             name: userData.name,
             avatar: userData.avatarUrl
           }}
+          renderBubble={props => {
+            return (
+              <Bubble
+                {...props}
+                textStyle={{
+                  left: {
+                    color: colors.white,
+                  },
+                  right: {
+                    color: colors.white,
+                  },
+                }}
+                wrapperStyle={{
+                  left: {
+                    backgroundColor: colors.pink,
+                  },
+                  right: {
+                    backgroundColor: colors.pink,
+                  }
+                }}
+              />
+            )
+          }}
+
+          onPressAvatar={user => {
+            alert(JSON.stringify(user))
+          }}
+
+          renderLoadEarlier={() => (<Text>Load earlier messages</Text>)}
         />
       )}
     </Container >
