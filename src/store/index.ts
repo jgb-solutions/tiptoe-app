@@ -24,6 +24,7 @@ export type AppStateInterface = {
 	authData: AuthDataInterface
 	socket?: Socket
 	doLogin: (userData: UserDataInterface) => void
+	doLogout: () => void
 }
 
 export const INITIAL_USER_STATE = {
@@ -44,6 +45,11 @@ const useStore = createStore<AppStateInterface>(
 						...userData,
 						isLoggedIn: true,
 					},
+				}))
+			},
+			doLogout: async () => {
+				set((_) => ({
+					authData: INITIAL_USER_STATE,
 				}))
 			},
 		})

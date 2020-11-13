@@ -12,6 +12,7 @@ import {
   Thumbnail,
   Text,
 } from 'native-base'
+import { useNavigation } from '@react-navigation/native'
 
 import { useChannel } from '../hooks/useChannel'
 import { CHANNELS, SOCKET_EVENTS } from '../utils/constants'
@@ -46,6 +47,7 @@ export const mapMessageFromResponse = (message: ReponseMessage) => ({
 })
 
 export default function ChatScreen() {
+  const navigation = useNavigation()
   const [messages, setMessages] = useState<IMessage[]>([])
   const [RoomGeneralChannel, okReponse] = useChannel(`${CHANNELS.ROOM}:general`)
   const userData = useStore((state: AppStateInterface) => state.authData.data)
@@ -88,6 +90,10 @@ export default function ChatScreen() {
     setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
   }, [RoomGeneralChannel])
 
+  const goBack = () => {
+    navigation.goBack()
+  }
+
   return (
     <Container>
       <Header
@@ -98,6 +104,10 @@ export default function ChatScreen() {
           {/* <Button transparent>
             <Icon name='chatbubbles' style={{ color: colors.white }} />
           </Button> */}
+          <Button transparent onPress={goBack}>
+            <Icon name='arrow-back' style={{ color: colors.white }} />
+          </Button>
+
           <Thumbnail
             small
             source={{ uri: "https://placeimg.com/140/140/any" }}

@@ -32,7 +32,7 @@ export default function ThumbnailScrollList({ thumbnails, onPress }: Props) {
       }}
     >
       {thumbnails.map((thumbnail) => (
-        <TouchableOpacity onPress={() => handleOnPress(thumbnail.hash)}>
+        <TouchableOpacity key={thumbnail.hash} onPress={() => handleOnPress(thumbnail.hash)}>
           <Body key={thumbnail.hash} style={{ marginRight: 12 }}>
             <Thumbnail
               source={{ uri: thumbnail.imageUrl }}

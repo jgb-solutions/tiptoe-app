@@ -85,6 +85,7 @@ export default function LogInWithEmailScreen() {
             control={control}
             render={({ onChange, onBlur, value }) => (
               <FormInput
+                secureTextEntry
                 autoCapitalize="none"
                 onBlur={onBlur}
                 onChangeText={value => onChange(value)}

@@ -10,9 +10,11 @@ import {
   Body,
   Right,
 } from 'native-base'
+import { useNavigation } from '@react-navigation/native'
 
 
 import { colors } from '../../utils/colors'
+import { screenNames } from '../../utils/screens'
 const tiptoeLogo = require('../../../assets/images/TipToeLogo.png')
 
 type Props = {
@@ -20,7 +22,12 @@ type Props = {
   noLeft?: boolean
   noRight?: boolean
   contentStyle?: ViewStyle
-  pageStyle?: ViewStyle
+  pageStyle?: ViewStyle,
+  bodyStyle?: ViewStyle,
+  leftStyle?: ViewStyle,
+  rightStyle?: ViewStyle,
+  onPressRight?: () => void
+  onPressLeft?: () => void
 }
 
 
@@ -29,8 +36,31 @@ export default function Page({
   noLeft,
   noRight,
   contentStyle,
-  pageStyle
+  pageStyle,
+  onPressLeft,
+  onPressRight,
+  bodyStyle,
+  leftStyle,
+  rightStyle
 }: Props) {
+  const navigation = useNavigation()
+
+  const handlePressLeft = () => {
+    if (onPressLeft) {
+      onPressLeft()
+    } else {
+      navigation.goBack()
+    }
+  }
+
+  const handlePressRight = () => {
+    if (onPressRight) {
+      onPressRight()
+    } else {
+      navigation.navigate(screenNames.ChatList)
+    }
+  }
+
   return (
     <Container style={[{ ...pageStyle }]}>
       <Header
@@ -38,21 +68,21 @@ export default function Page({
         androidStatusBarColor={colors.black}
         style={{ backgroundColor: colors.pink }}>
         {!noLeft && (
-          <Left style={{ flex: 1 }}>
-            <Button transparent>
-              <Icon name='chatbubbles' style={{ color: colors.white }} />
+          <Left style={[{ flex: 1 }, { ...leftStyle }]}>
+            <Button transparent onPress={handlePressLeft}>
+              <Icon name='arrow-back' style={{ color: colors.white }} />
             </Button>
           </Left>
         )}
-        <Body style={{ flex: 1 }}>
+        <Body style={[{ flex: 1 }, { ...bodyStyle }]}>
           <Image
             source={tiptoeLogo} style={{ maxWidth: 100, flex: 1 }}
             resizeMode='contain'
           />
         </Body>
         {!noRight && (
-          <Right style={{ flex: 1 }}>
-            <Button transparent>
+          <Right style={[{ flex: 1 }, { ...rightStyle }]}>
+            <Button transparent onPress={handlePressRight}>
               <Icon name='chatbubbles' style={{ color: colors.white }} />
             </Button>
           </Right>

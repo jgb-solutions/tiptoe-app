@@ -14,10 +14,16 @@ import {
 } from 'native-base'
 
 import Page from '../components/layouts/Page'
+import useStore, { AppStateInterface } from '../store'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 
 export default function ProfileScreen() {
 	const [switchValue, setSwitchValue] = useState(false)
+	const { logout } = useStore((state: AppStateInterface) =>
+		({
+			logout: state.doLogout
+		}))
 
 	return (
 		<Page>
@@ -61,6 +67,18 @@ export default function ProfileScreen() {
 					<Text>On</Text>
 					<Icon active name="arrow-forward" />
 				</Right>
+			</ListItem>
+			<ListItem icon>
+				<Left>
+					<Button style={{}}>
+						<Icon active name="log-out" />
+					</Button>
+				</Left>
+				<Body>
+					<TouchableOpacity onPress={logout}>
+						<Text>Log Out</Text>
+					</TouchableOpacity>
+				</Body>
 			</ListItem>
 		</Page>
 	)

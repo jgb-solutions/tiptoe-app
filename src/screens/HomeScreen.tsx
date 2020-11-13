@@ -7,6 +7,7 @@ import {
 	Spinner
 } from 'native-base'
 import { useQuery } from '@apollo/react-hooks'
+import { useNavigation } from "@react-navigation/native"
 
 // Local imports
 import { FETCH_MODELS, FETCH_PHOTOS } from "../graphql/queries"
@@ -25,8 +26,10 @@ export default function HomeScreen() {
 		console.log(`data has arrived`, photoData)
 	}, [photoData])
 
+
+
 	return (
-		<Page>
+		<Page noLeft rightStyle={{ flex: 0 }}>
 			{photoLoading || modelLoading ? (
 				<Spinner color={colors.pink} />
 			) : photoError || modelError ? (

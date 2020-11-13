@@ -8,11 +8,12 @@ import { SOCKET_EVENTS } from '../utils/constants'
 import { SOCKET_URL } from "../utils/constants"
 
 export default function GlobalStuff() {
-  const { isLoggedIn, socket, token } = useStore((state: AppStateInterface) =>
+  const { isLoggedIn, socket, token, logout } = useStore((state: AppStateInterface) =>
     ({
       isLoggedIn: state.authData.isLoggedIn,
       socket: state.socket,
-      token: state.authData.token
+      token: state.authData.token,
+      logout: state.doLogout
     }))
 
   const [notificationsChannel] = useChannel('notifications')
@@ -33,9 +34,13 @@ export default function GlobalStuff() {
           token
         }
       })
+      socket.onError(error => {
+        if (error && !error.isTrusted) {
+          logout()
+        }
+      })
 
       socket.connect()
-
       useStore.setState({ socket })
     } else {
       if (socket) {

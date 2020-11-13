@@ -9,6 +9,7 @@ import HomeScreen from "../screens/HomeScreen"
 import LogInWithEmailScreen from "../screens/LogInWithEmailScreen."
 import ProfileScreen from "../screens/ProfileScreen"
 import SearchScreen from "../screens/SearchScreen"
+import ChatListScreen from "../screens/ChatListScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
 import AddPhotoScreen from "../screens/AddPhotoScreen"
 import SettingsScreen from "../screens/SettingsScreen"
@@ -18,6 +19,7 @@ import ChatScreen from "../screens/ChatScreen"
 // Other stuff
 import { colors } from "../utils/colors"
 import useStore, { AppStateInterface } from "../store"
+import { screenNames } from "../utils/screens"
 
 // Navigators setup
 const Stack = createStackNavigator()
@@ -26,7 +28,7 @@ const Tab = createBottomTabNavigator()
 function TabNavigation() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName={screenNames.Home}
       tabBarOptions={{
         activeTintColor: colors.pink,
         tabStyle: {},
@@ -37,7 +39,7 @@ function TabNavigation() {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name={screenNames.Home}
         component={HomeScreen}
         options={{
           tabBarLabel: 'Home',
@@ -50,7 +52,7 @@ function TabNavigation() {
         }}
       />
       <Tab.Screen
-        name="Search"
+        name={screenNames.Search}
         component={SearchScreen}
         options={{
           tabBarLabel: 'Search',
@@ -63,7 +65,7 @@ function TabNavigation() {
         }}
       />
       <Tab.Screen
-        name="Add"
+        name={screenNames.Add}
         component={AddPhotoScreen}
         options={{
           tabBarLabel: 'Add Photo',
@@ -78,7 +80,7 @@ function TabNavigation() {
         }}
       />
       <Tab.Screen
-        name="Favorites"
+        name={screenNames.Favorites}
         component={FavoritesScreen}
         options={{
           tabBarLabel: 'Favorites',
@@ -92,7 +94,7 @@ function TabNavigation() {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name={screenNames.Profile}
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
@@ -104,7 +106,7 @@ function TabNavigation() {
           ),
         }}
       />
-    </Tab.Navigator >
+    </Tab.Navigator>
   )
 }
 
@@ -120,13 +122,14 @@ function MainNavigation() {
       >
         {isLoggedIn ? (
           <>
-            <Stack.Screen name="Chat" component={ChatScreen} />
             <Stack.Screen name="TabNavigation" component={TabNavigation} />
+            <Stack.Screen name={screenNames.Chat} component={ChatScreen} />
+            <Stack.Screen name={screenNames.ChatList} component={ChatListScreen} />
           </>
         ) : (
             <>
-              <Stack.Screen name="LogIn" component={LogInWithEmailScreen} />
-              <Stack.Screen name="SignUp" component={SignUpWithEmailScreen} />
+              <Stack.Screen name={screenNames.LogIn} component={LogInWithEmailScreen} />
+              <Stack.Screen name={screenNames.SignUp} component={SignUpWithEmailScreen} />
             </>
           )}
       </Stack.Navigator>
