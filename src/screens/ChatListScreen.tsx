@@ -8,15 +8,24 @@ import { screenNames } from "../utils/screens"
 export default function ChatListScreen() {
   const navigation = useNavigation()
 
-  const handleGoToChatScreen = (roomId: string) => {
-    navigation.navigate(screenNames.Chat, { roomId })
+  const handleGoToChatScreen = (roomId: number) => {
+    const userId = roomId
+
+    navigation.navigate(screenNames.Chat, {
+      roomId,
+      user: {
+        name: `User ${userId}`,
+        avatar: "https://placeimg.com/140/140/any",
+        id: userId
+      }
+    })
   }
 
   return (
     <Page noRight leftStyle={{ flex: 0 }}>
       <List>
         {new Array(20).fill(0).map((number, index) => (
-          <ListItem avatar key={index} onPress={() => handleGoToChatScreen(number)}>
+          <ListItem avatar key={index} onPress={() => handleGoToChatScreen(index)}>
             <Left>
               <Thumbnail source={{ uri: "https://placeimg.com/140/140/any" }} />
             </Left>

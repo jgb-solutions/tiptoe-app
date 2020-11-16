@@ -12,7 +12,9 @@ import {
   Thumbnail,
   Text,
 } from 'native-base'
-import { useNavigation } from '@react-navigation/native'
+import { RouteProp, useNavigation } from '@react-navigation/native'
+import { useRoute } from '@react-navigation/native'
+
 
 import { useChannel } from '../hooks/useChannel'
 import { CHANNELS, SOCKET_EVENTS } from '../utils/constants'
@@ -46,8 +48,24 @@ export const mapMessageFromResponse = (message: ReponseMessage) => ({
   }
 })
 
+type RouteParamsProps = RouteProp<{
+  params: {
+    roomId: string
+    user: {
+      name: string
+      avatar: string
+      id: number
+    }
+  }
+}, 'params'>
+
 export default function ChatScreen() {
   const navigation = useNavigation()
+  const route = useRoute<RouteParamsProps>()
+
+  const chatUser = route.params.user
+  const roomId = route.params.roomId
+
   const [messages, setMessages] = useState<IMessage[]>([])
   const [RoomGeneralChannel, okReponse] = useChannel(`${CHANNELS.ROOM}:general`)
   const userData = useStore((state: AppStateInterface) => state.authData.data)
@@ -110,12 +128,12 @@ export default function ChatScreen() {
 
           <Thumbnail
             small
-            source={{ uri: "https://placeimg.com/140/140/any" }}
+            source={{ uri: chatUser.avatar }}
             style={{ marginRight: 5, }}
           />
           <Text style={{
             fontWeight: 'bold', color: colors.white
-          }}>Some User</Text>
+          }}>{chatUser.name}</Text>
         </Left>
         <Right style={{ flex: 1 }}>
           <Button transparent onPress={() => alert('pressed more')}>

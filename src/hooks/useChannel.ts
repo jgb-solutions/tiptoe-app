@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 
 import useStore, { AppStateInterface } from "../store"
 
-type Props = [channel: Channel, reponse: any]
+type Props = [channel: Channel | undefined, reponse: any]
 
 const useChannel = (channelName: string): Props => {
 	const { socket } = useStore(({ socket }: AppStateInterface) => ({ socket }))
