@@ -37,13 +37,13 @@ export default function GlobalStuff() {
       socket.onError(error => {
         if (error && !error.isTrusted) {
           Toast.show({
-            text: "There was a problem with your connection. Please log in again.",
+            text: "Your connection is unstable..",
             // buttonText: 'OK',
             duration: 4000,
             // position: "top"
           })
 
-          logout()
+          // logout()
         }
       })
 

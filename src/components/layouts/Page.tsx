@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Image, ViewStyle, } from 'react-native'
+import { Image, View, ViewStyle, } from 'react-native'
 import {
   Container,
   Header,
@@ -21,6 +21,7 @@ type Props = {
   children: ReactNode
   noLeft?: boolean
   noRight?: boolean
+  noContent?: boolean
   contentStyle?: ViewStyle
   pageStyle?: ViewStyle,
   bodyStyle?: ViewStyle,
@@ -41,7 +42,8 @@ export default function Page({
   onPressRight,
   bodyStyle,
   leftStyle,
-  rightStyle
+  rightStyle,
+  noContent
 }: Props) {
   const navigation = useNavigation()
 
@@ -88,9 +90,11 @@ export default function Page({
           </Right>
         )}
       </Header>
-      <Content contentContainerStyle={[{ ...contentStyle }]}>
-        {children}
-      </Content>
+      {!noContent ? (
+        <Content contentContainerStyle={[{ ...contentStyle }]}>
+          {children}
+        </Content>
+      ) : <View style={{ flex: 1 }}>{children}</View>}
     </Container >
   )
 }

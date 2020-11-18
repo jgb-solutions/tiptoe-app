@@ -29,30 +29,30 @@ export default function HomeScreen() {
 
 
 	return (
-		<Page noLeft rightStyle={{ flex: 0 }}>
+		<Page noLeft rightStyle={{ flex: 0 }} noContent>
 			{photoLoading || modelLoading ? (
 				<Spinner color={colors.pink} />
 			) : photoError || modelError ? (
 				<Text>An error occurred</Text>
 			) : (
-						<>
-							<ThumbnailScrollList
-								thumbnails={modelData.models.data.map((model: ModelInterface) => ({
-									title: model.stageName,
-									hash: model.hash,
-									imageUrl: model.posterUrl
-								}))} />
+						<FlatList
+							ListHeaderComponent={
+								<ThumbnailScrollList
+									thumbnails={modelData.models.data.map((model: ModelInterface) => ({
+										title: model.stageName,
+										hash: model.hash,
+										imageUrl: model.posterUrl
+									}))} />
+							}
+							ListEmptyComponent={() => (
+								<Text>There are no photos</Text>
+							)}
+							data={photoData.photos.data}
+							keyExtractor={(card) => `${card.hash}`}
+							renderItem={({ item: photo }: { item: PhotoInterface }) => (
+								<PhotoCard photo={photo} />
+							)} />
 
-							<FlatList
-								ListEmptyComponent={() => (
-									<Text>There are no photos</Text>
-								)}
-								data={photoData.photos.data}
-								keyExtractor={(card) => `${card.hash}`}
-								renderItem={({ item: photo }: { item: PhotoInterface }) => (
-									<PhotoCard photo={photo} />
-								)} />
-						</>
 					)}
 		</Page>
 	)

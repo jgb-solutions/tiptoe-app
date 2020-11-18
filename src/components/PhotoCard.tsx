@@ -18,6 +18,7 @@ import {
 
 import PhotoInterface from "../interfaces/PhotoInterface"
 import { colors } from '../utils/colors'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -45,14 +46,14 @@ export default function PhotoCard({ photo }: Props) {
           </Body>
         </Left>
       </CardItem>
-      <TouchableOpacity>
+      <TouchableWithoutFeedback>
         <CardItem cardBody>
           <Image
             source={{ uri: photo.url }}
             style={{ height: SCREEN_WIDTH, flex: 1 }}
             resizeMode='cover' />
         </CardItem>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
 
       <CardItem>
         <Left>
