@@ -144,6 +144,7 @@ export default function ChatScreen() {
       {userData && (
         <GiftedChat
           // messagesContainerStyle={{ flex: 1 }}
+          // showUserAvatar={false}
           messages={messages}
           onSend={messages => onSend(messages)}
           user={{

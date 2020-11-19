@@ -105,6 +105,7 @@ export const FETCH_PHOTOS = gql`
 				caption
 				url
 				likeCount
+				insertedAt
 				model {
 					stageName
 					hash

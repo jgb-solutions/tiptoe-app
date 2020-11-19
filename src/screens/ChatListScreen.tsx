@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native"
 
 import Page from "../components/layouts/Page"
 import { screenNames } from "../utils/screens"
+import { colors } from "../utils/colors"
 
 export default function ChatListScreen() {
   const navigation = useNavigation()
@@ -22,16 +23,23 @@ export default function ChatListScreen() {
   }
 
   return (
-    <Page noRight leftStyle={{ flex: 0 }}>
+    <Page
+      noRight
+      leftStyle={{ flex: 0 }}
+      title={<Text
+        style={{
+          color: colors.white,
+          fontWeight: 'bold'
+        }}>Messages</Text>}>
       <List>
-        {new Array(20).fill(0).map((number, index) => (
+        {new Array(5).fill(0).map((number, index) => (
           <ListItem avatar key={index} onPress={() => handleGoToChatScreen(index)}>
             <Left>
               <Thumbnail source={{ uri: "https://placeimg.com/140/140/any" }} />
             </Left>
             <Body>
-              <Text>Kumar Pratik</Text>
-              <Text note>Doing what you like will always keep you happy . .</Text>
+              <Text>User {index + 1}</Text>
+              <Text note>Latest chat message with that user</Text>
             </Body>
             <Right>
               <Text note>3:43 pm</Text>

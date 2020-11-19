@@ -23,12 +23,13 @@ type Props = {
   noRight?: boolean
   noContent?: boolean
   contentStyle?: ViewStyle
-  pageStyle?: ViewStyle,
-  bodyStyle?: ViewStyle,
-  leftStyle?: ViewStyle,
-  rightStyle?: ViewStyle,
+  pageStyle?: ViewStyle
+  bodyStyle?: ViewStyle
+  leftStyle?: ViewStyle
+  rightStyle?: ViewStyle
   onPressRight?: () => void
   onPressLeft?: () => void
+  title?: ReactNode
 }
 
 
@@ -43,7 +44,8 @@ export default function Page({
   bodyStyle,
   leftStyle,
   rightStyle,
-  noContent
+  noContent,
+  title
 }: Props) {
   const navigation = useNavigation()
 
@@ -81,6 +83,7 @@ export default function Page({
             source={tiptoeLogo} style={{ maxWidth: 100, flex: 1 }}
             resizeMode='contain'
           />
+          {title}
         </Body>
         {!noRight && (
           <Right style={[{ flex: 1 }, { ...rightStyle }]}>

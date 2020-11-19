@@ -15,10 +15,16 @@ import {
   Body,
   Right,
 } from 'native-base'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
-import PhotoInterface from "../interfaces/PhotoInterface"
+
+import DoubleTap from './DoubleTap'
 import { colors } from '../utils/colors'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import PhotoInterface from "../interfaces/PhotoInterface"
+
+// Initialize days with RelativeTime plugin
+dayjs.extend(relativeTime)
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -27,6 +33,10 @@ type Props = {
 }
 
 export default function PhotoCard({ photo }: Props) {
+  const hanleToggleLike = (photo: PhotoInterface) => {
+    alert(`Like ${photo.hash} by ${photo.model.stageName}`)
+  }
+
   return (
     <Card>
       <CardItem>
@@ -46,24 +56,24 @@ export default function PhotoCard({ photo }: Props) {
           </Body>
         </Left>
       </CardItem>
-      <TouchableWithoutFeedback>
+      <DoubleTap onDoubleTap={() => hanleToggleLike(photo)}>
         <CardItem cardBody>
           <Image
             source={{ uri: photo.url }}
             style={{ height: SCREEN_WIDTH, flex: 1 }}
             resizeMode='cover' />
         </CardItem>
-      </TouchableWithoutFeedback>
+      </DoubleTap>
 
       <CardItem>
         <Left>
           <Button transparent>
-            <Icon name="heart" style={{ color: colors.darkGrey }} />
-            <Text style={{ color: colors.darkGrey }}>{photo.likeCount} Like{photo.likeCount !== 1 ? 's' : ''}</Text>
+            <Icon name="heart" style={{ color: colors.pink }} />
+            <Text style={{ color: colors.darkGrey }}>{photo.likeCount} like{photo.likeCount !== 1 ? 's' : ''}</Text>
           </Button>
         </Left>
         <Right>
-          <Text>11h ago</Text>
+          <Text>{dayjs(photo.insertedAt).fromNow()}</Text>
         </Right>
       </CardItem>
 
