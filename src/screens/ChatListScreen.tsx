@@ -26,11 +26,12 @@ export default function ChatListScreen() {
     <Page
       noRight
       leftStyle={{ flex: 0 }}
-      title={<Text
-        style={{
-          color: colors.white,
-          fontWeight: 'bold'
-        }}>Messages</Text>}>
+    // title={<Text
+    //   style={{
+    //     color: colors.white,
+    //     fontWeight: 'bold'
+    //   }}>Messages</Text>}
+    >
       <List>
         {new Array(5).fill(0).map((number, index) => (
           <ListItem avatar key={index} onPress={() => handleGoToChatScreen(index)}>

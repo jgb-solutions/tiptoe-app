@@ -49,10 +49,6 @@ export default function PhotoCard({ photo }: Props) {
             <TouchableOpacity>
               <Text>{photo.model.stageName}</Text>
             </TouchableOpacity>
-
-            <TouchableOpacity>
-              <Text note>Location</Text>
-            </TouchableOpacity>
           </Body>
         </Left>
       </CardItem>
@@ -68,7 +64,7 @@ export default function PhotoCard({ photo }: Props) {
       <CardItem>
         <Left>
           <Button transparent>
-            <Icon name="heart" style={{ color: colors.pink }} />
+            <Icon name="heart" style={{ color: colors.pink, fontSize: 36 }} />
             <Text style={{ color: colors.darkGrey }}>{photo.likeCount} like{photo.likeCount !== 1 ? 's' : ''}</Text>
           </Button>
         </Left>
