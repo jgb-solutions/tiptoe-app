@@ -35,15 +35,22 @@ export default function GlobalStuff() {
         }
       })
       socket.onError(error => {
-        if (error && !error.isTrusted) {
-          Toast.show({
-            text: "Your connection is unstable..",
-            // buttonText: 'OK',
-            duration: 4000,
-            // position: "top"
-          })
+        if (error) {
+          if (!error.isTrusted) {
+            Toast.show({
+              text: "Your connection is unstable..",
+              duration: 4000,
+            })
+          }
 
-          // logout()
+          if (error.message.includes("403")) {
+            Toast.show({
+              text: "Your session has expired. Please log in again.",
+              duration: 4000,
+            })
+
+            logout()
+          }
         }
       })
 

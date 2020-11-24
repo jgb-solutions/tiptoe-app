@@ -1,53 +1,67 @@
 import React from "react"
-import { Body, Left, List, ListItem, Right, Text, Thumbnail } from "native-base"
+import {
+  Body,
+  Left,
+  List,
+  ListItem,
+  Right,
+  Spinner,
+  Text,
+  Thumbnail
+} from "native-base"
 import { useNavigation } from "@react-navigation/native"
+import { useQuery } from "@apollo/react-hooks"
 
 import Page from "../components/layouts/Page"
 import { screenNames } from "../utils/screens"
 import { colors } from "../utils/colors"
+import { FETCH_ROOMS } from "../graphql/queries"
+import { View } from "react-native"
+import RoomInterface from "../interfaces/RoomInterface"
 
 export default function ChatListScreen() {
   const navigation = useNavigation()
+  const { loading, error, data, refetch } = useQuery(FETCH_ROOMS)
 
-  const handleGoToChatScreen = (roomId: number) => {
-    const userId = roomId
-
-    navigation.navigate(screenNames.Chat, {
-      roomId,
-      user: {
-        name: `User ${userId}`,
-        avatar: "https://placeimg.com/140/140/any",
-        id: userId
-      }
-    })
+  const handleGoToChatScreen = (room: RoomInterface) => {
+    navigation.navigate(screenNames.Chat, { room })
   }
 
   return (
     <Page
       noRight
       leftStyle={{ flex: 0 }}
-    // title={<Text
-    //   style={{
-    //     color: colors.white,
-    //     fontWeight: 'bold'
-    //   }}>Messages</Text>}
     >
-      <List>
-        {new Array(5).fill(0).map((number, index) => (
-          <ListItem avatar key={index} onPress={() => handleGoToChatScreen(index)}>
-            <Left>
-              <Thumbnail source={{ uri: "https://placeimg.com/140/140/any" }} />
-            </Left>
-            <Body>
-              <Text>User {index + 1}</Text>
-              <Text note>Latest chat message with that user</Text>
-            </Body>
-            <Right>
-              <Text note>3:43 pm</Text>
-            </Right>
-          </ListItem>
-        ))}
-      </List>
+      {loading ? (
+        <Spinner color={colors.pink} />
+      ) : error ? (
+        <Text>An error occurred</Text>
+      ) : data.me.rooms.length ? (
+        <List>
+          {data.me.rooms.map((room: RoomInterface) => (
+            <ListItem avatar key={room.id} onPress={() => handleGoToChatScreen(room)}>
+              <Left>
+                <Thumbnail source={{ uri: room.chatUser.avatarUrl }} />
+              </Left>
+              <Body>
+                <Text>{room.chatUser.name}</Text>
+                <Text note>{room.messages.map(m => m.text).join(', ')}</Text>
+              </Body>
+              <Right>
+                <Text note>3:43 pm</Text>
+              </Right>
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+              <View style={{
+                flex: 1,
+                alignItems: 'center',
+                paddingTop: 12
+              }}>
+                <Text>You have no chats yet.</Text>
+              </View>
+            )}
     </Page>
   )
 }

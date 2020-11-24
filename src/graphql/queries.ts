@@ -120,6 +120,28 @@ export const FETCH_PHOTOS = gql`
 	}
 `
 
+export const FETCH_ROOMS = gql`
+	query roomsData {
+		me {
+			rooms {
+				id
+				messages {
+					# id
+					text
+					# user {
+					# 	id
+					# }
+				}
+				chatUser {
+					id
+					name
+					avatarUrl
+				}
+			}
+		}
+	}
+`
+
 export const FETCH_MODELS = gql`
 	query modelsData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
 		# Latest 10 Models
