@@ -18,3 +18,5 @@ export const SOCKET_EVENTS = {
 export const CHANNELS = {
   ROOM: "room"
 }
+
+export const HOMEPAGE_PER_PAGE_NUMBER = 12

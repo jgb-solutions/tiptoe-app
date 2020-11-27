@@ -17,37 +17,38 @@ import PhotoCard from "../components/PhotoCard"
 import ThumbnailScrollList from "../components/ThumbnailScrollList"
 import ModelInterface from "../interfaces/ModelInterface"
 import { colors } from "../utils/colors"
+import useHomeData from '../hooks/useHomeData'
 
 export default function HomeScreen() {
-	const { loading: photoLoading, error: photoError, data: photoData } = useQuery(FETCH_PHOTOS)
-	const { loading: modelLoading, error: modelError, data: modelData } = useQuery(FETCH_MODELS)
+	const { homeData, homeError, homeLoading } = useHomeData()
 
 	useEffect(() => {
-		console.log(`data has arrived`, photoData)
-	}, [photoData])
+		console.log(`data has arrived`, homeData)
+	}, [homeData])
 
 
 
 	return (
 		<Page noLeft rightStyle={{ flex: 0 }} noContent>
-			{photoLoading || modelLoading ? (
+			{homeLoading ? (
 				<Spinner color={colors.pink} />
-			) : photoError || modelError ? (
+			) : homeError ? (
 				<Text>An error occurred</Text>
 			) : (
 						<FlatList
 							ListHeaderComponent={
 								<ThumbnailScrollList
-									thumbnails={modelData.models.data.map((model: ModelInterface) => ({
+									thumbnails={homeData.models.data.map((model: ModelInterface) => ({
 										title: model.stageName,
 										hash: model.hash,
 										imageUrl: model.posterUrl
 									}))} />
 							}
 							ListEmptyComponent={() => (
-								<Text>There are no photos</Text>
+								// TO DO
+								<Text>You timeline is empty! You should start following some models</Text>
 							)}
-							data={photoData.photos.data}
+							data={homeData.photos.data}
 							keyExtractor={(card) => `${card.hash}`}
 							renderItem={({ item: photo }: { item: PhotoInterface }) => (
 								<PhotoCard photo={photo} />

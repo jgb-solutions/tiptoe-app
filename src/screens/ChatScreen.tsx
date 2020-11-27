@@ -21,6 +21,7 @@ import { CHANNELS, SOCKET_EVENTS } from '../utils/constants'
 import IMessageInterface from '../interfaces/IMessageInterface'
 import useStore, { AppStateInterface } from '../store'
 import { colors } from '../utils/colors'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export type ReponseMessage = {
   id: string
@@ -50,11 +51,13 @@ export const mapMessageFromResponse = (message: ReponseMessage) => ({
 
 type RouteParamsProps = RouteProp<{
   params: {
-    roomId: string
-    user: {
-      name: string
-      avatar: string
-      id: number
+    room: {
+      id: string
+      chatUser: {
+        name: string
+        avatarUrl: string
+        id: number
+      }
     }
   }
 }, 'params'>
@@ -63,8 +66,8 @@ export default function ChatScreen() {
   const navigation = useNavigation()
   const route = useRoute<RouteParamsProps>()
 
-  const chatUser = route.params.user
-  const roomId = route.params.roomId
+
+  const { chatUser, id: roomId } = route.params.room
 
   const [messages, setMessages] = useState<IMessage[]>([])
   const [RoomGeneralChannel, okReponse] = useChannel(`${CHANNELS.ROOM}:general`)
@@ -119,21 +122,20 @@ export default function ChatScreen() {
         androidStatusBarColor={colors.black}
         style={{ backgroundColor: colors.pink }}>
         <Left style={{ flexDirection: 'row', alignItems: 'center' }}>
-          {/* <Button transparent>
-            <Icon name='chatbubbles' style={{ color: colors.white }} />
-          </Button> */}
           <Button transparent onPress={goBack}>
             <Icon name='arrow-back' style={{ color: colors.white }} />
           </Button>
 
-          <Thumbnail
-            small
-            source={{ uri: chatUser.avatar }}
-            style={{ marginRight: 5, }}
-          />
-          <Text style={{
-            fontWeight: 'bold', color: colors.white
-          }}>{chatUser.name}</Text>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Thumbnail
+              small
+              source={{ uri: chatUser.avatarUrl }}
+              style={{ marginRight: 5, }}
+            />
+            <Text style={{
+              fontWeight: 'bold', color: colors.white
+            }}>{chatUser.name}</Text>
+          </TouchableOpacity>
         </Left>
         <Right style={{ flex: 1 }}>
           <Button transparent onPress={() => alert('pressed more')}>

@@ -1,4 +1,5 @@
 import React from "react"
+import { View } from "react-native"
 import {
   Body,
   Left,
@@ -16,12 +17,15 @@ import Page from "../components/layouts/Page"
 import { screenNames } from "../utils/screens"
 import { colors } from "../utils/colors"
 import { FETCH_ROOMS } from "../graphql/queries"
-import { View } from "react-native"
 import RoomInterface from "../interfaces/RoomInterface"
 
 export default function ChatListScreen() {
   const navigation = useNavigation()
   const { loading, error, data, refetch } = useQuery(FETCH_ROOMS)
+
+  React.useEffect(() => {
+    console.log(`data has arrived`, data)
+  }, [data])
 
   const handleGoToChatScreen = (room: RoomInterface) => {
     navigation.navigate(screenNames.Chat, { room })
@@ -47,7 +51,7 @@ export default function ChatListScreen() {
                 <Text>{room.chatUser.name}</Text>
                 <Text note>{room.messages.map(m => m.text).join(', ')}</Text>
               </Body>
-              <Right>
+              <Right style={{ borderColor: 'transparent' }}>
                 <Text note>3:43 pm</Text>
               </Right>
             </ListItem>

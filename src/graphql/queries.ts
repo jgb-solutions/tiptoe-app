@@ -1,46 +1,25 @@
 import gql from "graphql-tag"
 
-export const FETCH_HOME = gql`
-	query homePageData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
-		# Latest 10 tracks
-		latestTracks: tracks(take: $take, page: $page, orderBy: $orderBy) {
+export const FETCH_HOME_SCREEN = gql`
+	query homescreenData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
+		models(take: $take, page: $page, orderBy: $orderBy) {
 			data {
-				hash
-				title
-				posterUrl
-				artist {
-					stage_name
-					hash
-				}
-			}
-		}
-
-		# Latest 10 playlists
-		latestPlaylists: playlists(take: $take, page: $page, orderBy: $orderBy) {
-			data {
-				hash
-				title
-				cover_url
-			}
-		}
-
-		# latest 1o artists
-		latestArtists: artists(take: $take, orderBy: $orderBy) {
-			data {
-				stage_name
 				hash
 				posterUrl
+				stageName
+				name
 			}
 		}
 
-		# latest 1o albums
-		latestAlbums: albums(take: $take, orderBy: $orderBy) {
+		photos(take: $take, page: $page, orderBy: $orderBy) {
 			data {
-				title
 				hash
-				cover_url
-				artist {
-					stage_name
+				caption
+				url
+				likeCount
+				insertedAt
+				model {
+					stageName
 					hash
 					posterUrl
 				}
