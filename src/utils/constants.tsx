@@ -20,3 +20,4 @@ export const CHANNELS = {
 }
 
 export const HOMEPAGE_PER_PAGE_NUMBER = 12
+export const FETCH_PHOTOS_NUMBER = 24

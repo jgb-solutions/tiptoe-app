@@ -8,4 +8,5 @@ export const screenNames = {
   ChatList: "ChatList",
   LogIn: "LogIn",
   SignUp: "SignUp",
+  PublicModelProfileScreen: "PublicModelProfileScreen",
 }

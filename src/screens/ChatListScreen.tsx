@@ -21,7 +21,9 @@ import RoomInterface from "../interfaces/RoomInterface"
 
 export default function ChatListScreen() {
   const navigation = useNavigation()
-  const { loading, error, data, refetch } = useQuery(FETCH_ROOMS)
+  const { loading, error, data, refetch } = useQuery(FETCH_ROOMS, {
+    fetchPolicy: 'network-only'
+  })
 
   React.useEffect(() => {
     console.log(`data has arrived`, data)
@@ -49,7 +51,7 @@ export default function ChatListScreen() {
               </Left>
               <Body>
                 <Text>{room.chatUser.name}</Text>
-                <Text note>{room.messages.map(m => m.text).join(', ')}</Text>
+                <Text note>{room.messages[0].text.substr(0, 39)}...</Text>
               </Body>
               <Right style={{ borderColor: 'transparent' }}>
                 <Text note>3:43 pm</Text>

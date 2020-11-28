@@ -76,20 +76,20 @@ export const FETCH_MANAGE_SCREEN = gql`
 `
 
 export const FETCH_PHOTOS = gql`
-	query photosData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
+	query photosData(
+		$page: Int
+		$take: Int
+		$orderBy: [OrderByClause!]
+		$modelHash: String
+	) {
 		# Latest 10 photos
-		photos(take: $take, page: $page, orderBy: $orderBy) {
+		photos(take: $take, page: $page, orderBy: $orderBy, modelHash: $modelHash) {
 			data {
 				hash
 				caption
 				url
 				likeCount
 				insertedAt
-				model {
-					stageName
-					hash
-					posterUrl
-				}
 			}
 			paginationInfo {
 				hasMorePages
@@ -115,6 +115,8 @@ export const FETCH_ROOMS = gql`
 					id
 					name
 					avatarUrl
+					type
+					modelHash
 				}
 			}
 		}
@@ -390,28 +392,15 @@ export const FETCH_ARTIST = gql`
 	}
 `
 
-export const FETCH_ALBUM = gql`
-	query albumDetail($hash: String!) {
-		album(hash: $hash) {
-			id
-			title
+export const FETCH_MODEL = gql`
+	query modelDetail($hash: String!) {
+		model(hash: $hash) {
+			name
+			stageName
+			posterUrl
+			facebookUrl
 			hash
-			cover_url
-			detail
-			release_year
-			tracks {
-				hash
-				title
-				posterUrl
-				audio_url
-				number
-				play_count
-				download_count
-			}
-			artist {
-				hash
-				stage_name
-			}
+			instagramUrl
 		}
 	}
 `

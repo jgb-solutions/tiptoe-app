@@ -1,5 +1,6 @@
 import React, { useEffect } from "react"
 import {
+	View,
 	FlatList
 } from "react-native"
 import {
@@ -18,8 +19,10 @@ import ThumbnailScrollList from "../components/ThumbnailScrollList"
 import ModelInterface from "../interfaces/ModelInterface"
 import { colors } from "../utils/colors"
 import useHomeData from '../hooks/useHomeData'
+import { screenNames } from "../utils/screens"
 
 export default function HomeScreen() {
+	const navigation = useNavigation()
 	const { homeData, homeError, homeLoading } = useHomeData()
 
 	useEffect(() => {
@@ -42,11 +45,24 @@ export default function HomeScreen() {
 										title: model.stageName,
 										hash: model.hash,
 										imageUrl: model.posterUrl
-									}))} />
+									}))}
+
+									onPress={(hash) => {
+										navigation.navigate(
+											screenNames.PublicModelProfileScreen, {
+											hash: `${hash}`
+										})
+									}}
+								/>
 							}
 							ListEmptyComponent={() => (
-								// TO DO
-								<Text>You timeline is empty! You should start following some models</Text>
+								<View style={{
+									flex: 1,
+									alignItems: 'center',
+									paddingTop: 12
+								}}>
+									<Text>Your timeline is empty! You should start following some models.</Text>
+								</View>
 							)}
 							data={homeData.photos.data}
 							keyExtractor={(card) => `${card.hash}`}

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { TouchableOpacity } from 'react-native'
 import { Bubble, GiftedChat, IMessage } from 'react-native-gifted-chat'
 import {
   Container,
@@ -21,7 +22,7 @@ import { CHANNELS, SOCKET_EVENTS } from '../utils/constants'
 import IMessageInterface from '../interfaces/IMessageInterface'
 import useStore, { AppStateInterface } from '../store'
 import { colors } from '../utils/colors'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { screenNames } from '../utils/screens'
 
 export type ReponseMessage = {
   id: string
@@ -49,15 +50,19 @@ export const mapMessageFromResponse = (message: ReponseMessage) => ({
   }
 })
 
+export interface ChatUser {
+  id: number
+  name: string
+  avatarUrl: string
+  type: "user" | "model"
+  modelHash?: string
+}
+
 type RouteParamsProps = RouteProp<{
   params: {
     room: {
       id: string
-      chatUser: {
-        name: string
-        avatarUrl: string
-        id: number
-      }
+      chatUser: ChatUser
     }
   }
 }, 'params'>
@@ -70,7 +75,7 @@ export default function ChatScreen() {
   const { chatUser, id: roomId } = route.params.room
 
   const [messages, setMessages] = useState<IMessage[]>([])
-  const [RoomGeneralChannel, okReponse] = useChannel(`${CHANNELS.ROOM}:general`)
+  const [RoomGeneralChannel, okReponse] = useChannel(`${CHANNELS.ROOM}:${roomId}`)
   const userData = useStore((state: AppStateInterface) => state.authData.data)
 
   useEffect(() => {
@@ -97,12 +102,26 @@ export default function ChatScreen() {
     }
   }, [RoomGeneralChannel])
 
+  const goToChatUserScreen = () => {
+    if (chatUser.type == 'model') {
+      // go to model's profile
+      navigation.navigate(screenNames.PublicModelProfileScreen, {
+        name: chatUser.name,
+        avatarUrl: chatUser.avatarUrl,
+        hash: chatUser.modelHash
+      })
+    } else {
+      // go to user's profile
+      alert('issa user')
+    }
+  }
+
   const onSend = useCallback((newMessages = []) => {
     newMessages.forEach((message: IMessageInterface) => {
       RoomGeneralChannel?.push(SOCKET_EVENTS.NEW_MESSAGE, {
         text: message.text,
         userId: message.user._id,
-        // roomID:
+        roomId: roomId
       })
       // .receive("ok", (msg) => console.log("created message", msg))
       // .receive("error", (reasons) => console.log("create failed", reasons))
@@ -126,7 +145,10 @@ export default function ChatScreen() {
             <Icon name='arrow-back' style={{ color: colors.white }} />
           </Button>
 
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+            onPress={goToChatUserScreen}
+          >
             <Thumbnail
               small
               source={{ uri: chatUser.avatarUrl }}

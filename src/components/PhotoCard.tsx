@@ -22,6 +22,8 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import DoubleTap from './DoubleTap'
 import { colors } from '../utils/colors'
 import PhotoInterface from "../interfaces/PhotoInterface"
+import { useNavigation } from '@react-navigation/native'
+import { screenNames } from '../utils/screens'
 
 // Initialize days with RelativeTime plugin
 dayjs.extend(relativeTime)
@@ -33,6 +35,7 @@ type Props = {
 }
 
 export default function PhotoCard({ photo }: Props) {
+  const navigation = useNavigation()
   const hanleToggleLike = (photo: PhotoInterface) => {
     alert(`Like ${photo.hash} by ${photo.model.stageName}`)
   }
@@ -41,12 +44,22 @@ export default function PhotoCard({ photo }: Props) {
     <Card>
       <CardItem>
         <Left>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => {
+            navigation.navigate(
+              screenNames.PublicModelProfileScreen, {
+              hash: `${photo.model.hash}`
+            })
+          }}>
             <Thumbnail small source={{ uri: photo.model.posterUrl }} />
           </TouchableOpacity>
 
           <Body>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+              navigation.navigate(
+                screenNames.PublicModelProfileScreen, {
+                hash: `${photo.model.hash}`
+              })
+            }}>
               <Text>{photo.model.stageName}</Text>
             </TouchableOpacity>
           </Body>

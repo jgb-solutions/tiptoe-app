@@ -15,6 +15,7 @@ import AddPhotoScreen from "../screens/AddPhotoScreen"
 import SettingsScreen from "../screens/SettingsScreen"
 import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen"
 import ChatScreen from "../screens/ChatScreen"
+import PublicModelProfileScreen from "../screens/PublicModelProfileScreen"
 
 // Other stuff
 import { colors } from "../utils/colors"
@@ -38,6 +39,13 @@ function TabNavigation() {
         showLabel: false
       }}
     >
+      {/* <Tab.Screen
+        name={screenNames.PublicModelProfileScreen}
+        component={PublicModelProfileScreen}
+        options={{
+          tabBarVisible: false
+        }}
+      /> */}
       <Tab.Screen
         name={screenNames.Home}
         component={HomeScreen}
@@ -125,6 +133,7 @@ function MainNavigation() {
             <Stack.Screen name="TabNavigation" component={TabNavigation} />
             <Stack.Screen name={screenNames.Chat} component={ChatScreen} />
             <Stack.Screen name={screenNames.ChatList} component={ChatListScreen} />
+            <Tab.Screen name={screenNames.PublicModelProfileScreen} component={PublicModelProfileScreen} />
           </>
         ) : (
             <>
