@@ -1,40 +1,42 @@
 import React, { useState } from 'react'
 import {
+  Image,
   FlatList,
   Dimensions,
-  TouchableOpacity,
-  Image,
-  ViewStyle
+  ViewStyle,
+  TouchableOpacity
 } from 'react-native'
 import {
-  Container,
-  Header,
   Icon,
   Left,
-  Right,
-  Thumbnail,
   Text,
   View,
+  Right,
+  Header,
   Spinner,
+  Container,
+  Thumbnail
 } from 'native-base'
-
-import { RouteProp, useNavigation } from '@react-navigation/native'
 import { useRoute } from '@react-navigation/native'
+import { RouteProp, useNavigation } from '@react-navigation/native'
 
 import { colors } from '../utils/colors'
-import PhotoInterface from '../interfaces/PhotoInterface'
-import usePhotos from '../hooks/usePhotos'
 import useModel from '../hooks/useModel'
+import usePhotos from '../hooks/usePhotos'
+import { formatToUnits } from '../utils/formatNumber'
+import PhotoInterface from '../interfaces/PhotoInterface'
 import ModelInterface from '../interfaces/ModelInterface'
+import { screenNames } from '../utils/screens'
 
 type StatsProps = {
-  number: string
+  number: number
   title: string
+  style?: ViewStyle
 }
 
-const Stats = ({ number, title }: StatsProps) => (
-  <View style={{ alignItems: 'center' }}>
-    <Text style={{ fontWeight: 'bold' }}>{number}</Text>
+const Stats = ({ number, title, style }: StatsProps) => (
+  <View style={{ alignItems: 'center', ...style }}>
+    <Text style={{ fontWeight: 'bold' }}>{formatToUnits(number)}</Text>
     <Text>{title}</Text>
   </View>
 )
@@ -93,9 +95,12 @@ export default function PublicModelProfileScreen() {
   }
 
   const goToPhoto = (photo: PhotoInterface) => {
-    // TO DO
-    // navigation.navigate(index)
-    alert(photo)
+    navigation.navigate(screenNames.PhotoScreen, {
+      photo: {
+        ...photo,
+        model
+      },
+    })
   }
 
   return (
@@ -152,12 +157,11 @@ export default function PublicModelProfileScreen() {
                                 flex: 1,
                                 marginLeft: 48,
                                 flexDirection: "row",
-                                justifyContent: 'space-between',
+                                justifyContent: 'flex-end',
                                 alignItems: "center"
                               }}>
-                                <Stats title="Posts" number="1,098" />
-                                <Stats title="Followers" number="2.1M" />
-                                <Stats title="Following" number="130" />
+                                <Stats title="Posts" number={1098} />
+                                <Stats style={{ marginLeft: 12 }} title="Followers" number={2100000} />
                               </View>
                             </View>
 

@@ -90,6 +90,11 @@ export const FETCH_PHOTOS = gql`
 				url
 				likeCount
 				insertedAt
+				model {
+					stageName
+					posterUrl
+					hash
+				}
 			}
 			paginationInfo {
 				hasMorePages

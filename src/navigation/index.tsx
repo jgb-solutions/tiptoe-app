@@ -12,6 +12,7 @@ import SearchScreen from "../screens/SearchScreen"
 import ChatListScreen from "../screens/ChatListScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
 import AddPhotoScreen from "../screens/AddPhotoScreen"
+import PhotoScreen from "../screens/PhotoScreen"
 import SettingsScreen from "../screens/SettingsScreen"
 import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen"
 import ChatScreen from "../screens/ChatScreen"
@@ -133,7 +134,8 @@ function MainNavigation() {
             <Stack.Screen name="TabNavigation" component={TabNavigation} />
             <Stack.Screen name={screenNames.Chat} component={ChatScreen} />
             <Stack.Screen name={screenNames.ChatList} component={ChatListScreen} />
-            <Tab.Screen name={screenNames.PublicModelProfileScreen} component={PublicModelProfileScreen} />
+            <Stack.Screen name={screenNames.PublicModelProfileScreen} component={PublicModelProfileScreen} />
+            <Stack.Screen name={screenNames.PhotoScreen} component={PhotoScreen} />
           </>
         ) : (
             <>
