@@ -9,5 +9,4 @@ export const screenNames = {
   LogIn: "LogIn",
   SignUp: "SignUp",
   PublicModelProfileScreen: "PublicModelProfileScreen",
-  PhotoScreen: "PhotoScreen",
 }

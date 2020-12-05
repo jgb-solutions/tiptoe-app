@@ -31,10 +31,11 @@ dayjs.extend(relativeTime)
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
 type Props = {
-  photo: PhotoInterface
+  photo: PhotoInterface,
+  hideHeader?: boolean
 }
 
-export default function PhotoCard({ photo }: Props) {
+export default function PhotoCard({ photo, hideHeader }: Props) {
   const navigation = useNavigation()
   const hanleToggleLike = (photo: PhotoInterface) => {
     alert(`Like ${photo.hash} by ${photo.model.stageName}`)
@@ -42,34 +43,40 @@ export default function PhotoCard({ photo }: Props) {
 
   return (
     <Card>
-      <CardItem>
-        <Left>
-          <TouchableOpacity onPress={() => {
-            navigation.navigate(
-              screenNames.PublicModelProfileScreen, {
-              hash: `${photo.model.hash}`
-            })
-          }}>
-            <Thumbnail small source={{ uri: photo.model.posterUrl }} />
-          </TouchableOpacity>
-
-          <Body>
+      {!hideHeader && (
+        <CardItem>
+          <Left>
             <TouchableOpacity onPress={() => {
               navigation.navigate(
                 screenNames.PublicModelProfileScreen, {
                 hash: `${photo.model.hash}`
               })
             }}>
-              <Text>{photo.model.stageName}</Text>
+              <Thumbnail small source={{ uri: photo.model.posterUrl }} />
             </TouchableOpacity>
-          </Body>
-        </Left>
-      </CardItem>
+
+            <Body>
+              <TouchableOpacity onPress={() => {
+                navigation.navigate(
+                  screenNames.PublicModelProfileScreen, {
+                  hash: `${photo.model.hash}`
+                })
+              }}>
+                <Text>{photo.model.stageName}</Text>
+              </TouchableOpacity>
+            </Body>
+          </Left>
+        </CardItem>
+      )}
       <DoubleTap onDoubleTap={() => hanleToggleLike(photo)}>
         <CardItem cardBody>
           <Image
             source={{ uri: photo.url }}
-            style={{ height: SCREEN_WIDTH, flex: 1 }}
+            style={{
+              flex: 1,
+              height: SCREEN_WIDTH,
+              backgroundColor: colors.pink
+            }}
             resizeMode='cover' />
         </CardItem>
       </DoubleTap>
@@ -77,8 +84,14 @@ export default function PhotoCard({ photo }: Props) {
       <CardItem>
         <Left>
           <Button transparent>
-            <Icon name="heart" style={{ color: colors.pink, fontSize: 36 }} />
-            <Text style={{ color: colors.darkGrey }}>{photo.likeCount} like{photo.likeCount !== 1 ? 's' : ''}</Text>
+            <Icon name="heart" style={{
+              color: colors.pink,
+              fontSize: 36
+            }} />
+            <Text
+              style={{
+                color: colors.darkGrey
+              }}>{photo.likeCount} like{photo.likeCount !== 1 ? 's' : ''}</Text>
           </Button>
         </Left>
         <Right>

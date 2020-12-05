@@ -19,6 +19,7 @@ import {
 } from 'native-base'
 import { useRoute } from '@react-navigation/native'
 import { RouteProp, useNavigation } from '@react-navigation/native'
+import Modal from 'react-native-modal'
 
 import { colors } from '../utils/colors'
 import useModel from '../hooks/useModel'
@@ -26,7 +27,7 @@ import usePhotos from '../hooks/usePhotos'
 import { formatToUnits } from '../utils/formatNumber'
 import PhotoInterface from '../interfaces/PhotoInterface'
 import ModelInterface from '../interfaces/ModelInterface'
-import { screenNames } from '../utils/screens'
+import PhotoCard from '../components/PhotoCard'
 
 type StatsProps = {
   number: number
@@ -83,6 +84,7 @@ export default function PublicModelProfileScreen() {
     loadMorePhotos, hasMorePhotos
   } = usePhotos(modelHash)
   const [model, setModel] = useState<ModelInterface | undefined>()
+  const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
   React.useEffect(() => {
     if (modelData) {
@@ -95,12 +97,7 @@ export default function PublicModelProfileScreen() {
   }
 
   const goToPhoto = (photo: PhotoInterface) => {
-    navigation.navigate(screenNames.PhotoScreen, {
-      photo: {
-        ...photo,
-        model
-      },
-    })
+    setCurrentPhoto(photo)
   }
 
   return (
@@ -199,6 +196,18 @@ export default function PublicModelProfileScreen() {
                             </View>
                           </View>
                         )}
+                  {currentPhoto && (
+                    <Modal
+                      isVisible
+                      useNativeDriver
+                      onBackButtonPress={() => setCurrentPhoto(null)}
+                      onBackdropPress={() => setCurrentPhoto(null)}
+                    >
+                      <View style={{ borderRadius: 15, overflow: 'hidden' }}>
+                        <PhotoCard hideHeader photo={currentPhoto} />
+                      </View>
+                    </Modal>
+                  )}
                 </>
 
               )}
