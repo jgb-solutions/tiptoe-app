@@ -7,11 +7,9 @@ import {
 	Text,
 	Spinner
 } from 'native-base'
-import { useQuery } from '@apollo/react-hooks'
 import { useNavigation } from "@react-navigation/native"
 
 // Local imports
-import { FETCH_MODELS, FETCH_PHOTOS } from "../graphql/queries"
 import Page from "../components/layouts/Page"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import PhotoCard from "../components/PhotoCard"
@@ -34,9 +32,9 @@ export default function HomeScreen() {
 		refetch: refetchPhotos
 	} = usePhotos()
 
-	useEffect(() => {
-		console.log(`data has arrived`, homeData)
-	}, [homeData])
+	// useEffect(() => {
+	// 	console.log(`data has arrived`, homeData)
+	// }, [homeData])
 
 
 

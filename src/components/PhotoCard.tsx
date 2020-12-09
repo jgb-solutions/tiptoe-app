@@ -40,12 +40,20 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
   const navigation = useNavigation()
   const { toggleLike } = useToggleLike()
 
-  const hanleToggleLike = (photo: PhotoInterface) => {
+  const handleToggleLike = (photo: PhotoInterface) => {
+    const { likedByMe } = photo
+
     toggleLike({
       photoId: photo.id,
     })
 
-    photo.likedByMe = !photo.likedByMe
+    photo.likedByMe = !likedByMe
+
+    if (likedByMe) {
+      photo.likeCount -= 1
+    } else {
+      photo.likeCount += 1
+    }
   }
 
   return (
@@ -75,7 +83,7 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
           </Left>
         </CardItem>
       )}
-      <DoubleTap onDoubleTap={() => hanleToggleLike(photo)}>
+      <DoubleTap onDoubleTap={() => handleToggleLike(photo)}>
         <CardItem cardBody>
           <Image
             source={{ uri: photo.url }}
@@ -90,7 +98,7 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 
       <CardItem>
         <Left>
-          <Button transparent>
+          <Button transparent onPress={() => handleToggleLike(photo)}>
             <Icon
               name={photo.likedByMe ? "heart" : "heart-empty"}
               style={{

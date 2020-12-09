@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Image,
   FlatList,
@@ -39,6 +39,10 @@ export default function PublicModelProfileScreen() {
     refetch
   } = useFavoritePhotos()
   const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
+
+  // useEffect(() => {
+  //   console.log(data)
+  // }, [data])
 
   const goBack = () => {
     navigation.goBack()

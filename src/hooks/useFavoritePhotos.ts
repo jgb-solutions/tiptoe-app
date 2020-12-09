@@ -10,6 +10,8 @@ export default function useFavoritePhotos() {
 	const { loading, error, data, fetchMore, refetch } = useQuery(
 		FETCH_FAVORITE_PHOTOS,
 		{
+			fetchPolicy: "network-only",
+			// notifyOnNetworkStatusChange: true,
 			variables: {
 				take: FETCH_FAVORITE_PHOTOS_NUMBER,
 				orderBy: [{ field: "insertAt", order: "DESC" }],
