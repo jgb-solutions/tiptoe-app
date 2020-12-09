@@ -10,7 +10,7 @@ export default function useHomeData() {
 			notifyOnNetworkStatusChange: true,
 			variables: {
 				take: HOMEPAGE_PER_PAGE_NUMBER,
-				orderBy: [{ field: "created_at", order: "DESC" }],
+				orderBy: [{ field: "insertAt", order: "DESC" }],
 			},
 		}
 	)

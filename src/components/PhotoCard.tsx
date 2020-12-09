@@ -24,6 +24,7 @@ import { colors } from '../utils/colors'
 import PhotoInterface from "../interfaces/PhotoInterface"
 import { useNavigation } from '@react-navigation/native'
 import { screenNames } from '../utils/screens'
+import useToggleLike from '../hooks/useToggleLike'
 
 // Initialize days with RelativeTime plugin
 dayjs.extend(relativeTime)
@@ -37,8 +38,14 @@ type Props = {
 
 export default function PhotoCard({ photo, hideHeader }: Props) {
   const navigation = useNavigation()
+  const { toggleLike } = useToggleLike()
+
   const hanleToggleLike = (photo: PhotoInterface) => {
-    alert(`Like ${photo.hash} by ${photo.model.stageName}`)
+    toggleLike({
+      photoId: photo.id,
+    })
+
+    photo.likedByMe = !photo.likedByMe
   }
 
   return (
@@ -84,10 +91,13 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
       <CardItem>
         <Left>
           <Button transparent>
-            <Icon name="heart" style={{
-              color: colors.pink,
-              fontSize: 36
-            }} />
+            <Icon
+              name={photo.likedByMe ? "heart" : "heart-empty"}
+              style={{
+                color: colors.pink,
+                fontSize: 36
+              }} />
+
             <Text
               style={{
                 color: colors.darkGrey

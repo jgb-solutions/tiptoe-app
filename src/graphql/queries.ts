@@ -85,10 +85,36 @@ export const FETCH_PHOTOS = gql`
 		# Latest 10 photos
 		photos(take: $take, page: $page, orderBy: $orderBy, modelHash: $modelHash) {
 			data {
+				id
 				hash
 				caption
 				url
 				likeCount
+				likedByMe
+				insertedAt
+				model {
+					stageName
+					posterUrl
+					hash
+				}
+			}
+			paginationInfo {
+				hasMorePages
+				currentPage
+			}
+		}
+	}
+`
+export const FETCH_FAVORITE_PHOTOS = gql`
+	query favoritePhotosData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
+		favoritePhotos(take: $take, page: $page, orderBy: $orderBy) {
+			data {
+				id
+				hash
+				caption
+				url
+				likeCount
+				likedByMe
 				insertedAt
 				model {
 					stageName

@@ -20,10 +20,19 @@ import ModelInterface from "../interfaces/ModelInterface"
 import { colors } from "../utils/colors"
 import useHomeData from '../hooks/useHomeData'
 import { screenNames } from "../utils/screens"
+import usePhotos from "../hooks/usePhotos"
 
 export default function HomeScreen() {
 	const navigation = useNavigation()
 	const { homeData, homeError, homeLoading } = useHomeData()
+	const {
+		loading: photosLoading,
+		error: photosError,
+		data: photosData,
+		loadMorePhotos,
+		hasMorePhotos,
+		refetch: refetchPhotos
+	} = usePhotos()
 
 	useEffect(() => {
 		console.log(`data has arrived`, homeData)
@@ -33,9 +42,9 @@ export default function HomeScreen() {
 
 	return (
 		<Page noLeft rightStyle={{ flex: 0 }} noContent>
-			{homeLoading ? (
+			{homeLoading || photosLoading ? (
 				<Spinner color={colors.pink} />
-			) : homeError ? (
+			) : homeError || photosError ? (
 				<Text>An error occurred</Text>
 			) : (
 						<FlatList
@@ -64,11 +73,16 @@ export default function HomeScreen() {
 									<Text>Your timeline is empty! You should start following some models.</Text>
 								</View>
 							)}
-							data={homeData.photos.data}
+							data={photosData.photos.data}
 							keyExtractor={(card) => `${card.hash}`}
 							renderItem={({ item: photo }: { item: PhotoInterface }) => (
 								<PhotoCard photo={photo} />
-							)} />
+							)}
+							onRefresh={() => refetchPhotos}
+							refreshing={photosLoading}
+							onEndReached={() => loadMorePhotos()}
+							onEndReachedThreshold={.9}
+						/>
 
 					)}
 		</Page>
