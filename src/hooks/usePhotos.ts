@@ -7,7 +7,14 @@ import { FETCH_PHOTOS_NUMBER } from "../utils/constants"
 
 export default function usePhotos(modelHash?: string) {
 	const [hasMore, setHasMore] = useState(true)
-	const { loading, error, data, fetchMore, refetch } = useQuery(FETCH_PHOTOS, {
+	const {
+		loading,
+		error,
+		data,
+		fetchMore,
+		refetch,
+		subscribeToMore,
+	} = useQuery(FETCH_PHOTOS, {
 		variables: {
 			take: FETCH_PHOTOS_NUMBER,
 			orderBy: [{ field: "insertAt", order: "DESC" }],
@@ -18,7 +25,6 @@ export default function usePhotos(modelHash?: string) {
 	const loadMorePhotos = () => {
 		const { currentPage } = data.photos.paginationInfo
 
-		// alert(currentPage + 1)
 		fetchMore({
 			variables: {
 				page: currentPage + 1,
@@ -52,5 +58,6 @@ export default function usePhotos(modelHash?: string) {
 		loadMorePhotos,
 		hasMorePhotos: hasMore,
 		refetch,
+		subscribeToMore,
 	}
 }

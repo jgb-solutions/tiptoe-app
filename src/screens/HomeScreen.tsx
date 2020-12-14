@@ -1,24 +1,22 @@
 import React, { useEffect } from "react"
-import {
-	View,
-	FlatList
-} from "react-native"
-import {
-	Text,
-	Spinner
-} from 'native-base'
+import { Text, Spinner } from 'native-base'
+import { View, FlatList } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 
 // Local imports
-import Page from "../components/layouts/Page"
-import PhotoInterface from "../interfaces/PhotoInterface"
-import PhotoCard from "../components/PhotoCard"
-import ThumbnailScrollList from "../components/ThumbnailScrollList"
-import ModelInterface from "../interfaces/ModelInterface"
 import { colors } from "../utils/colors"
+import usePhotos from "../hooks/usePhotos"
+import Page from "../components/layouts/Page"
 import useHomeData from '../hooks/useHomeData'
 import { screenNames } from "../utils/screens"
-import usePhotos from "../hooks/usePhotos"
+import PhotoCard from "../components/PhotoCard"
+import PhotoInterface from "../interfaces/PhotoInterface"
+import ModelInterface from "../interfaces/ModelInterface"
+import ThumbnailScrollList from "../components/ThumbnailScrollList"
+import {
+	PHOTO_UPDATES_SUBSCRIPTION
+} from "../graphql/subscriptions"
+import { SUBSCRIPTION_TOPICS } from "../utils/constants"
 
 export default function HomeScreen() {
 	const navigation = useNavigation()
@@ -29,14 +27,45 @@ export default function HomeScreen() {
 		data: photosData,
 		loadMorePhotos,
 		hasMorePhotos,
-		refetch: refetchPhotos
+		refetch: refetchPhotos,
+		subscribeToMore
 	} = usePhotos()
 
 	// useEffect(() => {
 	// 	console.log(`data has arrived`, homeData)
 	// }, [homeData])
 
+	useEffect(() => {
+		const unsubscribe = subscribeToMore({
+			document: PHOTO_UPDATES_SUBSCRIPTION,
+			variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
+			updateQuery: (prev, { subscriptionData }) => {
+				if (!subscriptionData.data) return prev
 
+				const { photos: { data, ...otherInfo } }: {
+					photos: {
+						data: PhotoInterface[]
+					}
+				} = prev
+
+				const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
+
+				const newData = data.map((photo: PhotoInterface) => {
+					return photo.id === unlikedPhoto.id ?
+						{ ...photo, likedByMe: false } : photo
+				})
+
+				return {
+					photos: {
+						...otherInfo,
+						data: newData
+					}
+				}
+			}
+		})
+
+		return () => unsubscribe()
+	}, [])
 
 	return (
 		<Page noLeft rightStyle={{ flex: 0 }} noContent>
@@ -47,20 +76,22 @@ export default function HomeScreen() {
 			) : (
 						<FlatList
 							ListHeaderComponent={
-								<ThumbnailScrollList
-									thumbnails={homeData.models.data.map((model: ModelInterface) => ({
-										title: model.stageName,
-										hash: model.hash,
-										imageUrl: model.posterUrl
-									}))}
+								<>
+									<ThumbnailScrollList
+										thumbnails={homeData.models.data.map((model: ModelInterface) => ({
+											title: model.stageName,
+											hash: model.hash,
+											imageUrl: model.posterUrl
+										}))}
 
-									onPress={(hash) => {
-										navigation.navigate(
-											screenNames.PublicModelProfileScreen, {
-											hash: `${hash}`
-										})
-									}}
-								/>
+										onPress={(hash) => {
+											navigation.navigate(
+												screenNames.PublicModelProfileScreen, {
+												hash: `${hash}`
+											})
+										}}
+									/>
+								</>
 							}
 							ListEmptyComponent={() => (
 								<View style={{

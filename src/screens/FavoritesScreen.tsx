@@ -14,7 +14,6 @@ import {
   Header,
   Spinner,
   Container,
-  Thumbnail,
   Button
 } from 'native-base'
 import { useNavigation } from '@react-navigation/native'
@@ -24,6 +23,8 @@ import { colors } from '../utils/colors'
 import PhotoInterface from '../interfaces/PhotoInterface'
 import PhotoCard from '../components/PhotoCard'
 import useFavoritePhotos from '../hooks/useFavoritePhotos'
+import { PHOTO_UPDATES_SUBSCRIPTION } from '../graphql/subscriptions'
+import { SUBSCRIPTION_TOPICS } from '../utils/constants'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -36,13 +37,52 @@ export default function PublicModelProfileScreen() {
     data,
     loadMorePhotos,
     hasMorePhotos,
-    refetch
+    refetch,
+    subscribeToMore
   } = useFavoritePhotos()
   const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
-  // useEffect(() => {
-  //   console.log(data)
-  // }, [data])
+  useEffect(() => {
+    const unsubscribe = subscribeToMore({
+      document: PHOTO_UPDATES_SUBSCRIPTION,
+      variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+
+        const { favoritePhotos: { data, ...otherInfo } } = prev
+
+        const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
+
+        const filteredData = data.filter((photo: PhotoInterface) => photo.id !== unlikedPhoto.id)
+
+        setCurrentPhoto(null)
+
+        return {
+          favoritePhotos: {
+            ...otherInfo,
+            data: filteredData
+          }
+        }
+      }
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  React.useEffect(() => {
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      refetch()
+    })
+
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      setCurrentPhoto(null)
+    })
+
+    return () => {
+      unsubscribeFocus()
+      unsubscribeBlur()
+    }
+  }, [navigation])
 
   const goBack = () => {
     navigation.goBack()
@@ -106,7 +146,7 @@ export default function PublicModelProfileScreen() {
                   alignItems: 'center',
                   paddingTop: 12
                 }}>
-                  <Text>That model has no photos yet.</Text>
+                  <Text>You have no favorite photos yet.</Text>
                 </View>
               )}
               data={data.favoritePhotos.data}

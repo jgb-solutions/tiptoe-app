@@ -51,7 +51,7 @@ export default function ChatListScreen() {
               </Left>
               <Body>
                 <Text>{room.chatUser.name}</Text>
-                <Text note>{room.messages[0].text.substr(0, 39)}...</Text>
+                <Text note>{room.messages.length > 0 ? room.messages[0].text.substr(0, 39) : null}...</Text>
               </Body>
               <Right style={{ borderColor: 'transparent' }}>
                 <Text note>3:43 pm</Text>

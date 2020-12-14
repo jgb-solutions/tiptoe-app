@@ -1,27 +1,26 @@
 import React, { useState } from "react"
 import Constants from 'expo-constants'
 import {
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
   Text,
+  View,
+  Image,
   Platform,
-  SafeAreaView
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native'
-import { Container, Header, Content, Item, Input } from 'native-base'
-import { useNavigation } from '@react-navigation/native'
+import { request } from 'graphql-request'
 import { useForm, Controller } from "react-hook-form"
-import { useApolloClient } from "@apollo/react-hooks"
+import { useNavigation } from '@react-navigation/native'
 
-
-const TipToeLogo = require('../../assets/images/TipToeLogo.png')
-import FormInput from '../components/FormInput'
-import FormButton from '../components/FormButton'
 import { colors } from "../utils/colors"
-import useStore, { AppStateInterface } from "../store"
+import FormInput from '../components/FormInput'
 import { LOG_USER_IN } from "../graphql/queries"
+import FormButton from '../components/FormButton'
+import useStore, { AppStateInterface } from "../store"
+import { GRAPHQL_API_URL } from "../utils/constants"
+const TipToeLogo = require('../../assets/images/TipToeLogo.png')
 
 export interface Credentials {
   email: string
@@ -31,18 +30,17 @@ export interface Credentials {
 export default function LogInWithEmailScreen() {
   const { control, handleSubmit, errors } = useForm<Credentials>({ mode: 'onBlur' })
   const navigation = useNavigation()
-  const client = useApolloClient()
   const [loginError, setLoginError] = useState("")
   const { doLogin } = useStore((state: AppStateInterface) =>
     ({ doLogin: state.doLogin }))
 
   const handleLogin = async (credentials: Credentials) => {
     try {
-      const { data: { login: userData }, errors } = await client.query({
-        query: LOG_USER_IN,
-        variables: { input: credentials },
-        fetchPolicy: 'network-only'
-      })
+      const { login: userData } = await request(
+        GRAPHQL_API_URL,
+        LOG_USER_IN,
+        { input: credentials },
+      )
 
       if (errors) {
         setLoginError("Your email or password is not valid.")

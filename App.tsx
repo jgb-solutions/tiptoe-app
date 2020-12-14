@@ -2,15 +2,12 @@ import React from "react"
 import { AppLoading } from "expo"
 import * as Font from "expo-font"
 import { Ionicons } from "@expo/vector-icons"
-import { ApolloProvider } from '@apollo/react-hooks'
 
 
 import { MainNavigation } from "./src/navigation"
 // @ts-ignore
-// import getTheme from './native-base-theme/components'
-import { client } from "./src/graphql/client"
-import GlobalStuff from "./src/components/GlobalStuff"
 import { Root } from "native-base"
+import GlobalStuff from "./src/components/GlobalStuff"
 
 export default function App() {
   const [fontsLoaded] = Font.useFonts({
@@ -22,13 +19,9 @@ export default function App() {
   if (!fontsLoaded) return <AppLoading />
 
   return (
-    <ApolloProvider client={client}>
-      {/* <StyleProvider style={getTheme()}> */}
-      <Root>
-        <MainNavigation />
-      </Root>
+    <Root>
+      <MainNavigation />
       <GlobalStuff />
-      {/* </StyleProvider> */}
-    </ApolloProvider>
+    </Root>
   )
 }

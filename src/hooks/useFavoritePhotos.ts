@@ -7,22 +7,25 @@ import { FETCH_FAVORITE_PHOTOS_NUMBER } from "../utils/constants"
 
 export default function useFavoritePhotos() {
 	const [hasMore, setHasMore] = useState(true)
-	const { loading, error, data, fetchMore, refetch } = useQuery(
-		FETCH_FAVORITE_PHOTOS,
-		{
-			fetchPolicy: "network-only",
-			// notifyOnNetworkStatusChange: true,
-			variables: {
-				take: FETCH_FAVORITE_PHOTOS_NUMBER,
-				orderBy: [{ field: "insertAt", order: "DESC" }],
-			},
-		}
-	)
+	const {
+		loading,
+		error,
+		data,
+		fetchMore,
+		refetch,
+		subscribeToMore,
+	} = useQuery(FETCH_FAVORITE_PHOTOS, {
+		fetchPolicy: "network-only",
+		// notifyOnNetworkStatusChange: true,
+		variables: {
+			take: FETCH_FAVORITE_PHOTOS_NUMBER,
+			orderBy: [{ field: "insertAt", order: "DESC" }],
+		},
+	})
 
 	const loadMorePhotos = () => {
 		const { currentPage } = data.favoritePhotos.paginationInfo
 
-		// alert(currentPage + 1)
 		fetchMore({
 			variables: {
 				page: currentPage + 1,
@@ -59,5 +62,6 @@ export default function useFavoritePhotos() {
 		loadMorePhotos,
 		hasMorePhotos: hasMore,
 		refetch,
+		subscribeToMore,
 	}
 }

@@ -3,24 +3,26 @@ import { Icon } from "native-base"
 import { NavigationContainer } from "@react-navigation/native"
 import { createStackNavigator } from "@react-navigation/stack"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { ApolloProvider } from '@apollo/react-hooks'
 
 // Screens
+import ChatScreen from "../screens/ChatScreen"
 import HomeScreen from "../screens/HomeScreen"
-import LogInWithEmailScreen from "../screens/LogInWithEmailScreen."
-import ProfileScreen from "../screens/ProfileScreen"
 import SearchScreen from "../screens/SearchScreen"
+import ProfileScreen from "../screens/ProfileScreen"
 import ChatListScreen from "../screens/ChatListScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
 import AddPhotoScreen from "../screens/AddPhotoScreen"
-import SettingsScreen from "../screens/SettingsScreen"
+// import SettingsScreen from "../screens/SettingsScreen"
+import LogInWithEmailScreen from "../screens/LogInWithEmailScreen."
 import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen"
-import ChatScreen from "../screens/ChatScreen"
 import PublicModelProfileScreen from "../screens/PublicModelProfileScreen"
 
 // Other stuff
 import { colors } from "../utils/colors"
 import useStore, { AppStateInterface } from "../store"
 import { screenNames } from "../utils/screens"
+import { getClient } from "../graphql/client"
 
 // Navigators setup
 const Stack = createStackNavigator()
@@ -119,29 +121,30 @@ function TabNavigation() {
 }
 
 function MainNavigation() {
-  const isLoggedIn = useStore((state: AppStateInterface) => state.authData.isLoggedIn)
+  const { isLoggedIn, phoenixSocket } = useStore((state: AppStateInterface) => ({
+    isLoggedIn: state.authData.isLoggedIn,
+    phoenixSocket: state.socket
+  }))
+  const navigatorScreenOptions = { headerShown: false, }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        {isLoggedIn ? (
-          <>
+      {isLoggedIn && phoenixSocket ? (
+        <ApolloProvider client={getClient()}>
+          <Stack.Navigator screenOptions={navigatorScreenOptions}>
             <Stack.Screen name="TabNavigation" component={TabNavigation} />
             <Stack.Screen name={screenNames.Chat} component={ChatScreen} />
             <Stack.Screen name={screenNames.ChatList} component={ChatListScreen} />
             <Stack.Screen name={screenNames.PublicModelProfileScreen} component={PublicModelProfileScreen} />
-          </>
-        ) : (
-            <>
-              <Stack.Screen name={screenNames.LogIn} component={LogInWithEmailScreen} />
-              <Stack.Screen name={screenNames.SignUp} component={SignUpWithEmailScreen} />
-            </>
-          )}
-      </Stack.Navigator>
+          </Stack.Navigator>
+        </ApolloProvider>
+      ) : (
+          <Stack.Navigator screenOptions={navigatorScreenOptions}>
+            <Stack.Screen name={screenNames.LogIn} component={LogInWithEmailScreen} />
+            <Stack.Screen name={screenNames.SignUp} component={SignUpWithEmailScreen} />
+          </Stack.Navigator>
+
+        )}
     </NavigationContainer>
   )
 }

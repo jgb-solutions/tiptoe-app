@@ -105,6 +105,7 @@ export const FETCH_PHOTOS = gql`
 		}
 	}
 `
+
 export const FETCH_FAVORITE_PHOTOS = gql`
 	query favoritePhotosData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
 		favoritePhotos(take: $take, page: $page, orderBy: $orderBy) {

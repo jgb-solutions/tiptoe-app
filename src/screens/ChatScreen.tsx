@@ -112,6 +112,7 @@ export default function ChatScreen() {
       })
     } else {
       // go to user's profile
+      // TO DO
       alert('issa user')
     }
   }
@@ -121,7 +122,7 @@ export default function ChatScreen() {
       RoomGeneralChannel?.push(SOCKET_EVENTS.NEW_MESSAGE, {
         text: message.text,
         userId: message.user._id,
-        roomId: roomId
+        roomId
       })
       // .receive("ok", (msg) => console.log("created message", msg))
       // .receive("error", (reasons) => console.log("create failed", reasons))
