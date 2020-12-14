@@ -50,7 +50,8 @@ export default function LogInWithEmailScreen() {
         doLogin(userData)
       }
     } catch (error) {
-      setLoginError(error.graphQLErrors[0].message)
+      alert(JSON.stringify(error))
+      // setLoginError(error.graphQLErrors[0].message)
     }
   }
 
