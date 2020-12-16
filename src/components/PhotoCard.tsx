@@ -43,17 +43,11 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
   const handleToggleLike = (photo: PhotoInterface) => {
     const { likedByMe } = photo
 
-    toggleLike({
-      photoId: photo.id,
-    })
+    toggleLike({ photoId: photo.id, })
 
     photo.likedByMe = !likedByMe
 
-    if (likedByMe) {
-      photo.likeCount -= 1
-    } else {
-      photo.likeCount += 1
-    }
+    photo.likeCount += likedByMe ? -1 : 1
   }
 
   return (
