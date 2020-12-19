@@ -16,7 +16,7 @@ export const FETCH_HOME_SCREEN = gql`
 				hash
 				caption
 				url
-				likeCount
+				likesCount
 				insertedAt
 				model {
 					stageName
@@ -89,7 +89,7 @@ export const FETCH_PHOTOS = gql`
 				hash
 				caption
 				url
-				likeCount
+				likesCount
 				likedByMe
 				insertedAt
 				model {
@@ -114,7 +114,7 @@ export const FETCH_FAVORITE_PHOTOS = gql`
 				hash
 				caption
 				url
-				likeCount
+				likesCount
 				likedByMe
 				insertedAt
 				model {
@@ -427,12 +427,16 @@ export const FETCH_ARTIST = gql`
 export const FETCH_MODEL = gql`
 	query modelDetail($hash: String!) {
 		model(hash: $hash) {
+			id
 			name
 			stageName
 			posterUrl
 			facebookUrl
 			hash
 			instagramUrl
+			photosCount
+			followersCount
+			followedByMe
 		}
 	}
 `

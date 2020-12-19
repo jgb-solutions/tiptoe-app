@@ -28,6 +28,7 @@ import { formatToUnits } from '../utils/formatNumber'
 import PhotoInterface from '../interfaces/PhotoInterface'
 import ModelInterface from '../interfaces/ModelInterface'
 import PhotoCard from '../components/PhotoCard'
+import useToggleFollow from '../hooks/useToggleFollow'
 
 type StatsProps = {
   number: number
@@ -37,7 +38,7 @@ type StatsProps = {
 
 const Stats = ({ number, title, style }: StatsProps) => (
   <View style={{ alignItems: 'center', ...style }}>
-    <Text style={{ fontWeight: 'bold' }}>{formatToUnits(number)}</Text>
+    <Text style={{ fontWeight: 'bold' }}>{number > 999 ? formatToUnits(number) : number}</Text>
     <Text>{title}</Text>
   </View>
 )
@@ -75,9 +76,15 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window')
 export default function PublicModelProfileScreen() {
   const navigation = useNavigation()
   const route = useRoute<RouteParamsProps>()
+  const { toggleFollow, data: toggleFollowData, error: toggleFollowError } = useToggleFollow()
   const modelHash = route.params.hash
   const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
-  const { data: modelData, loading: modelLoading, error: modelError } = useModel(modelHash)
+  const {
+    data: modelData,
+    loading: modelLoading,
+    error: modelError,
+    refetch: refetchModel
+  } = useModel(modelHash)
   const {
     loading: photosLoading,
     error: photosError, data: photosData,
@@ -91,6 +98,17 @@ export default function PublicModelProfileScreen() {
       setModel(modelData.model)
     }
   }, [modelData])
+
+  React.useEffect(() => {
+    console.log(toggleFollowData)
+    if (toggleFollowData) {
+      refetchModel()
+    }
+  }, [toggleFollowData])
+
+  const handleToggleFollow = () => {
+    toggleFollow({ modelId: modelData.model.id })
+  }
 
   const goBack = () => {
     navigation.goBack()
@@ -157,8 +175,15 @@ export default function PublicModelProfileScreen() {
                                 justifyContent: 'flex-end',
                                 alignItems: "center"
                               }}>
-                                <Stats title="Posts" number={1098} />
-                                <Stats style={{ marginLeft: 12 }} title="Followers" number={2100000} />
+                                <Stats
+                                  title={`Post${modelData.model.photosCount !== 1 ? 's' : ''}`}
+                                  number={modelData.model.photosCount}
+                                />
+                                <Stats
+                                  style={{ marginLeft: 12 }}
+                                  title={`Follower${modelData.model.followersCount !== 1 ? 's' : ''}`}
+                                  number={modelData.model.followersCount}
+                                />
                               </View>
                             </View>
 
@@ -174,8 +199,8 @@ export default function PublicModelProfileScreen() {
                               <Button style={{
                                 flex: 1,
                                 backgroundColor: colors.pink
-                              }}>
-                                <Text style={{ color: colors.white }}>Follow</Text>
+                              }} onPress={handleToggleFollow}>
+                                <Text style={{ color: colors.white }}>{modelData.model.followedByMe ? 'Unfollow' : 'Follow'}</Text>
                               </Button>
                               <Button style={{
                                 flex: 1,

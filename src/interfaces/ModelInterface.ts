@@ -1,4 +1,5 @@
 export default interface ModelInterface {
+	id: string
 	name: string
 	stageName: string
 	hash: string
@@ -7,4 +8,7 @@ export default interface ModelInterface {
 	facebookUrl: string
 	twitterUrl: string
 	instagramUrl: string
+	photosCount: number
+	followersCount: number
+	followedByMe: boolean
 }

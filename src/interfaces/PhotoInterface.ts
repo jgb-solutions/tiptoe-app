@@ -5,7 +5,7 @@ export default interface PhotoInterface {
 	url: string
 	featured: boolean
 	detail: string
-	likeCount: number
+	likesCount: number
 	likedByMe: boolean
 	insertedAt: Date
 	category: {

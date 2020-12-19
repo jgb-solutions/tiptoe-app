@@ -47,7 +47,7 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 
     photo.likedByMe = !likedByMe
 
-    photo.likeCount += likedByMe ? -1 : 1
+    photo.likesCount += likedByMe ? -1 : 1
   }
 
   return (
@@ -103,7 +103,7 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
             <Text
               style={{
                 color: colors.darkGrey
-              }}>{photo.likeCount} like{photo.likeCount !== 1 ? 's' : ''}</Text>
+              }}>{photo.likesCount} like{photo.likesCount !== 1 ? 's' : ''}</Text>
           </Button>
         </Left>
         <Right>

@@ -59,6 +59,14 @@ export const TOGGLE_LIKE = gql`
 	}
 `
 
+export const TOGGLE_FOLLOW = gql`
+	mutation ToggleFollow($input: ToggleFollowInput!) {
+		toggleFollow(input: $input) {
+			success
+		}
+	}
+`
+
 export const DELETE_ALBUM = gql`
 	mutation DeleteAlbum($hash: String!) {
 		deleteAlbum(hash: $hash) {
