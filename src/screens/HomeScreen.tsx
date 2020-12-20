@@ -17,6 +17,7 @@ import {
 	PHOTO_UPDATES_SUBSCRIPTION
 } from "../graphql/subscriptions"
 import { SUBSCRIPTION_TOPICS } from "../utils/constants"
+import NegativeResponse from "../components/NegativeResponse"
 
 export default function HomeScreen() {
 	const navigation = useNavigation()
@@ -30,10 +31,6 @@ export default function HomeScreen() {
 		refetch: refetchPhotos,
 		subscribeToMore
 	} = usePhotos()
-
-	// useEffect(() => {
-	// 	console.log(`data has arrived`, homeData)
-	// }, [homeData])
 
 	useEffect(() => {
 		const unsubscribe = subscribeToMore({
@@ -52,7 +49,7 @@ export default function HomeScreen() {
 
 				const newData = data.map((photo: PhotoInterface) => {
 					return photo.id === unlikedPhoto.id ?
-						{ ...photo, likedByMe: false } : photo
+						{ ...photo, likedByMe: false, likesCount: photo.likesCount - 1 } : photo
 				})
 
 				return {
@@ -72,7 +69,9 @@ export default function HomeScreen() {
 			{homeLoading || photosLoading ? (
 				<Spinner color={colors.pink} />
 			) : homeError || photosError ? (
-				<Text>An error occurred</Text>
+				<NegativeResponse>
+					<Text>An error occurred</Text>
+				</NegativeResponse>
 			) : (
 						<FlatList
 							ListHeaderComponent={

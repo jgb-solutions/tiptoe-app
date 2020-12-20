@@ -59,6 +59,14 @@ export const TOGGLE_LIKE = gql`
 	}
 `
 
+export const CREATE_ROOM = gql`
+	mutation CreateRoom($input: CreateRoomInput!) {
+		createRoom(input: $input) {
+			id
+		}
+	}
+`
+
 export const TOGGLE_FOLLOW = gql`
 	mutation ToggleFollow($input: ToggleFollowInput!) {
 		toggleFollow(input: $input) {

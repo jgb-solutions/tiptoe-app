@@ -33,6 +33,7 @@ import useToggleFollow from '../hooks/useToggleFollow'
 import { screenNames } from '../utils/screens'
 import ChatUserInterface from '../interfaces/ChatUserInterface'
 import NegativeResponse from '../components/NegativeResponse'
+import useCreateRoom from '../hooks/useCreateRoom'
 
 type StatsProps = {
   number: number
@@ -92,9 +93,15 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window')
 export default function PublicModelProfileScreen() {
   const navigation = useNavigation()
   const route = useRoute<RouteParamsProps>()
-  const { toggleFollow, data: toggleFollowData, loading: toggleFollowLoading } = useToggleFollow()
   const modelHash = route.params.hash
   const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
+  const { toggleFollow, data: toggleFollowData, loading: toggleFollowLoading } = useToggleFollow()
+  const {
+    createRoom,
+    loading: createRoomLoading,
+    error: createRoomError,
+    data: createRoomData
+  } = useCreateRoom()
   const {
     data: modelData,
     loading: modelLoading,
@@ -122,11 +129,15 @@ export default function PublicModelProfileScreen() {
     }
   }, [toggleFollowData])
 
-  // React.useEffect(() => {
-  //   if (roomdData) {
-  //     goToChatScreen(room)
-  //   }
-  // }, [roomData])
+  React.useEffect(() => {
+    if (createRoomData) {
+      const room = createRoomData.createRoom
+      goToChatScreen({
+        ...room,
+        chatUser: makeChatUserFromModel(modelData.model)
+      })
+    }
+  }, [createRoomData])
 
   const handleToggleFollow = () => {
     // TO DO FOR PAYMENT CHECK
@@ -147,7 +158,7 @@ export default function PublicModelProfileScreen() {
       })
     } else {
       // time to create the room
-      alert('time to create a new room son')
+      createRoom({ modelId: modelData.model.id })
     }
   }
 
@@ -269,7 +280,8 @@ export default function PublicModelProfileScreen() {
                                 borderWidth: 1,
                                 borderColor: colors.pink,
                                 marginLeft: 4
-                              }} onPress={handleFetchOrCreateChatRoom}>
+                              }} onPress={handleFetchOrCreateChatRoom}
+                                disable={createRoomLoading}>
                                 <Text style={{ color: colors.black }}>Message</Text>
                               </Button>
                               <Button style={{

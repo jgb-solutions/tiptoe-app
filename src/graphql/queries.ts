@@ -136,6 +136,7 @@ export const FETCH_ROOMS = gql`
 		me {
 			rooms {
 				id
+				insertedAt
 				messages {
 					# id
 					text

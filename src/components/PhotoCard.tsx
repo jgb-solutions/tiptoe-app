@@ -15,19 +15,14 @@ import {
   Body,
   Right,
 } from 'native-base'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-
 
 import DoubleTap from './DoubleTap'
 import { colors } from '../utils/colors'
 import PhotoInterface from "../interfaces/PhotoInterface"
 import { useNavigation } from '@react-navigation/native'
 import { screenNames } from '../utils/screens'
+import { dayjs } from '../utils/dayjs'
 import useToggleLike from '../hooks/useToggleLike'
-
-// Initialize days with RelativeTime plugin
-dayjs.extend(relativeTime)
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
