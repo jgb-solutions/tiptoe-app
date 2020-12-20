@@ -437,6 +437,9 @@ export const FETCH_MODEL = gql`
 			photosCount
 			followersCount
 			followedByMe
+			roomWithMe {
+				id
+			}
 		}
 	}
 `

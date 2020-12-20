@@ -5,9 +5,12 @@ import { TOGGLE_FOLLOW } from "../graphql/mutations"
 type ToggleFollowProps = { modelId: string }
 
 export default function useToggleFollow() {
-	const [toggleFollowMutation, { data, error }] = useMutation(TOGGLE_FOLLOW, {
-		fetchPolicy: "no-cache",
-	})
+	const [toggleFollowMutation, { data, error, loading }] = useMutation(
+		TOGGLE_FOLLOW,
+		{
+			fetchPolicy: "no-cache",
+		}
+	)
 
 	const toggleFollow = (input: ToggleFollowProps) => {
 		toggleFollowMutation({
@@ -15,5 +18,5 @@ export default function useToggleFollow() {
 		})
 	}
 
-	return { toggleFollow, data, error }
+	return { toggleFollow, data, error, loading }
 }

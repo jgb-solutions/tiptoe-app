@@ -1,5 +1,4 @@
 import React from "react"
-import { View } from "react-native"
 import {
   Body,
   Left,
@@ -18,16 +17,11 @@ import { screenNames } from "../utils/screens"
 import { colors } from "../utils/colors"
 import { FETCH_ROOMS } from "../graphql/queries"
 import RoomInterface from "../interfaces/RoomInterface"
+import NegativeResponse from "../components/NegativeResponse"
 
 export default function ChatListScreen() {
   const navigation = useNavigation()
-  const { loading, error, data, refetch } = useQuery(FETCH_ROOMS, {
-    fetchPolicy: 'network-only'
-  })
-
-  React.useEffect(() => {
-    console.log(`data has arrived`, data)
-  }, [data])
+  const { loading, error, data, refetch } = useQuery(FETCH_ROOMS)
 
   const handleGoToChatScreen = (room: RoomInterface) => {
     navigation.navigate(screenNames.Chat, { room })
@@ -41,7 +35,9 @@ export default function ChatListScreen() {
       {loading ? (
         <Spinner color={colors.pink} />
       ) : error ? (
-        <Text>An error occurred</Text>
+        <NegativeResponse>
+          <Text>An error occurred</Text>
+        </NegativeResponse>
       ) : data.me.rooms.length ? (
         <List>
           {data.me.rooms.map((room: RoomInterface) => (
@@ -60,13 +56,9 @@ export default function ChatListScreen() {
           ))}
         </List>
       ) : (
-              <View style={{
-                flex: 1,
-                alignItems: 'center',
-                paddingTop: 12
-              }}>
+              <NegativeResponse>
                 <Text>You have no chats yet.</Text>
-              </View>
+              </NegativeResponse>
             )}
     </Page>
   )

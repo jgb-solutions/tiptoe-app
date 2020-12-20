@@ -6,6 +6,7 @@ import { FETCH_PHOTOS } from "../graphql/queries"
 import { FETCH_PHOTOS_NUMBER } from "../utils/constants"
 
 export default function usePhotos(modelHash?: string) {
+	console.log(`model hash ` + modelHash)
 	const [hasMore, setHasMore] = useState(true)
 	const {
 		loading,

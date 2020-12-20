@@ -23,6 +23,7 @@ import IMessageInterface from '../interfaces/IMessageInterface'
 import useStore, { AppStateInterface } from '../store'
 import { colors } from '../utils/colors'
 import { screenNames } from '../utils/screens'
+import ChatUserInterface from '../interfaces/ChatUserInterface'
 
 export type ReponseMessage = {
   id: string
@@ -50,20 +51,13 @@ export const mapMessageFromResponse = (message: ReponseMessage) => ({
   }
 })
 
-export interface ChatUser {
-  id: number
-  name: string
-  avatarUrl: string
-  type: "user" | "model"
-  modelHash?: string
-}
-
 type RouteParamsProps = RouteProp<{
   params: {
     room: {
       id: string
-      chatUser: ChatUser
-    }
+      chatUser: ChatUserInterface
+    },
+    fromModelScreen: boolean
   }
 }, 'params'>
 
@@ -72,7 +66,7 @@ export default function ChatScreen() {
   const route = useRoute<RouteParamsProps>()
 
 
-  const { chatUser, id: roomId } = route.params.room
+  const { room: { chatUser, id: roomId }, fromModelScreen } = route.params
 
   const [messages, setMessages] = useState<IMessage[]>([])
   const [RoomGeneralChannel, okReponse] = useChannel(`${CHANNELS.ROOM}:${roomId}`)
@@ -105,11 +99,16 @@ export default function ChatScreen() {
   const goToChatUserScreen = () => {
     if (chatUser.type == 'model') {
       // go to model's profile
-      navigation.navigate(screenNames.PublicModelProfileScreen, {
-        name: chatUser.name,
-        avatarUrl: chatUser.avatarUrl,
-        hash: chatUser.modelHash
-      })
+      if (fromModelScreen) {
+        goBack()
+      } else {
+        navigation.navigate(screenNames.PublicModelProfileScreen, {
+          name: chatUser.name,
+          avatarUrl: chatUser.avatarUrl,
+          hash: chatUser.modelHash
+        })
+      }
+
     } else {
       // go to user's profile
       // TO DO

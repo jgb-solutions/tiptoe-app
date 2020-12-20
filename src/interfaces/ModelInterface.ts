@@ -1,3 +1,5 @@
+import RoomInterface from "./RoomInterface"
+
 export default interface ModelInterface {
 	id: string
 	name: string
@@ -11,4 +13,5 @@ export default interface ModelInterface {
 	photosCount: number
 	followersCount: number
 	followedByMe: boolean
+	roomWithMe?: RoomInterface
 }

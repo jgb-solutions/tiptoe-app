@@ -27,8 +27,12 @@ import usePhotos from '../hooks/usePhotos'
 import { formatToUnits } from '../utils/formatNumber'
 import PhotoInterface from '../interfaces/PhotoInterface'
 import ModelInterface from '../interfaces/ModelInterface'
+import RoomInterface from '../interfaces/RoomInterface'
 import PhotoCard from '../components/PhotoCard'
 import useToggleFollow from '../hooks/useToggleFollow'
+import { screenNames } from '../utils/screens'
+import ChatUserInterface from '../interfaces/ChatUserInterface'
+import NegativeResponse from '../components/NegativeResponse'
 
 type StatsProps = {
   number: number
@@ -48,22 +52,34 @@ type ButtonProps = {
   children: React.ReactNode
   onPress?: () => void
   transparent?: boolean
+  disable?: boolean
 }
 
-const Button = ({ children, style, onPress, transparent }: ButtonProps) => (
-  <TouchableOpacity style={[{
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-    backgroundColor: transparent ? 'transparent' : undefined,
-    ...style
-  }]}
-    onPress={onPress}>
-    {children}
-  </TouchableOpacity>
-)
+const Button = ({
+  children, style, onPress, transparent, disable
+}: ButtonProps) => {
+  const handleOnPress = () => {
+    if (disable) return
+
+    onPress && onPress()
+  }
+
+  return (
+    <TouchableOpacity style={[{
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 6,
+      opacity: disable ? .70 : 1,
+      backgroundColor: transparent ? 'transparent' : undefined,
+      ...style
+    }]}
+      onPress={handleOnPress}>
+      {children}
+    </TouchableOpacity>
+  )
+}
 
 type RouteParamsProps = RouteProp<{
   params: {
@@ -76,7 +92,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window')
 export default function PublicModelProfileScreen() {
   const navigation = useNavigation()
   const route = useRoute<RouteParamsProps>()
-  const { toggleFollow, data: toggleFollowData, error: toggleFollowError } = useToggleFollow()
+  const { toggleFollow, data: toggleFollowData, loading: toggleFollowLoading } = useToggleFollow()
   const modelHash = route.params.hash
   const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
   const {
@@ -88,7 +104,8 @@ export default function PublicModelProfileScreen() {
   const {
     loading: photosLoading,
     error: photosError, data: photosData,
-    loadMorePhotos, hasMorePhotos
+    loadMorePhotos, hasMorePhotos,
+    refetch
   } = usePhotos(modelHash)
   const [model, setModel] = useState<ModelInterface | undefined>()
   const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
@@ -100,19 +117,55 @@ export default function PublicModelProfileScreen() {
   }, [modelData])
 
   React.useEffect(() => {
-    console.log(toggleFollowData)
     if (toggleFollowData) {
       refetchModel()
     }
   }, [toggleFollowData])
 
+  // React.useEffect(() => {
+  //   if (roomdData) {
+  //     goToChatScreen(room)
+  //   }
+  // }, [roomData])
+
   const handleToggleFollow = () => {
+    // TO DO FOR PAYMENT CHECK
+    // if (!false) {
+    //   alert("you have to pay to be able to follow this model.")
+    //   return
+    // }
+
     toggleFollow({ modelId: modelData.model.id })
   }
 
-  const goBack = () => {
-    navigation.goBack()
+  const handleFetchOrCreateChatRoom = () => {
+    const room = modelData.model.roomWithMe
+    if (room) {
+      goToChatScreen({
+        ...room,
+        chatUser: makeChatUserFromModel(modelData.model)
+      })
+    } else {
+      // time to create the room
+      alert('time to create a new room son')
+    }
   }
+
+  const goToChatScreen = (room: RoomInterface) => {
+    navigation.navigate(screenNames.Chat, {
+      room, fromModelScreen: true
+    })
+  }
+
+  const makeChatUserFromModel = (model: ModelInterface): ChatUserInterface => ({
+    id: model.id,
+    name: model.stageName,
+    avatarUrl: model.posterUrl,
+    type: "model",
+    modelHash: model.hash
+  })
+
+  const goBack = () => navigation.goBack()
 
   const goToPhoto = (photo: PhotoInterface) => {
     setCurrentPhoto(photo)
@@ -143,7 +196,15 @@ export default function PublicModelProfileScreen() {
       {modelLoading || photosLoading ? (
         <Spinner color={colors.pink} />
       ) : modelError || photosError ? (
-        <Text>An error occurred</Text>
+        <NegativeResponse>
+          <Text>An error occurred</Text>
+          <Button style={{
+            borderWidth: 1,
+            borderColor: colors.pink,
+            marginTop: 12,
+            padding: 12
+          }} onPress={() => refetch()}><Text>Retry?</Text></Button>
+        </NegativeResponse>
       ) : (
             <FlatList
               showsVerticalScrollIndicator={false}
@@ -199,7 +260,7 @@ export default function PublicModelProfileScreen() {
                               <Button style={{
                                 flex: 1,
                                 backgroundColor: colors.pink
-                              }} onPress={handleToggleFollow}>
+                              }} onPress={handleToggleFollow} disable={toggleFollowLoading}>
                                 <Text style={{ color: colors.white }}>{modelData.model.followedByMe ? 'Unfollow' : 'Follow'}</Text>
                               </Button>
                               <Button style={{
@@ -208,7 +269,7 @@ export default function PublicModelProfileScreen() {
                                 borderWidth: 1,
                                 borderColor: colors.pink,
                                 marginLeft: 4
-                              }}>
+                              }} onPress={handleFetchOrCreateChatRoom}>
                                 <Text style={{ color: colors.black }}>Message</Text>
                               </Button>
                               <Button style={{
@@ -249,6 +310,8 @@ export default function PublicModelProfileScreen() {
               )}
               data={photosData.photos.data}
               keyExtractor={(photo) => photo.hash}
+              onRefresh={refetch}
+              refreshing={photosLoading}
               renderItem={({ item: photo }: { item: PhotoInterface }) => (
                 <TouchableOpacity
                   style={{
