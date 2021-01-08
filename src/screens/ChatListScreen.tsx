@@ -61,7 +61,7 @@ export default function ChatListScreen() {
               keyExtractor={(room) => `${room.id}`}
               renderItem={({ item: room }: { item: RoomInterface }) =>
                 <>
-                  {!!room.messages.length ? (
+                  {!!room.messages.length && (
                     <ListItem avatar onPress={() => handleGoToChatScreen(room)}>
                       <Left>
                         <Thumbnail source={{ uri: room.chatUser.avatarUrl }} />
@@ -74,11 +74,7 @@ export default function ChatListScreen() {
                         <Text note>{dayjs(room.insertedAt).fromNow()}</Text>
                       </Right>
                     </ListItem>
-                  ) : (
-                      <NegativeResponse>
-                        <Text>You have no chats yet.</Text>
-                      </NegativeResponse>
-                    )}
+                  )}
                 </>
               }
               onRefresh={() => refetch()}
