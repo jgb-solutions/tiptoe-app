@@ -93,11 +93,13 @@ export default function Page({
           </Right>
         )}
       </Header>
-      {!noContent ? (
-        <Content contentContainerStyle={[{ ...contentStyle }]}>
-          {children}
-        </Content>
-      ) : <View style={{ flex: 1 }}>{children}</View>}
+      {noContent ? (
+        <View style={{ flex: 1 }}>{children}</View>
+      ) : (
+          <Content contentContainerStyle={{ ...contentStyle }}>
+            {children}
+          </Content>
+        )}
     </Container >
   )
 }

@@ -34,20 +34,13 @@ function TabNavigation() {
       initialRouteName={screenNames.Home}
       tabBarOptions={{
         activeTintColor: colors.pink,
+        inactiveTintColor: colors.black,
         tabStyle: {},
         style: {
           paddingVertical: 5
         },
         showLabel: false
-      }}
-    >
-      {/* <Tab.Screen
-        name={screenNames.PublicModelProfileScreen}
-        component={PublicModelProfileScreen}
-        options={{
-          tabBarVisible: false
-        }}
-      /> */}
+      }}>
       <Tab.Screen
         name={screenNames.Home}
         component={HomeScreen}
@@ -56,7 +49,7 @@ function TabNavigation() {
           tabBarIcon: ({ color, size }) => (
             <Icon name="home" style={{
               fontSize: size,
-              color: color
+              color
             }} />
           ),
         }}
@@ -69,7 +62,7 @@ function TabNavigation() {
           tabBarIcon: ({ color, size }) => (
             <Icon name="search" style={{
               fontSize: size,
-              color: color
+              color
             }} />
           ),
         }}
@@ -84,7 +77,7 @@ function TabNavigation() {
               name="add-circle"
               style={{
                 fontSize: size * 1.9,
-                color: color
+                color
               }} />
           ),
         }}
@@ -97,7 +90,7 @@ function TabNavigation() {
           tabBarIcon: ({ color, size }) => (
             <Icon name="heart" style={{
               fontSize: size,
-              color: color
+              color
             }} />
           ),
           // tabBarBadge: 3
@@ -111,7 +104,7 @@ function TabNavigation() {
           tabBarIcon: ({ color, size }) => (
             <Icon name="person" style={{
               fontSize: size,
-              color: color
+              color
             }} />
           ),
         }}

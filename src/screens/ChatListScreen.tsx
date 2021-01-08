@@ -59,20 +59,28 @@ export default function ChatListScreen() {
               )}
               data={data.me.rooms}
               keyExtractor={(room) => `${room.id}`}
-              renderItem={({ item: room }: { item: RoomInterface }) => (
-                <ListItem avatar onPress={() => handleGoToChatScreen(room)}>
-                  <Left>
-                    <Thumbnail source={{ uri: room.chatUser.avatarUrl }} />
-                  </Left>
-                  <Body>
-                    <Text>{room.chatUser.name}</Text>
-                    <Text note>{room.messages.length > 0 ? room.messages[0].text.substr(0, 39) : null}...</Text>
-                  </Body>
-                  <Right style={{ borderColor: 'transparent' }}>
-                    <Text note>{dayjs(room.insertedAt).fromNow()}</Text>
-                  </Right>
-                </ListItem>
-              )}
+              renderItem={({ item: room }: { item: RoomInterface }) =>
+                <>
+                  {!!room.messages.length ? (
+                    <ListItem avatar onPress={() => handleGoToChatScreen(room)}>
+                      <Left>
+                        <Thumbnail source={{ uri: room.chatUser.avatarUrl }} />
+                      </Left>
+                      <Body>
+                        <Text>{room.chatUser.name}</Text>
+                        <Text note>{room.messages[0].text.substr(0, 39)}...</Text>
+                      </Body>
+                      <Right style={{ borderColor: 'transparent' }}>
+                        <Text note>{dayjs(room.insertedAt).fromNow()}</Text>
+                      </Right>
+                    </ListItem>
+                  ) : (
+                      <NegativeResponse>
+                        <Text>You have no chats yet.</Text>
+                      </NegativeResponse>
+                    )}
+                </>
+              }
               onRefresh={() => refetch()}
               refreshing={loading}
               onEndReachedThreshold={.9}

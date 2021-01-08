@@ -107,11 +107,6 @@ export default function PublicModelProfileScreen() {
             fontWeight: 'bold', color: colors.white
           }}>Your Favorites</Text>
         </Left>
-        <Right style={{ flex: 1 }}>
-          <Button transparent onPress={() => alert('pressed more')}>
-            <Icon name='more' style={{ color: colors.white }} />
-          </Button>
-        </Right>
       </Header>
 
       {loading ? (
