@@ -17,7 +17,7 @@ const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 // export const SOCKET_URL = `ws://${API_HOST || 'localhost'}:4000/socket`
 
 // Production
-export const API_URL = `https://tiptoe.app/api`
+export const API_URL = `https://api.tiptoe.app/api`
 export const SOCKET_URL = `wss://ws.tiptoe.app/socket`
 
 // GraphQL URL
