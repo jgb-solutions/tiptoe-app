@@ -138,11 +138,7 @@ export const FETCH_ROOMS = gql`
 				id
 				insertedAt
 				messages {
-					# id
 					text
-					# user {
-					# 	id
-					# }
 				}
 				chatUser {
 					id
