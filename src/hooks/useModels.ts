@@ -2,15 +2,14 @@ import { useState } from "react"
 import { useQuery } from "@apollo/react-hooks"
 import get from "lodash/get"
 
-import { FETCH_PHOTOS } from "../graphql/queries"
-import { FETCH_PHOTOS_NUMBER } from "../utils/constants"
+import { FETCH_MODELS } from "../graphql/queries"
+import { FETCH_MODELS_NUMBER } from "../utils/constants"
 
 interface FilterProps {
-	modelHash?: string
 	random?: boolean
 }
 
-export default function usePhotos({ modelHash, random }: FilterProps = {}) {
+export default function useModels({ random }: FilterProps = {}) {
 	const [hasMore, setHasMore] = useState(true)
 	const {
 		loading,
@@ -19,17 +18,16 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 		fetchMore,
 		refetch,
 		subscribeToMore,
-	} = useQuery(FETCH_PHOTOS, {
+	} = useQuery(FETCH_MODELS, {
 		variables: {
-			take: FETCH_PHOTOS_NUMBER,
+			take: FETCH_MODELS_NUMBER,
 			orderBy: [{ field: "insertAt", order: "DESC" }],
-			modelHash,
 			random,
 		},
 	})
 
-	const loadMorePhotos = () => {
-		const { currentPage } = data.photos.paginationInfo
+	const loadMoreModels = () => {
+		const { currentPage } = data.models.paginationInfo
 
 		fetchMore({
 			variables: {
@@ -42,15 +40,15 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 				)
 					return
 
-				const oldPhotos = get(previousResult, "photos.data")
-				const { data: newPhotos, ...newInfo } = get(fetchMoreResult, "photos")
+				const oldModels = get(previousResult, "models.data")
+				const { data: newModels, ...newInfo } = get(fetchMoreResult, "models")
 
 				setHasMore(newInfo.paginationInfo.hasMorePages)
 
 				return {
-					photos: {
+					models: {
 						...newInfo,
-						data: [...oldPhotos, ...newPhotos],
+						data: [...oldModels, ...newModels],
 					},
 				}
 			},
@@ -58,12 +56,12 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 	}
 
 	return {
-		photosLoading: loading,
-		photosError: error,
-		photosData: data,
-		loadMorePhotos,
-		hasMorePhotos: hasMore,
-		refetchPhotos: refetch,
-		subscribeToMorePhotos: subscribeToMore,
+		modelsLoading: loading,
+		modelsError: error,
+		modelsData: data,
+		loadMoreModels,
+		hasMoreModels: hasMore,
+		refetchModels: refetch,
+		subscribeToMoreModels: subscribeToMore,
 	}
 }

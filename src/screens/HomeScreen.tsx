@@ -23,17 +23,16 @@ export default function HomeScreen() {
 	const navigation = useNavigation()
 	const { homeData, homeError, homeLoading } = useHomeData()
 	const {
-		loading: photosLoading,
-		error: photosError,
-		data: photosData,
+		photosLoading,
+		photosError,
+		photosData,
 		loadMorePhotos,
-		hasMorePhotos,
-		refetch: refetchPhotos,
-		subscribeToMore
+		refetchPhotos,
+		subscribeToMorePhotos
 	} = usePhotos()
 
 	useEffect(() => {
-		const unsubscribe = subscribeToMore({
+		const unsubscribe = subscribeToMorePhotos({
 			document: PHOTO_UPDATES_SUBSCRIPTION,
 			variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
 			updateQuery: (prev, { subscriptionData }) => {

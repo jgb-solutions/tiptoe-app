@@ -31,7 +31,7 @@ const Tab = createBottomTabNavigator()
 function TabNavigation() {
   return (
     <Tab.Navigator
-      initialRouteName={screenNames.Home}
+      initialRouteName={screenNames.Search}
       tabBarOptions={{
         activeTintColor: colors.pink,
         inactiveTintColor: colors.black,

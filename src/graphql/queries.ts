@@ -81,9 +81,16 @@ export const FETCH_PHOTOS = gql`
 		$take: Int
 		$orderBy: [OrderByClause!]
 		$modelHash: String
+		$random: Boolean
 	) {
 		# Latest 10 photos
-		photos(take: $take, page: $page, orderBy: $orderBy, modelHash: $modelHash) {
+		photos(
+			take: $take
+			page: $page
+			orderBy: $orderBy
+			modelHash: $modelHash
+			random: $random
+		) {
 			data {
 				id
 				hash

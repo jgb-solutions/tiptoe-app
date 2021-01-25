@@ -2,15 +2,10 @@ import { useState } from "react"
 import { useQuery } from "@apollo/react-hooks"
 import get from "lodash/get"
 
-import { FETCH_PHOTOS } from "../graphql/queries"
-import { FETCH_PHOTOS_NUMBER } from "../utils/constants"
+import { FETCH_FAVORITE_PHOTOS } from "../graphql/queries"
+import { FETCH_FAVORITE_PHOTOS_NUMBER } from "../utils/constants"
 
-interface FilterProps {
-	modelHash?: string
-	random?: boolean
-}
-
-export default function usePhotos({ modelHash, random }: FilterProps = {}) {
+export default function useFavoritePhotos() {
 	const [hasMore, setHasMore] = useState(true)
 	const {
 		loading,
@@ -19,17 +14,17 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 		fetchMore,
 		refetch,
 		subscribeToMore,
-	} = useQuery(FETCH_PHOTOS, {
+	} = useQuery(FETCH_FAVORITE_PHOTOS, {
+		fetchPolicy: "network-only",
+		// notifyOnNetworkStatusChange: true,
 		variables: {
-			take: FETCH_PHOTOS_NUMBER,
+			take: FETCH_FAVORITE_PHOTOS_NUMBER,
 			orderBy: [{ field: "insertAt", order: "DESC" }],
-			modelHash,
-			random,
 		},
 	})
 
 	const loadMorePhotos = () => {
-		const { currentPage } = data.photos.paginationInfo
+		const { currentPage } = data.favoritePhotos.paginationInfo
 
 		fetchMore({
 			variables: {
@@ -42,8 +37,11 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 				)
 					return
 
-				const oldPhotos = get(previousResult, "photos.data")
-				const { data: newPhotos, ...newInfo } = get(fetchMoreResult, "photos")
+				const oldPhotos = get(previousResult, "favoritePhotos.data")
+				const { data: newPhotos, ...newInfo } = get(
+					fetchMoreResult,
+					"favoritePhotos"
+				)
 
 				setHasMore(newInfo.paginationInfo.hasMorePages)
 
@@ -58,12 +56,12 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 	}
 
 	return {
-		photosLoading: loading,
-		photosError: error,
-		photosData: data,
+		loading,
+		error,
+		data,
 		loadMorePhotos,
 		hasMorePhotos: hasMore,
-		refetchPhotos: refetch,
-		subscribeToMorePhotos: subscribeToMore,
+		refetch,
+		subscribeToMore,
 	}
 }

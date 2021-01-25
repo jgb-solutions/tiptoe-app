@@ -103,17 +103,17 @@ export default function PublicModelProfileScreen() {
     data: createRoomData
   } = useCreateRoom()
   const {
-    data: modelData,
-    loading: modelLoading,
-    error: modelError,
-    refetch: refetchModel
+    modelData,
+    modelLoading,
+    modelError,
+    refetchModel
   } = useModel(modelHash)
   const {
-    loading: photosLoading,
-    error: photosError, data: photosData,
-    loadMorePhotos, hasMorePhotos,
-    refetch
-  } = usePhotos(modelHash)
+    photosLoading,
+    photosError,
+    photosData,
+    refetchPhotos
+  } = usePhotos({ modelHash })
   const [model, setModel] = useState<ModelInterface | undefined>()
   const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
@@ -214,7 +214,7 @@ export default function PublicModelProfileScreen() {
             borderColor: colors.pink,
             marginTop: 12,
             padding: 12
-          }} onPress={() => refetch()}><Text>Retry?</Text></Button>
+          }} onPress={() => refetchModel()}><Text>Retry?</Text></Button>
         </NegativeResponse>
       ) : (
             <FlatList
@@ -312,17 +312,13 @@ export default function PublicModelProfileScreen() {
               numColumns={3}
               onLayout={event => setThumbWidth(event.nativeEvent.layout.width)}
               ListEmptyComponent={() => (
-                <View style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  paddingTop: 12
-                }}>
+                <NegativeResponse>
                   <Text>That model has no photos yet.</Text>
-                </View>
+                </NegativeResponse>
               )}
               data={photosData.photos.data}
               keyExtractor={(photo) => photo.hash}
-              onRefresh={refetch}
+              onRefresh={() => refetchPhotos()}
               refreshing={photosLoading}
               renderItem={({ item: photo }: { item: PhotoInterface }) => (
                 <TouchableOpacity

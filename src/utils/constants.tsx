@@ -1,4 +1,4 @@
-import { Platform } from "react-native"
+import { Dimensions, Platform } from "react-native"
 
 export const APP_NAME = `TipToe`
 
@@ -39,4 +39,7 @@ export const SUBSCRIPTION_TOPICS = {
 
 export const HOMEPAGE_PER_PAGE_NUMBER = 12
 export const FETCH_PHOTOS_NUMBER = 24
+export const FETCH_MODELS_NUMBER = 24
 export const FETCH_FAVORITE_PHOTOS_NUMBER = 24
+
+export const SCREEN_WIDTH = Dimensions.get('window').width
