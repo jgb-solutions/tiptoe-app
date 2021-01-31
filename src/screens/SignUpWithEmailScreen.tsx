@@ -247,6 +247,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		// backgroundColor: colors.blackB,
+    marginTop:25,
 	},
 	contentContainer: {
 		alignItems: "center",
