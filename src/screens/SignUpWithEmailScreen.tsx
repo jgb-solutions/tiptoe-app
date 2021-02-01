@@ -10,12 +10,9 @@ import {
 	SafeAreaView,
 	TouchableOpacity,
 } from "react-native"
-import { Item, Input } from "native-base"
-
-// import { CheckBox } from "react-native-elements"
 
 import Checkbox from "../components/Checkbox"
-import { Picker } from "@react-native-community/picker"
+import { Picker } from "@react-native-picker/picker"
 
 import { request } from "graphql-request"
 import { useForm, Controller } from "react-hook-form"
@@ -37,6 +34,7 @@ export interface Credentials {
 	type: string
 	gender: string
 	phone: number
+	termsCondition: boolean
 }
 
 export default function SignUpWithEmailScreen() {
@@ -46,6 +44,7 @@ export default function SignUpWithEmailScreen() {
 	const navigation = useNavigation()
 	const [signUpError, setsignUpError] = useState("")
 	const [selectedValue, setSelectedValue] = useState<any | null>(null)
+	const [termsCondition, setTermsCondition] = useState<boolean | false>(false)
 	const { doLogin } = useStore((state: AppStateInterface) => ({
 		doLogin: state.doLogin,
 	}))
@@ -58,9 +57,13 @@ export default function SignUpWithEmailScreen() {
 
 	const handleSignUp = async (credentials: Credentials) => {
 		try {
-			const { signUp: userData } = await request(GRAPHQL_API_URL, SIGN_USER_UP, {
-				input: credentials,
-			})
+			const { signUp: userData } = await request(
+				GRAPHQL_API_URL,
+				SIGN_USER_UP,
+				{
+					input: credentials,
+				}
+			)
 
 			if (errors) {
 				setsignUpError("Your email or password is not valid.")
@@ -171,15 +174,13 @@ export default function SignUpWithEmailScreen() {
 					/>
 
 					<View
-						style={
-							{
-								borderColor: errors.type ? colors.error : colors.black,
-								paddingHorizontal: 10,
-								borderWidth: 0.6,
-								borderRadius: 50,
-                marginBottom: 15,
-							}
-						}
+						style={{
+							borderColor: errors.type ? colors.error : colors.black,
+							paddingHorizontal: 10,
+							borderWidth: 0.6,
+							borderRadius: 50,
+							marginBottom: 15,
+						}}
 					>
 						<Controller
 							name="type"
@@ -187,7 +188,6 @@ export default function SignUpWithEmailScreen() {
 							render={({}) => (
 								<Picker
 									selectedValue={selectedValue}
-									// style={{ width: "50%" }}
 									onValueChange={(itemValue, itemIndex) =>
 										setSelectedValue(itemValue)
 									}
@@ -223,12 +223,40 @@ export default function SignUpWithEmailScreen() {
 							<Text style={styles.errorText}>{errors.gender.message}</Text>
 						)}
 					</View>
+
+					<View style={styles.simpleContainer}>
+						<Controller
+							control={control}
+							name="termsCondition"
+							rules={{
+								required: "You suppose to accept our terms and condition first",
+							}}
+							render={() => (
+								<View style={styles.checkboxesTermsCondition}>
+									<Checkbox
+										checked={termsCondition}
+										onValueChanged={() => setTermsCondition(!termsCondition)}
+										label={""}
+									/>
+									<Text style={{ marginLeft: 10 }}>
+										Accept our term and condition
+									</Text>
+								</View>
+							)}
+						/>
+						{!!errors.termsCondition && !termsCondition && (
+							<Text style={styles.errorText}>
+								{errors.termsCondition.message}
+							</Text>
+						)}
+					</View>
 				</View>
 
 				<FormButton
 					btnStyle={{ marginBottom: 12 }}
 					label="Sign up"
 					onPress={handleSubmit(handleSignUp)}
+					disabled={!termsCondition}
 				/>
 
 				<Text style={styles.smallText}>ALREADY HAVE AN ACCOUNT?</Text>
@@ -246,8 +274,7 @@ export default function SignUpWithEmailScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		// backgroundColor: colors.blackB,
-    marginTop:25,
+		marginTop: 25,
 	},
 	contentContainer: {
 		alignItems: "center",
@@ -267,7 +294,6 @@ const styles = StyleSheet.create({
 	},
 	signUp: {
 		textTransform: "uppercase",
-		// color: colors.lightGrey,
 		fontSize: 24,
 		marginVertical: 20,
 	},
@@ -283,18 +309,12 @@ const styles = StyleSheet.create({
 	},
 	smallText: {
 		textTransform: "uppercase",
-		// color: colors.white,
 		fontSize: 12,
 	},
 	simpleContainer: {
 		flex: 1,
-		// flexDirection: 'row',
-		// justifyContent: "center",
 		alignItems: "center",
-		// height: 50,
 		textAlign: "center",
-		// borderWidth: 0.7,
-		// borderColor: "black",
 		borderRadius: 50,
 		marginBottom: 15,
 	},
@@ -303,6 +323,13 @@ const styles = StyleSheet.create({
 
 		width: "100%",
 		justifyContent: "space-between",
+		marginBottom: 24,
+	},
+	checkboxesTermsCondition: {
+		flexDirection: "row",
+		width: "100%",
+		justifyContent: "flex-start",
+		alignItems: "center",
 		marginBottom: 24,
 	},
 	errorText: {
