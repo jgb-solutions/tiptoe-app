@@ -8,12 +8,13 @@ type Props = {
   label: string,
   labelStyle?: TextStyle,
   icon?: ReactNode,
-  onPress: () => void
+  onPress: () => void,
+  disabled: boolean
 }
 
-const FormButton = ({ btnStyle, label, labelStyle, icon, onPress }: Props) => {
+const FormButton = ({ btnStyle, label, labelStyle, icon, onPress, disabled }: Props) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.btn, btnStyle]}>
+    <TouchableOpacity onPress={onPress} style={[styles.btn, btnStyle]} disabled={disabled}>
       {icon}
       <Text style={[styles.label, labelStyle]}>{label}</Text>
     </TouchableOpacity>
