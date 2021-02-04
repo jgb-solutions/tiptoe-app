@@ -1,5 +1,18 @@
 import gql from "graphql-tag"
 
+export const SIGN_USER_UP = gql`
+	mutation RegisterUser($input: RegisterInput!){
+		register(input: $input) {
+			id
+			name
+			email
+			avatarUrl
+			telephone
+			insertedAt
+		}
+	}
+`
+
 export const ADD_TRACK_MUTATION = gql`
 	mutation AddTrack($input: TrackInput!) {
 		addTrack(input: $input) {
