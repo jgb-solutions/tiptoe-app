@@ -136,7 +136,6 @@ function MainNavigation() {
             <Stack.Screen name={screenNames.LogIn} component={LogInWithEmailScreen} />
             <Stack.Screen name={screenNames.SignUp} component={SignUpWithEmailScreen} />
           </Stack.Navigator>
-
         )}
     </NavigationContainer>
   )
