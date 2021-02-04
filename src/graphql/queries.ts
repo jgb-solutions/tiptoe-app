@@ -555,22 +555,6 @@ export const LOG_USER_IN = gql`
 	}
 `
 
-export const SIGN_USER_UP = gql`
-	query signUserUp($input: SignupInput!) {
-		login(input: $input) {
-			token
-			data {
-				id
-				name
-				email
-				avatarUrl
-				telephone
-				insertedAt
-			}
-		}
-	}
-`
-
 export const FACEBOOK_LOGIN_URL = gql`
 	query facebookLoginUrl {
 		facebookLoginUrl {
