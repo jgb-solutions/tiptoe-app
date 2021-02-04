@@ -9,12 +9,12 @@ const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 // export const SOCKET_URL = `ws://192.168.0.102:4000/socket`
 
 // NouKod Media
-export const API_URL = `http://10.228.149.147:4000`
-export const SOCKET_URL = `ws://10.228.149.147:4000/socket`
+// export const API_URL = `http://10.228.149.147:4000`
+// export const SOCKET_URL = `ws://10.228.149.147:4000/socket`
 
 // Localhost
-// export const API_URL = `http://${API_HOST || 'localhost'}:4000`
-// export const SOCKET_URL = `ws://${API_HOST || 'localhost'}:4000/socket`
+export const API_URL = `http://${API_HOST || 'localhost'}:4000`
+export const SOCKET_URL = `ws://${API_HOST || 'localhost'}:4000/socket`
 
 // Production
 // export const API_URL = `https://api.tiptoe.app`
