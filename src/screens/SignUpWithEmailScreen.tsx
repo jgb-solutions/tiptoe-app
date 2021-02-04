@@ -12,7 +12,6 @@ import {
 } from "react-native"
 
 import Checkbox from "../components/Checkbox"
-import { Picker } from "@react-native-picker/picker"
 
 import { request } from "graphql-request"
 import { useForm, Controller } from "react-hook-form"
@@ -20,25 +19,24 @@ import { useNavigation } from "@react-navigation/native"
 
 import { colors } from "../utils/colors"
 import FormInput from "../components/FormInput"
-import { SIGN_USER_UP } from "../graphql/queries"
+import { SIGN_USER_UP } from "../graphql/mutations"
 import FormButton from "../components/FormButton"
 import useStore, { AppStateInterface } from "../store"
 import { GRAPHQL_API_URL } from "../utils/constants"
 const TipToeLogo = require("../../assets/images/TipToeLogo.png")
+import SelectPicker from "react-native-form-select-picker"
 
 export interface Credentials {
-	lastName: string
-	firstName: string
+	name: string
 	email: string
 	password: string
 	type: string
 	gender: string
-	phone: number
-	termsCondition: boolean
+	telephone: number
 }
 
 export default function SignUpWithEmailScreen() {
-	const { control, handleSubmit, errors, register } = useForm<Credentials>({
+	const { control, handleSubmit, errors } = useForm<Credentials>({
 		mode: "onBlur",
 	})
 	const navigation = useNavigation()
@@ -52,8 +50,6 @@ export default function SignUpWithEmailScreen() {
 	const genres = ["male", "female", "other"]
 
 	const [gender, setGender] = useState("")
-
-	// console.error(selectedValue)
 
 	const handleSignUp = async (credentials: Credentials) => {
 		try {
@@ -78,6 +74,8 @@ export default function SignUpWithEmailScreen() {
 		}
 	}
 
+	// const options = ["Viewer", "Model"]
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView contentContainerStyle={styles.contentContainer}>
@@ -92,32 +90,15 @@ export default function SignUpWithEmailScreen() {
 						render={({ onChange, onBlur, value }) => (
 							<FormInput
 								onBlur={onBlur}
-								autoCapitalize="none"
+					 			autoCapitalize="none"
 								onChangeText={(value) => onChange(value)}
 								value={value}
-								placeholder="Enter Your First Name"
-								error={errors.lastName}
+								placeholder="Enter Your Full Name"
+								error={errors.name}
 							/>
 						)}
-						name="lastName"
-						rules={{ required: "The last name is required" }}
-						defaultValue=""
-					/>
-
-					<Controller
-						control={control}
-						render={({ onChange, onBlur, value }) => (
-							<FormInput
-								onBlur={onBlur}
-								autoCapitalize="none"
-								onChangeText={(value) => onChange(value)}
-								value={value}
-								placeholder="Enter Your Last Name"
-								error={errors.lastName}
-							/>
-						)}
-						name="firstName"
-						rules={{ required: "The last name is required" }}
+						name="name"
+						rules={{ required: "The full name is required" }}
 						defaultValue=""
 					/>
 
@@ -165,10 +146,10 @@ export default function SignUpWithEmailScreen() {
 								onChangeText={(value) => onChange(value)}
 								value={value}
 								placeholder="Enter Your Phone"
-								error={errors.phone}
+								error={errors.telephone}
 							/>
 						)}
-						name="phone"
+						name="telephone"
 						rules={{ required: "The phone is required" }}
 						defaultValue=""
 					/>
@@ -186,15 +167,23 @@ export default function SignUpWithEmailScreen() {
 							name="type"
 							control={control}
 							render={({}) => (
-								<Picker
-									selectedValue={selectedValue}
-									onValueChange={(itemValue, itemIndex) =>
-										setSelectedValue(itemValue)
-									}
+								<SelectPicker
+									onValueChange={(value) => {
+										setSelectedValue(value)
+									}}
+									selected={selectedValue}
+									style={{ flexDirection: "row", justifyContent: "center" }}
+									onSelectedStyle={{ color: "#252525", fontSize: 16 }}
+									placeholder="Signup as"
+									placeholderStyle={{
+										textAlign: "center",
+										fontSize: 15,
+										color: "#757575",
+									}}
 								>
-									<Picker.Item label="Sign up as a viewer" value="viewer" />
-									<Picker.Item label="Sign up as a model" value="model" />
-								</Picker>
+									<SelectPicker.Item label={"Viewer"} value={"viewer"} />
+									<SelectPicker.Item label={"Model"} value={"model"} />
+								</SelectPicker>
 							)}
 						/>
 					</View>
@@ -225,38 +214,29 @@ export default function SignUpWithEmailScreen() {
 					</View>
 
 					<View style={styles.simpleContainer}>
-						<Controller
-							control={control}
-							name="termsCondition"
-							rules={{
-								required: "You suppose to accept our terms and condition first",
-							}}
-							render={() => (
-								<View style={styles.checkboxesTermsCondition}>
-									<Checkbox
-										checked={termsCondition}
-										onValueChanged={() => setTermsCondition(!termsCondition)}
-										label={""}
-									/>
-									<Text style={{ marginLeft: 10 }}>
-										Accept our term and condition
-									</Text>
-								</View>
-							)}
-						/>
-						{!!errors.termsCondition && !termsCondition && (
-							<Text style={styles.errorText}>
-								{errors.termsCondition.message}
+						<View style={styles.checkboxesTermsCondition}>
+							<Checkbox
+								checked={termsCondition}
+								onValueChanged={() => setTermsCondition(!termsCondition)}
+								label={""}
+							/>
+							<Text style={{ marginLeft: 10 }}>
+								<TouchableOpacity
+									onPress={() => navigation.navigate("TermsCondition")}
+								>
+									<Text>Accept our terms and condition</Text>
+								</TouchableOpacity>
 							</Text>
-						)}
+						</View>
 					</View>
 				</View>
 
 				<FormButton
-					btnStyle={{ marginBottom: 12 }}
+					btnStyle={{ marginBottom: 12, }}
 					label="Sign up"
 					onPress={handleSubmit(handleSignUp)}
 					disabled={!termsCondition}
+					color={{ color: termsCondition ? colors.black : colors.lightGrey }}
 				/>
 
 				<Text style={styles.smallText}>ALREADY HAVE AN ACCOUNT?</Text>
@@ -274,7 +254,8 @@ export default function SignUpWithEmailScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		marginTop: 25,
+		marginTop: 0,
+		backgroundColor: colors.white,
 	},
 	contentContainer: {
 		alignItems: "center",
@@ -298,7 +279,8 @@ const styles = StyleSheet.create({
 		marginVertical: 20,
 	},
 	signUpError: {
-		textTransform: "uppercase",
+		textAlign: "center",
+		// textTransform: "uppercase",
 		color: colors.red,
 		fontSize: 18,
 		marginVertical: 20,
