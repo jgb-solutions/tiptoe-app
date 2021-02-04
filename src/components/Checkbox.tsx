@@ -52,11 +52,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 36,
     height: 36,
-    backgroundColor: colors.black,
+    backgroundColor: colors.white,
     borderRadius: 6,
+    borderColor: colors.black,
+    borderWidth: 1
   },
   label: {
-    color: colors.lightGrey,
+    color: colors.blackOpact,
     textTransform: "uppercase",
     fontSize: 10,
     marginLeft: 6,
