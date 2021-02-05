@@ -30,28 +30,44 @@ export interface Credentials {
 	name: string
 	email: string
 	password: string
-	type: string
+	userType: string
 	gender: string
 	telephone: number
 }
 
+enum UserType {
+	CONSUMER,
+	MODEL,
+}
+
+enum Gender {
+	FEMALE,
+	MALE,
+	OTHER,
+}
+
 export default function SignUpWithEmailScreen() {
-	const { control, handleSubmit, errors } = useForm<Credentials>({
+	const { control, handleSubmit, errors, formState } = useForm<Credentials>({
 		mode: "onBlur",
 	})
 	const navigation = useNavigation()
 	const [signUpError, setsignUpError] = useState("")
-	const [selectedValue, setSelectedValue] = useState<any | null>(null)
+	const [userType, setUserType] = useState<any | UserType>()
 	const [termsCondition, setTermsCondition] = useState<boolean | false>(false)
 	const { doLogin } = useStore((state: AppStateInterface) => ({
 		doLogin: state.doLogin,
 	}))
+	const [gender, setGender] = useState<any | Gender>()
 
-	const genres = ["male", "female", "other"]
+	const { isValid } = formState
+	const userTypeGender = !!userType && !!gender
 
-	const [gender, setGender] = useState("")
+	const formIsValid = isValid && userTypeGender
 
 	const handleSignUp = async (credentials: Credentials) => {
+		credentials.userType = userType
+		credentials.gender = gender
+		console.error(credentials)
 		try {
 			const { signUp: userData } = await request(
 				GRAPHQL_API_URL,
@@ -60,6 +76,7 @@ export default function SignUpWithEmailScreen() {
 					input: credentials,
 				}
 			)
+			console.error(userData)
 
 			if (errors) {
 				setsignUpError("Your email or password is not valid.")
@@ -73,8 +90,6 @@ export default function SignUpWithEmailScreen() {
 			setsignUpError(error.response.errors[0].message)
 		}
 	}
-
-	// const options = ["Viewer", "Model"]
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -90,7 +105,7 @@ export default function SignUpWithEmailScreen() {
 						render={({ onChange, onBlur, value }) => (
 							<FormInput
 								onBlur={onBlur}
-					 			autoCapitalize="none"
+								autoCapitalize="none"
 								onChangeText={(value) => onChange(value)}
 								value={value}
 								placeholder="Enter Your Full Name"
@@ -156,7 +171,7 @@ export default function SignUpWithEmailScreen() {
 
 					<View
 						style={{
-							borderColor: errors.type ? colors.error : colors.black,
+							borderColor: errors.userType ? colors.error : colors.black,
 							paddingHorizontal: 10,
 							borderWidth: 0.6,
 							borderRadius: 50,
@@ -164,49 +179,61 @@ export default function SignUpWithEmailScreen() {
 						}}
 					>
 						<Controller
-							name="type"
+							name="userType"
 							control={control}
-							render={({}) => (
+							as={
 								<SelectPicker
 									onValueChange={(value) => {
-										setSelectedValue(value)
+										setUserType(value)
 									}}
-									selected={selectedValue}
+									selected={userType}
 									style={{ flexDirection: "row", justifyContent: "center" }}
-									onSelectedStyle={{ color: "#252525", fontSize: 16 }}
 									placeholder="Signup as"
 									placeholderStyle={{
 										textAlign: "center",
-										fontSize: 15,
-										color: "#757575",
+										fontSize: 18,
 									}}
 								>
-									<SelectPicker.Item label={"Viewer"} value={"viewer"} />
-									<SelectPicker.Item label={"Model"} value={"model"} />
+									<SelectPicker.Item label={"Consumer"} value={"CONSUMER"} />
+									<SelectPicker.Item label={"Model"} value={"MODEL"} />
 								</SelectPicker>
-							)}
+							}
 						/>
+						{!!errors.userType && !userType && (
+							<Text style={styles.errorText}>{errors.userType.message}</Text>
+						)}
 					</View>
 
-					<View style={styles.simpleContainer}>
-						<Text style={{ margin: 10 }}>Check for your gender</Text>
-
+					<View
+						style={{
+							borderColor: errors.userType ? colors.error : colors.black,
+							paddingHorizontal: 10,
+							borderWidth: 0.6,
+							borderRadius: 50,
+							marginBottom: 15,
+						}}
+					>
 						<Controller
-							control={control}
 							name="gender"
-							rules={{ required: "The gender is required" }}
-							render={() => (
-								<View style={styles.checkboxesContainer}>
-									{genres.map((genre) => (
-										<Checkbox
-											key={genre}
-											checked={gender === genre}
-											onValueChanged={() => setGender(genre)}
-											label={genre}
-										/>
-									))}
-								</View>
-							)}
+							control={control}
+							as={
+								<SelectPicker
+									onValueChange={(value) => {
+										setGender(value)
+									}}
+									selected={gender}
+									style={{ flexDirection: "row", justifyContent: "center" }}
+									placeholder="Check for your gender"
+									placeholderStyle={{
+										textAlign: "center",
+										fontSize: 18,
+									}}
+								>
+									<SelectPicker.Item label={"Male"} value={"MALE"} />
+									<SelectPicker.Item label={"Female"} value={"FEMALE"} />
+									<SelectPicker.Item label={"Other"} value={"OTHER"} />
+								</SelectPicker>
+							}
 						/>
 						{!!errors.gender && !gender && (
 							<Text style={styles.errorText}>{errors.gender.message}</Text>
@@ -232,10 +259,10 @@ export default function SignUpWithEmailScreen() {
 				</View>
 
 				<FormButton
-					btnStyle={{ marginBottom: 12, }}
+					btnStyle={{ marginBottom: 12 }}
 					label="Sign up"
 					onPress={handleSubmit(handleSignUp)}
-					disabled={!termsCondition}
+					disabled={(formIsValid && !termsCondition)}
 					color={{ color: termsCondition ? colors.black : colors.lightGrey }}
 				/>
 
