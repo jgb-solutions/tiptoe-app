@@ -69,21 +69,20 @@ export default function SignUpWithEmailScreen() {
 		credentials.gender = gender
 		console.error(credentials)
 		try {
-			const { signUp: userData } = await request(
+			const { register: userData } = await request(
 				GRAPHQL_API_URL,
 				SIGN_USER_UP,
 				{
 					input: credentials,
 				}
 			)
-			console.error(userData)
-
-			if (errors) {
-				setsignUpError("Your email or password is not valid.")
-			}
 
 			if (userData) {
 				doLogin(userData)
+			}
+
+			if (errors) {
+				setsignUpError("something went wrong. Please check again")
 			}
 		} catch (error) {
 			console.log(JSON.stringify(error.response.errors[0].message))
