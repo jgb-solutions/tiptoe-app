@@ -3,12 +3,18 @@ import gql from "graphql-tag"
 export const SIGN_USER_UP = gql`
 	mutation RegisterUser($input: RegisterInput!){
 		register(input: $input) {
-			id
-			name
-			email
-			avatarUrl
-			telephone
-			insertedAt
+			data{
+				id
+				name
+				email
+				firstLogin
+				avatarUrl
+				telephone
+				insertedAt
+				userType 
+				gender
+			  }
+			  token
 		}
 	}
 `
