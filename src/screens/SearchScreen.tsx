@@ -138,7 +138,7 @@ export default function PublicModelProfileScreen() {
         </Item>
       </Header>
 
-      <Segment>
+      <Segment style={{ backgroundColor: colors.white }}>
         {segmentOptions.map((segmentName, index) => (
           <Button
             first={index === 0}

@@ -23,6 +23,7 @@ const getClient = () => {
 		websocketLink,
 		httpLink
 	)
+
 	return new ApolloClient({
 		link: ApolloLink.from([
 			onError(({ graphQLErrors, networkError }) => {
