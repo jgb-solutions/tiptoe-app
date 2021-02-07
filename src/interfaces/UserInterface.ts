@@ -11,5 +11,7 @@ export default interface UserInterface {
 	model?: ModelInterface
 	name: string
 	telephone: string
+	userType: string
+	gender: string
 	updatedAt: Date
 }
