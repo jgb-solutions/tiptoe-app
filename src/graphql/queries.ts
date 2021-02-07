@@ -547,9 +547,12 @@ export const LOG_USER_IN = gql`
 				id
 				name
 				email
+				firstLogin
 				avatarUrl
 				telephone
 				insertedAt
+				userType 
+				gender
 			}
 		}
 	}
