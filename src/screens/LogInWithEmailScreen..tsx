@@ -124,7 +124,7 @@ export default function LogInWithEmailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: colors.blackB,
+		backgroundColor: colors.white,
   },
   contentContainer: {
     alignItems: 'center',

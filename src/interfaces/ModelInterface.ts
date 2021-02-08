@@ -9,6 +9,7 @@ export default interface ModelInterface {
 	bio: string
 	facebookUrl: string
 	twitterUrl: string
+	youtubeUrl: string
 	instagramUrl: string
 	photosCount: number
 	followersCount: number

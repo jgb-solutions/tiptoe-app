@@ -1,9 +1,9 @@
 import gql from "graphql-tag"
 
 export const SIGN_USER_UP = gql`
-	mutation RegisterUser($input: RegisterInput!){
+	mutation RegisterUser($input: RegisterInput!) {
 		register(input: $input) {
-			data{
+			data {
 				id
 				name
 				email
@@ -11,14 +11,46 @@ export const SIGN_USER_UP = gql`
 				avatarUrl
 				telephone
 				insertedAt
-				userType 
+				userType
 				gender
-			  }
-			  token
+				model {
+					bio
+					facebookUrl
+					insertedAt
+					instagramUrl
+					name
+					twitterUrl
+					youtubeUrl
+				}
+			}
+			token
 		}
 	}
 `
 
+export const UPDATE_USER = gql`
+	mutation UpdateUser($input: UpdateUserInput!) {
+		updateUser(input: $input) {
+			id
+			name
+			email
+			firstLogin
+			avatarUrl
+			telephone
+			insertedAt
+			userType
+			gender
+			model {
+				bio
+				facebookUrl
+				instagramUrl
+				name
+				twitterUrl
+				youtubeUrl
+			}
+		}
+	}
+`
 
 export const ADD_GENRE_MUTATION = gql`
 	mutation AddGenre($input: GenreInput!) {
@@ -36,7 +68,6 @@ export const LOG_OUT_MUTATION = gql`
 		}
 	}
 `
-
 
 export const TOGGLE_LIKE = gql`
 	mutation ToggleLike($input: ToggleLikeInput!) {
@@ -58,22 +89,6 @@ export const TOGGLE_FOLLOW = gql`
 	mutation ToggleFollow($input: ToggleFollowInput!) {
 		toggleFollow(input: $input) {
 			success
-		}
-	}
-`
-
-
-
-export const UPDATE_USER = gql`
-	mutation UpdateUser($input: UpdateUserInput!) {
-		updateUser(input: $input) {
-			id
-			name
-			email
-			active
-			avatar_url
-			telephone
-			insertAt
 		}
 	}
 `

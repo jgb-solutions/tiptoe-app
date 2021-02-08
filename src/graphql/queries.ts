@@ -551,8 +551,17 @@ export const LOG_USER_IN = gql`
 				avatarUrl
 				telephone
 				insertedAt
-				userType 
+				userType
 				gender
+				model {
+					bio
+					facebookUrl
+					insertedAt
+					instagramUrl
+					name
+					twitterUrl
+					youtubeUrl
+				}
 			}
 		}
 	}
