@@ -42,10 +42,6 @@ export default function LogInWithEmailScreen() {
         { input: credentials },
       )
 
-      if (errors) {
-        setLoginError("Your email or password is not valid.")
-      }
-
       if (userData) {
         doLogin(userData)
       }
