@@ -8,28 +8,25 @@ const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 let API_URL_ = ''
 let SOCKET_URL_ = ''
 
-switch (Constants.manifest.env.EXPO_APP_ENV) {
-  case 'staging':
-    API_URL_ = `https://api.tiptoe.app`
-    SOCKET_URL_ = `wss://ws.tiptoe.app/socket`
-    break
-  case 'prod':
-    API_URL_ = `https://api.tiptoe.app`
-    SOCKET_URL_ = `wss://ws.tiptoe.app/socket`
-    break
-  case 'lan':
-    // Air Fiber
-    // export const API_URL_ = `http://192.168.0.102:4000`
-    // export const SOCKET_URL_ = `ws://192.168.0.102:4000/socket`
+if (Constants.manifest.env.EXPO_APP_ENV) {
+  switch (Constants.manifest.env.EXPO_APP_ENV) {
+    case 'lan':
+      // Air Fiber
+      // export const API_URL_ = `http://192.168.0.102:4000`
+      // export const SOCKET_URL_ = `ws://192.168.0.102:4000/socket`
 
-    // NouKod Media
-    API_URL_ = `http://10.228.149.147:4000`
-    SOCKET_URL_ = `ws://10.228.149.147:4000/socket`
-    break
-  default:
-    API_URL_ = `http://${API_HOST || 'localhost'}:4000`
-    SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
-    break
+      // NouKod Media
+      API_URL_ = `http://10.228.149.147:4000`
+      SOCKET_URL_ = `ws://10.228.149.147:4000/socket`
+      break
+    default:
+      API_URL_ = `http://${API_HOST || 'localhost'}:4000`
+      SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
+      break
+  }
+} else {
+  API_URL_ = `https://api.tiptoe.app`
+  SOCKET_URL_ = `wss://ws.tiptoe.app/socket`
 }
 
 export const API_URL = API_URL_
