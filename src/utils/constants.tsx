@@ -1,24 +1,38 @@
+import Constants from 'expo-constants'
 import { Dimensions, Platform } from "react-native"
+
+const releaseChannel = Constants.manifest.releaseChannel
 
 export const APP_NAME = `TipToe`
 
 const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 
-// Air Fiber
-// export const API_URL = `http://192.168.0.102:4000`
-// export const SOCKET_URL = `ws://192.168.0.102:4000/socket`
+let API_URL_ = ''
+let SOCKET_URL_ = ''
 
-// NouKod Media
-// export const API_URL = `http://10.228.149.147:4000`
-// export const SOCKET_URL = `ws://10.228.149.147:4000/socket`
+switch (Constants.manifest.env.EXPO_APP_ENV) {
+  case 'staging':
+    API_URL_ = `https://api.tiptoe.app`
+    SOCKET_URL_ = `wss://ws.tiptoe.app/socket`
+  case 'prod':
+    API_URL_ = `https://api.tiptoe.app`
+    SOCKET_URL_ = `wss://ws.tiptoe.app/socket`
+  case 'lan':
+    // Air Fiber
+    // export const API_URL_ = `http://192.168.0.102:4000`
+    // export const SOCKET_URL_ = `ws://192.168.0.102:4000/socket`
 
-// Localhost
-export const API_URL = `http://${API_HOST || 'localhost'}:4000`
-export const SOCKET_URL = `ws://${API_HOST || 'localhost'}:4000/socket`
+    // NouKod Media
+    API_URL_ = `http://10.228.149.147:4000`
+    SOCKET_URL_ = `ws://10.228.149.147:4000/socket`
+  default:
+    API_URL_ = `http://${API_HOST || 'localhost'}:4000`
+    SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
+}
 
-// Production
-// export const API_URL = `https://api.tiptoe.app`
-// export const SOCKET_URL = `wss://ws.tiptoe.app/socket`
+export const API_URL = API_URL_
+export const SOCKET_URL = SOCKET_URL_
+
 
 // GraphQL URL
 export const GRAPHQL_API_URL = `${API_URL}/graphql`

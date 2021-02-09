@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { screenNames } from "../utils/screens"
 import { Text, View, Button, Item, Input, Label } from "native-base"
+import * as Permissions from 'expo-permissions'
+
 import { colors } from "../utils/colors"
 import {
 	StyleSheet,
 	TouchableOpacity,
 	Image,
-	TextStyle,
 	ScrollView,
 	Platform,
 } from "react-native"
@@ -15,75 +16,59 @@ import { useForm, Controller } from "react-hook-form"
 import SelectPicker from "react-native-form-select-picker"
 import * as ImagePicker from "expo-image-picker"
 import Textarea from "react-native-textarea"
-import { request } from "graphql-request"
 
 // Local imports
 import Page from "../components/layouts/Page"
 import useStore, { AppStateInterface } from "../store"
-import { UPDATE_USER } from "../graphql/mutations"
-import { GRAPHQL_API_URL } from "../utils/constants"
+import UserInterface from "../interfaces/UserInterface"
+import useUpdateUser from '../hooks/useUpdateUser'
 
-export interface Credentials {
-	name: string
-	email: string
-	gender: string
-	telephone: number
-	avatarUrl: string
-	modelName: string
-	facebookUrl: string
-	instagramUrl: string
-	twitterUrl: string
-	youtubeUrl: string
-	bio: string
-}
+const GENDERS = ['Male', 'Female', 'Other']
 
 export default function UpdateInfoScreen() {
 	const navigation = useNavigation()
 	const currentUser = useStore((state: AppStateInterface) => (state.authData.data))
-
-	const { control, handleSubmit, errors, formState } = useForm<Credentials>({
+	const { control, handleSubmit } = useForm<UserInterface>({
 		mode: "onBlur",
+		defaultValues: currentUser
 	})
-
-
 	const [avatarUrl, setAvatarUrl] = useState<any | null>()
-	const [name, setName] = useState<any | null>()
-	const [email, setEmail] = useState<any | null>()
-	const [gender, setGender] = useState<any | null>()
-	const [telephone, setTelephone] = useState<any | null>()
-
-	const [modelName, setModelName] = useState<any | null>()
-	const [facebookUrl, setFacebookUrl] = useState<any | null>()
-	const [instagramUrl, setInstagramUrl] = useState<any | null>()
-	const [twitterUrl, setTwitterUrl] = useState<any | null>()
-	const [youtubeUrl, setYoutubeUrl] = useState<any | null>()
-	const [bio, setBio] = useState<any | null>()
-
-	const onSubmit = (credentials: Credentials)  => {
-		console.error(credentials)
-	}
+	const { updateUser, data } = useUpdateUser()
 
 	useEffect(() => {
-		;(async () => {
-			if (Platform.OS !== "web") {
-				const { status } = await ImagePicker.requestCameraRollPermissionsAsync()
-				if (status !== "granted") {
-					alert("Sorry, we need camera roll permissions to make this work!")
-				}
-			}
-		})()
-	}, [])
+		if (data) {
+			alert("Your profile has been updated.")
+		}
+	}, [data])
+
+	const onSubmit = (credentials: any) => {
+		updateUser(credentials)
+	}
+
+	const getPermissionForPhotos = async () => {
+		const { status } = await ImagePicker.requestCameraRollPermissionsAsync()
+
+		if (status !== "granted") {
+			alert("Sorry, we need camera roll permissions to make this work!")
+		}
+	}
 
 	const pickImage = async () => {
+		const { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL)
+
+		if (status !== 'granted') {
+			await getPermissionForPhotos()
+		}
+
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
+			aspect: [1, 1],
+			quality: .75,
 		})
 
 		if (!result.cancelled) {
-			avatarUrl(result.uri)
+			setAvatarUrl(result.uri)
 		}
 	}
 
@@ -109,7 +94,6 @@ export default function UpdateInfoScreen() {
 						<Text style={styles.headerBoxText}>Change Profile Photo</Text>
 					</TouchableOpacity>
 				</View>
-
 				<View>
 					<Item style={styles.items}>
 						<View style={styles.inputContainer}>
@@ -119,13 +103,12 @@ export default function UpdateInfoScreen() {
 								render={({ onChange, onBlur, value }) => (
 									<Input
 										style={{ paddingLeft: 9 }}
-										value={name ? name : currentUser?.name}
-										onChangeText={(value) => setName(value)}
+										value={value}
+										onChangeText={(value) => onChange(value)}
 									/>
 								)}
 								name="name"
 								rules={{ required: "The full name is required" }}
-								
 							/>
 						</View>
 					</Item>
@@ -138,8 +121,8 @@ export default function UpdateInfoScreen() {
 								render={({ onChange, onBlur, value }) => (
 									<Input
 										style={{ paddingLeft: 9 }}
-										value={email ? email : currentUser?.email}
-										onChangeText={(value) => setEmail(value)}
+										value={value}
+										onChangeText={(value) => onChange(value)}
 									/>
 								)}
 								name="email"
@@ -157,19 +140,17 @@ export default function UpdateInfoScreen() {
 								control={control}
 								render={({ onChange, onBlur, value }) => (
 									<SelectPicker
-										onValueChange={(value) => {
-											setGender(value)
-										}}
-										selected="MALE"
-										placeholder={gender ? gender : currentUser?.gender}
+										onValueChange={onChange}
+										selected={value}
+										placeholder="Select your gender"
 										placeholderStyle={{
 											fontSize: 18,
 											color: "#000",
 										}}
 									>
-										<SelectPicker.Item label={"Male"} value={"MALE"} />
-										<SelectPicker.Item label={"Female"} value={"FEMALE"} />
-										<SelectPicker.Item label={"Other"} value={"OTHER"} />
+										{GENDERS.map((gender, index) => (
+											<SelectPicker.Item key={index} label={gender} value={gender.toLowerCase()} />
+										))}
 									</SelectPicker>
 								)}
 							/>
@@ -184,13 +165,12 @@ export default function UpdateInfoScreen() {
 								render={({ onChange, onBlur, value }) => (
 									<Input
 										style={{ paddingLeft: 9 }}
-										value={telephone ? telephone : currentUser?.telephone}
-										onChangeText={(value) => setTelephone(value)}
+										value={value}
+										onChangeText={(value) => onChange(value)}
 									/>
 								)}
 								name="telephone"
 								rules={{ required: "The full phone field is required" }}
-								defaultValue={telephone ? telephone : currentUser?.telephone}
 							/>
 						</View>
 					</Item>
@@ -206,89 +186,84 @@ export default function UpdateInfoScreen() {
 										render={({ onChange, onBlur, value }) => (
 											<Input
 												style={{ paddingLeft: 9 }}
-												value={modelName ? modelName : currentUser.model?.name}
-												onChangeText={(value) => setModelName(value)}
+												value={value}
+												onChangeText={(value) => onChange(value)}
 											/>
 										)}
-										name="modelName"
+										name="model.name"
 										rules={{ required: "The model name is required" }}
-										defaultValue={modelName ? modelName : currentUser.model?.name}
 									/>
 								</View>
 							</Item>
 
 							<Item style={styles.items}>
 								<View style={styles.inputContainer}>
-									<Label style={styles.label}>Facebook Url</Label>
+									<Label style={styles.label}>Facebook Link</Label>
 									<Controller
 										control={control}
 										render={({ onChange, onBlur, value }) => (
 											<Input
 												style={{ paddingLeft: 9 }}
-												value={facebookUrl ? facebookUrl : currentUser.model?.facebookUrl}
-												onChangeText={(value) => setFacebookUrl(value)}
-												placeholder="Put The Facebook Url Here"
+												value={value}
+												onChangeText={(value) => onChange(value)}
+												placeholder="Put The Facebook Link Here"
 											/>
 										)}
-										name="facebookUrl"
-										defaultValue={facebookUrl ? facebookUrl : currentUser.model?.facebookUrl}
+										name="model.facebook"
 									/>
 								</View>
 							</Item>
 
 							<Item style={styles.items}>
 								<View style={styles.inputContainer}>
-									<Label style={styles.label}>Instagram Url</Label>
+									<Label style={styles.label}>Instagram Link</Label>
 									<Controller
 										control={control}
 										render={({ onChange, onBlur, value }) => (
 											<Input
 												style={{ paddingLeft: 9 }}
-												value={ instagramUrl ? instagramUrl : currentUser.model?.instagramUrl }
-												onChangeText={(value) => setInstagramUrl(value)}
-												placeholder="Put The Instagram Url Here"
+												value={value}
+												onChangeText={(value) => onChange(value)}
+												placeholder="Put The Instagram Link Here"
 											/>
 										)}
-										name="instagramUrl"
-										defaultValue={instagramUrl ? instagramUrl : currentUser.model?.instagramUrl }
+										name="model.instagram"
 									/>
 								</View>
 							</Item>
 
 							<Item style={styles.items}>
 								<View style={styles.inputContainer}>
-									<Label style={styles.label}>Twitter Url</Label>
+									<Label style={styles.label}>Twitter Link</Label>
 									<Controller
 										control={control}
 										render={({ onChange, onBlur, value }) => (
 											<Input
 												style={{ paddingLeft: 9 }}
-												value={ twitterUrl ? twitterUrl : currentUser.model?.twitterUrl}
-												onChangeText={(value) => setTwitterUrl(value)}
-												placeholder="Put The Twitter Url Here"
+												value={value}
+												onChangeText={(value) => onChange(value)}
+												placeholder="Put The Twitter Link Here"
 											/>
 										)}
-										name="twitterUrl"
-										defaultValue={twitterUrl ? twitterUrl : currentUser.model?.twitterUrl}
+										name="model.twitter"
 									/>
 								</View>
 							</Item>
 
 							<Item style={styles.items}>
 								<View style={styles.inputContainer}>
-									<Label style={styles.label}>Youtube Url</Label>
+									<Label style={styles.label}>Youtube Link</Label>
 									<Controller
 										control={control}
 										render={({ onChange, onBlur, value }) => (
 											<Input
 												style={{ paddingLeft: 9 }}
-												value={youtubeUrl ? youtubeUrl : currentUser.model?.youtubeUrl}
-												onChangeText={(value) => setYoutubeUrl(value)}
-												placeholder="Put The Youtube Url Here"
+												value={value}
+												onChangeText={(value) => onChange(value)}
+												placeholder="Put The Youtube Link Here"
 											/>
 										)}
-										name="youtubeUrl"
-										defaultValue={youtubeUrl ? youtubeUrl : currentUser.model?.youtubeUrl}
+										name="model.youtube"
 									/>
 								</View>
 							</Item>
@@ -302,16 +277,15 @@ export default function UpdateInfoScreen() {
 											<Textarea
 												containerStyle={styles.textareaContainer}
 												style={styles.textarea}
-												onChangeText={(value: string) => setBio(value)}
-												defaultValue={ bio ? bio : currentUser.model?.bio }
+												onChangeText={(value: string) => onChange(value)}
+												defaultValue={value}
 												maxLength={300}
 												placeholder={"Tell about you"}
 												placeholderTextColor={"#c7c7c7"}
 												underlineColorAndroid={"transparent"}
 											/>
 										)}
-										name="bio"
-										defaultValue={bio ? bio : currentUser.model?.bio }
+										name="model.bio"
 									/>
 								</View>
 							</Item>
@@ -319,8 +293,7 @@ export default function UpdateInfoScreen() {
 					)}
 					<TouchableOpacity
 						style={{ margin: 20 }}
-						onPress={handleSubmit(onSubmit)}
-					>
+						onPress={handleSubmit(onSubmit)}>
 						<Text style={styles.buttonText}>Save</Text>
 					</TouchableOpacity>
 				</View>
