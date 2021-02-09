@@ -67,7 +67,6 @@ export default function SignUpWithEmailScreen() {
 	const handleSignUp = async (credentials: Credentials) => {
 		credentials.userType = userType
 		credentials.gender = gender
-		console.error(credentials)
 		try {
 			const { register: userData } = await request(
 				GRAPHQL_API_URL,
@@ -85,7 +84,6 @@ export default function SignUpWithEmailScreen() {
 				setsignUpError("something went wrong. Please check again")
 			}
 		} catch (error) {
-			console.log(JSON.stringify(error.response.errors[0].message))
 			setsignUpError(error.response.errors[0].message)
 		}
 	}
