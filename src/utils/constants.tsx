@@ -1,8 +1,6 @@
 import Constants from 'expo-constants'
 import { Dimensions, Platform } from "react-native"
 
-const releaseChannel = Constants.manifest.releaseChannel
-
 export const APP_NAME = `TipToe`
 
 const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined

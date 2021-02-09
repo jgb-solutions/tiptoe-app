@@ -6,8 +6,8 @@
 		"ios": "expo start --ios",
 		"web": "expo start --web",
 		"eject": "expo eject",
-		"publish:staging": "expo publish --release-channel staging",
-		"publish:prod": "expo publish --release-channel prod"
+		"publish:staging": "EXPO_APP_ENV='staging' expo publish",
+		"publish:prod": "EXPO_APP_ENV='production' expo publish"
 	},
 	"dependencies": {
 		"@absinthe/socket": "^0.2.1",
