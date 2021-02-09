@@ -435,12 +435,12 @@ export const FETCH_MODEL = gql`
 			name
 			stageName
 			posterUrl
-			facebookUrl
+			facebook
 			hash
-			instagramUrl
+			instagram
 			photosCount
-			followersCount
-			followedByMe
+			followersCo
+			followedB
 			roomWithMe {
 				id
 			}
@@ -545,6 +545,8 @@ export const LOG_USER_IN = gql`
 			token
 			data {
 				id
+				active
+				admin
 				name
 				email
 				firstLogin
@@ -555,12 +557,12 @@ export const LOG_USER_IN = gql`
 				gender
 				model {
 					bio
-					facebookUrl
+					facebook
 					insertedAt
-					instagramUrl
+					instagram
 					name
-					twitterUrl
-					youtubeUrl
+					twitter
+					youtube
 				}
 			}
 		}

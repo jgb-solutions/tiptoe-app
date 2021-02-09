@@ -15,12 +15,12 @@ export const SIGN_USER_UP = gql`
 				gender
 				model {
 					bio
-					facebookUrl
+					facebook
 					insertedAt
-					instagramUrl
+					instagram
 					name
-					twitterUrl
-					youtubeUrl
+					twitter
+					youtube
 				}
 			}
 			token
@@ -42,11 +42,11 @@ export const UPDATE_USER = gql`
 			gender
 			model {
 				bio
-				facebookUrl
-				instagramUrl
+				facebook
+				instagram
 				name
-				twitterUrl
-				youtubeUrl
+				twitter
+				youtube
 			}
 		}
 	}
