@@ -8,7 +8,9 @@ const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 let API_URL_ = ''
 let SOCKET_URL_ = ''
 
-if (Constants.manifest.env.EXPO_APP_ENV) {
+const expoEnv = Constants.manifest.env
+
+if (expoEnv && expoEnv.EXPO_APP_ENV) {
   switch (Constants.manifest.env.EXPO_APP_ENV) {
     case 'lan':
       // Air Fiber
