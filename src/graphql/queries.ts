@@ -439,8 +439,8 @@ export const FETCH_MODEL = gql`
 			hash
 			instagram
 			photosCount
-			followersCo
-			followedB
+			followersCount
+			followedByMe
 			roomWithMe {
 				id
 			}

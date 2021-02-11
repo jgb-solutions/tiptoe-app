@@ -26,8 +26,8 @@ import { GRAPHQL_API_URL } from "../utils/constants"
 const TipToeLogo = require("../../assets/images/TipToeLogo.png")
 import SelectPicker from "react-native-form-select-picker"
 import Textarea from "react-native-textarea"
-import { MaterialCommunityIcons } from "@expo/vector-icons"
 
+import { Icon } from "native-base"
 export interface Model {
 	name: string
 	stageName: string
@@ -121,12 +121,18 @@ export default function SignUpWithEmailScreen() {
 
 				<View style={styles.inputsContainer}>
 					{!form && (
-						<TouchableOpacity onPress={()=> nextFrom()} style={{ marginBottom: 10 }}>
-							<MaterialCommunityIcons
-								name="arrow-left-thick"
-								size={24}
-								color="black"
-							/>
+						<TouchableOpacity
+							onPress={() => nextFrom()}
+							style={{ marginBottom: 10, flexDirection:'row' }}
+						>
+							<Icon
+								name="arrow-back"
+								style={{
+									fontSize: 24,
+									color: "black",
+								}}
+							/> 
+							<Text>Back</Text>
 						</TouchableOpacity>
 					)}
 					<View style={!form && styles.displayNone}>
