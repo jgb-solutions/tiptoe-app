@@ -7,9 +7,10 @@ export default interface ModelInterface {
 	hash: string
 	posterUrl: string
 	bio: string
-	facebookUrl: string
-	twitterUrl: string
-	instagramUrl: string
+	facebook: string
+	twitter: string
+	youtube: string
+	instagram: string
 	photosCount: number
 	followersCount: number
 	followedByMe: boolean

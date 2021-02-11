@@ -9,6 +9,7 @@ import { ApolloProvider } from "@apollo/react-hooks"
 import ChatScreen from "../screens/ChatScreen"
 import HomeScreen from "../screens/HomeScreen"
 import SearchScreen from "../screens/SearchScreen"
+import UpdateInfoScreen from "../screens/UpdateInfoScreen"
 import ProfileScreen from "../screens/ProfileScreen"
 import ChatListScreen from "../screens/ChatListScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
@@ -32,7 +33,7 @@ const Tab = createBottomTabNavigator()
 function TabNavigation() {
 	return (
 		<Tab.Navigator
-			initialRouteName={screenNames.Search}
+			initialRouteName={screenNames.Home}
 			tabBarOptions={{
 				activeTintColor: colors.pink,
 				inactiveTintColor: colors.black,
@@ -59,6 +60,7 @@ function TabNavigation() {
 					),
 				}}
 			/>
+
 			<Tab.Screen
 				name={screenNames.Search}
 				component={SearchScreen}
@@ -129,10 +131,11 @@ function TabNavigation() {
 }
 
 function MainNavigation() {
-	const { isLoggedIn, phoenixSocket } = useStore(
+	const { isLoggedIn, phoenixSocket, firstLogin } = useStore(
 		(state: AppStateInterface) => ({
 			isLoggedIn: state.authData.isLoggedIn,
 			phoenixSocket: state.socket,
+			firstLogin: state.authData.data?.firstLogin,
 		})
 	)
 	const navigatorScreenOptions = { headerShown: false }
@@ -141,7 +144,14 @@ function MainNavigation() {
 		<NavigationContainer>
 			{isLoggedIn && phoenixSocket ? (
 				<ApolloProvider client={getClient()}>
-					<Stack.Navigator screenOptions={navigatorScreenOptions}>
+					<Stack.Navigator
+						initialRouteName={
+							isLoggedIn && firstLogin
+								? screenNames.UpdateInfo
+								: screenNames.Home
+						}
+						screenOptions={navigatorScreenOptions}
+					>
 						<Stack.Screen name="TabNavigation" component={TabNavigation} />
 						<Stack.Screen name={screenNames.Chat} component={ChatScreen} />
 						<Stack.Screen
@@ -151,6 +161,10 @@ function MainNavigation() {
 						<Stack.Screen
 							name={screenNames.PublicModelProfileScreen}
 							component={PublicModelProfileScreen}
+						/>
+						<Stack.Screen
+							name={screenNames.UpdateInfo}
+							component={UpdateInfoScreen}
 						/>
 					</Stack.Navigator>
 				</ApolloProvider>

@@ -25,7 +25,18 @@ import useStore, { AppStateInterface } from "../store"
 import { GRAPHQL_API_URL } from "../utils/constants"
 const TipToeLogo = require("../../assets/images/TipToeLogo.png")
 import SelectPicker from "react-native-form-select-picker"
+import Textarea from "react-native-textarea"
 
+import { Icon } from "native-base"
+export interface Model {
+	name: string
+	stageName: string
+	bio: string
+	facebook: string
+	twitter: string
+	youtube: string
+	instagram: string
+}
 export interface Credentials {
 	name: string
 	email: string
@@ -33,6 +44,7 @@ export interface Credentials {
 	userType: string
 	gender: string
 	telephone: number
+	model?: Model
 }
 
 enum UserType {
@@ -54,6 +66,8 @@ export default function SignUpWithEmailScreen() {
 	const [signUpError, setsignUpError] = useState("")
 	const [userType, setUserType] = useState<any | UserType>()
 	const [termsCondition, setTermsCondition] = useState<boolean | false>(false)
+	const [form, setForm] = useState<boolean | true>(true)
+	const [submitForm, setSubmitForm] = useState<boolean | true>(true)
 	const { doLogin } = useStore((state: AppStateInterface) => ({
 		doLogin: state.doLogin,
 	}))
@@ -88,6 +102,15 @@ export default function SignUpWithEmailScreen() {
 		}
 	}
 
+	const nextFrom = () => {
+		setForm(!form)
+		setSubmitForm(!submitForm)
+	}
+
+	const typeOfUser = (value: any) => {
+		setUserType(value)
+		value === "MODEL" && setSubmitForm(false)
+	}
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView contentContainerStyle={styles.contentContainer}>
@@ -97,147 +120,298 @@ export default function SignUpWithEmailScreen() {
 				<Text style={styles.signUpError}>{signUpError}</Text>
 
 				<View style={styles.inputsContainer}>
-					<Controller
-						control={control}
-						render={({ onChange, onBlur, value }) => (
-							<FormInput
-								onBlur={onBlur}
-								autoCapitalize="none"
-								onChangeText={(value) => onChange(value)}
-								value={value}
-								placeholder="Enter Your Full Name"
-								error={errors.name}
-							/>
-						)}
-						name="name"
-						rules={{ required: "The full name is required" }}
-						defaultValue=""
-					/>
-
-					<Controller
-						control={control}
-						render={({ onChange, onBlur, value }) => (
-							<FormInput
-								onBlur={onBlur}
-								autoCapitalize="none"
-								onChangeText={(value) => onChange(value)}
-								value={value}
-								placeholder="Enter Your Email"
-								error={errors.email}
-							/>
-						)}
-						name="email"
-						rules={{ required: "The email is required" }}
-						defaultValue=""
-					/>
-
-					<Controller
-						control={control}
-						render={({ onChange, onBlur, value }) => (
-							<FormInput
-								secureTextEntry
-								autoCapitalize="none"
-								onBlur={onBlur}
-								onChangeText={(value) => onChange(value)}
-								value={value}
-								placeholder="Please Choose A Password"
-								error={errors.password}
-							/>
-						)}
-						name="password"
-						rules={{ required: "The password is required" }}
-						defaultValue=""
-					/>
-
-					<Controller
-						control={control}
-						render={({ onChange, onBlur, value }) => (
-							<FormInput
-								onBlur={onBlur}
-								autoCapitalize="none"
-								onChangeText={(value) => onChange(value)}
-								value={value}
-								placeholder="Enter Your Phone"
-								error={errors.telephone}
-							/>
-						)}
-						name="telephone"
-						rules={{ required: "The phone is required" }}
-						defaultValue=""
-					/>
-
-					<View
-						style={{
-							borderColor: errors.userType ? colors.error : colors.black,
-							paddingHorizontal: 10,
-							borderWidth: 0.6,
-							borderRadius: 50,
-							marginBottom: 15,
-						}}
-					>
+					{!form && (
+						<TouchableOpacity
+							onPress={() => nextFrom()}
+							style={{ marginBottom: 10, flexDirection:'row' }}
+						>
+							<Icon
+								name="arrow-back"
+								style={{
+									fontSize: 24,
+									color: "black",
+								}}
+							/> 
+							<Text>Back</Text>
+						</TouchableOpacity>
+					)}
+					<View style={!form && styles.displayNone}>
 						<Controller
-							name="userType"
 							control={control}
-							as={
-								<SelectPicker
-									onValueChange={(value) => {
-										setUserType(value)
-									}}
-									selected={userType}
-									style={{ flexDirection: "row", justifyContent: "center" }}
-									placeholder="Signup as"
-									placeholderStyle={{
-										textAlign: "center",
-										fontSize: 18,
-									}}
-								>
-									<SelectPicker.Item label={"Consumer"} value={"CONSUMER"} />
-									<SelectPicker.Item label={"Model"} value={"MODEL"} />
-								</SelectPicker>
-							}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									onBlur={onBlur}
+									autoCapitalize="none"
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Enter Your Full Name"
+									error={errors.name}
+								/>
+							)}
+							name="name"
+							rules={{ required: "The full name is required" }}
+							defaultValue=""
 						/>
-						{!!errors.userType && !userType && (
-							<Text style={styles.errorText}>{errors.userType.message}</Text>
-						)}
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									onBlur={onBlur}
+									autoCapitalize="none"
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Enter Your Email"
+									error={errors.email}
+								/>
+							)}
+							name="email"
+							rules={{ required: "The email is required" }}
+							defaultValue=""
+						/>
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									secureTextEntry
+									autoCapitalize="none"
+									onBlur={onBlur}
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Please Choose A Password"
+									error={errors.password}
+								/>
+							)}
+							name="password"
+							rules={{ required: "The password is required" }}
+							defaultValue=""
+						/>
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									onBlur={onBlur}
+									autoCapitalize="none"
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Enter Your Phone"
+									error={errors.telephone}
+								/>
+							)}
+							name="telephone"
+							rules={{ required: "The phone is required" }}
+							defaultValue=""
+						/>
+
+						<View
+							style={{
+								borderColor: errors.userType ? colors.error : colors.black,
+								paddingHorizontal: 10,
+								borderWidth: 0.6,
+								borderRadius: 50,
+								marginBottom: 15,
+							}}
+						>
+							<Controller
+								name="userType"
+								control={control}
+								as={
+									<SelectPicker
+										onValueChange={(value) => typeOfUser(value)}
+										selected={userType}
+										style={{ flexDirection: "row", justifyContent: "center" }}
+										placeholder="Signup as"
+										placeholderStyle={{
+											textAlign: "center",
+											fontSize: 18,
+										}}
+									>
+										<SelectPicker.Item label={"Consumer"} value={"CONSUMER"} />
+										<SelectPicker.Item label={"Model"} value={"MODEL"} />
+									</SelectPicker>
+								}
+							/>
+							{!!errors.userType && !userType && (
+								<Text style={styles.errorText}>{errors.userType.message}</Text>
+							)}
+						</View>
+
+						<View
+							style={{
+								borderColor: errors.userType ? colors.error : colors.black,
+								paddingHorizontal: 10,
+								borderWidth: 0.6,
+								borderRadius: 50,
+								marginBottom: 15,
+							}}
+						>
+							<Controller
+								name="gender"
+								control={control}
+								as={
+									<SelectPicker
+										onValueChange={(value) => {
+											setGender(value)
+										}}
+										selected={gender}
+										style={{ flexDirection: "row", justifyContent: "center" }}
+										placeholder="Check for your gender"
+										placeholderStyle={{
+											textAlign: "center",
+											fontSize: 18,
+										}}
+									>
+										<SelectPicker.Item label={"Male"} value={"MALE"} />
+										<SelectPicker.Item label={"Female"} value={"FEMALE"} />
+										<SelectPicker.Item label={"Other"} value={"OTHER"} />
+									</SelectPicker>
+								}
+							/>
+							{!!errors.gender && !gender && (
+								<Text style={styles.errorText}>{errors.gender.message}</Text>
+							)}
+						</View>
+					</View>
+					<View style={form && styles.displayNone}>
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									onBlur={onBlur}
+									autoCapitalize="none"
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Enter Your Model Name"
+									error={errors.model?.name}
+								/>
+							)}
+							name="model.name"
+							// rules={{ required: "The model name is required" }}
+							defaultValue=""
+						/>
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									onBlur={onBlur}
+									autoCapitalize="none"
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Enter Your Stage Name"
+									error={errors.model?.stageName}
+								/>
+							)}
+							name="model.stageName"
+							// rules={{ required: "The stage name is required" }}
+							defaultValue=""
+						/>
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									onBlur={onBlur}
+									autoCapitalize="none"
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Enter Your Facebook URL"
+									error={errors.model?.facebook}
+								/>
+							)}
+							name="model.facebook"
+							// rules={{ required: "The stage name is required" }}
+							defaultValue=""
+						/>
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									onBlur={onBlur}
+									autoCapitalize="none"
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Enter Your Instagram URL"
+									error={errors.model?.instagram}
+								/>
+							)}
+							name="model.instagram"
+							// rules={{ required: "The stage name is required" }}
+							defaultValue=""
+						/>
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									onBlur={onBlur}
+									autoCapitalize="none"
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Enter Your Twitter URL"
+									error={errors.model?.twitter}
+								/>
+							)}
+							name="model.twitter"
+							// rules={{ required: "The Twitter URL is required" }}
+							defaultValue=""
+						/>
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									onBlur={onBlur}
+									autoCapitalize="none"
+									onChangeText={(value) => onChange(value)}
+									value={value}
+									placeholder="Enter Your Youtube URL"
+									error={errors.model?.youtube}
+								/>
+							)}
+							name="model.youtube"
+							// rules={{ required: "The Youtube URL is required" }}
+							defaultValue=""
+						/>
+
+						<View
+							style={{
+								borderColor: colors.black,
+								padding: 15,
+								borderWidth: 0.6,
+								borderRadius: 50,
+								marginBottom: 15,
+							}}
+						>
+							<Controller
+								control={control}
+								render={({ onChange, onBlur, value }) => (
+									<Textarea
+										containerStyle={styles.textareaContainer}
+										style={styles.textarea}
+										onChangeText={(value: string) => onChange(value)}
+										defaultValue={value}
+										maxLength={300}
+										placeholder={"Tell about you"}
+										placeholderTextColor={"#c7c7c7"}
+										underlineColorAndroid={"transparent"}
+									/>
+								)}
+								name="model.bio"
+							/>
+						</View>
 					</View>
 
 					<View
-						style={{
-							borderColor: errors.userType ? colors.error : colors.black,
-							paddingHorizontal: 10,
-							borderWidth: 0.6,
-							borderRadius: 50,
-							marginBottom: 15,
-						}}
+						style={
+							submitForm || userType === "CONSUMER"
+								? styles.simpleContainer
+								: styles.displayNone
+						}
 					>
-						<Controller
-							name="gender"
-							control={control}
-							as={
-								<SelectPicker
-									onValueChange={(value) => {
-										setGender(value)
-									}}
-									selected={gender}
-									style={{ flexDirection: "row", justifyContent: "center" }}
-									placeholder="Check for your gender"
-									placeholderStyle={{
-										textAlign: "center",
-										fontSize: 18,
-									}}
-								>
-									<SelectPicker.Item label={"Male"} value={"MALE"} />
-									<SelectPicker.Item label={"Female"} value={"FEMALE"} />
-									<SelectPicker.Item label={"Other"} value={"OTHER"} />
-								</SelectPicker>
-							}
-						/>
-						{!!errors.gender && !gender && (
-							<Text style={styles.errorText}>{errors.gender.message}</Text>
-						)}
-					</View>
-
-					<View style={styles.simpleContainer}>
 						<View style={styles.checkboxesTermsCondition}>
 							<Checkbox
 								checked={termsCondition}
@@ -257,10 +431,19 @@ export default function SignUpWithEmailScreen() {
 
 				<FormButton
 					btnStyle={{ marginBottom: 12 }}
-					label="Sign up"
-					onPress={handleSubmit(handleSignUp)}
-					disabled={(formIsValid && !termsCondition)}
-					color={{ color: termsCondition ? colors.black : colors.lightGrey }}
+					label={userType !== "CONSUMER" && form ? "Next" : "Sign up"}
+					onPress={
+						submitForm || userType === "CONSUMER"
+							? handleSubmit(handleSignUp)
+							: () => nextFrom()
+					}
+					disabled={formIsValid && !termsCondition}
+					color={{
+						color:
+							termsCondition || userType === "MODEL"
+								? colors.black
+								: colors.lightGrey,
+					}}
 				/>
 
 				<Text style={styles.smallText}>ALREADY HAVE AN ACCOUNT?</Text>
@@ -343,5 +526,20 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 		marginTop: 4,
 		fontSize: 12,
+	},
+	displayNone: {
+		opacity: 0,
+		height: 0,
+		flex: 0,
+	},
+	textareaContainer: {
+		height: 180,
+		padding: 5,
+	},
+	textarea: {
+		textAlignVertical: "top", // hack android
+		height: 170,
+		fontSize: 18,
+		color: "#333",
 	},
 })
