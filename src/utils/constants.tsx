@@ -10,26 +10,30 @@ let SOCKET_URL_ = ''
 
 const expoEnv = Constants.manifest.env
 
-if (expoEnv && expoEnv.EXPO_APP_ENV) {
-  switch (Constants.manifest.env.EXPO_APP_ENV) {
-    case 'lan':
-      // Air Fiber
-      // export const API_URL_ = `http://192.168.0.102:4000`
-      // export const SOCKET_URL_ = `ws://192.168.0.102:4000/socket`
+// if (expoEnv && expoEnv.EXPO_APP_ENV) {
+//   switch (Constants.manifest.env.EXPO_APP_ENV) {
+//     case 'lan':
+//       // Air Fiber
+//       // export const API_URL_ = `http://192.168.0.102:4000`
+//       // export const SOCKET_URL_ = `ws://192.168.0.102:4000/socket`
 
-      // NouKod Media
-      API_URL_ = `http://10.228.149.147:4000`
-      SOCKET_URL_ = `ws://10.228.149.147:4000/socket`
-      break
-    default:
-      API_URL_ = `http://${API_HOST || 'localhost'}:4000`
-      SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
-      break
-  }
-} else {
-  API_URL_ = `https://api.tiptoe.app`
-  SOCKET_URL_ = `wss://ws.tiptoe.app/socket`
-}
+//       // NouKod Media
+//       API_URL_ = `http://10.228.149.147:4000`
+//       SOCKET_URL_ = `ws://10.228.149.147:4000/socket`
+//       break
+//     default:
+//       API_URL_ = `http://${API_HOST || 'localhost'}:4000`
+//       SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
+//       break
+//   }
+// } else {
+//   API_URL_ = `https://api.tiptoe.app`
+//   SOCKET_URL_ = `wss://ws.tiptoe.app/socket`
+// }
+
+
+API_URL_ = `http://${API_HOST || 'localhost'}:4000`
+SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
 
 export const API_URL = API_URL_
 export const SOCKET_URL = SOCKET_URL_
