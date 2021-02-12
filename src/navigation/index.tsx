@@ -33,7 +33,7 @@ const Tab = createBottomTabNavigator()
 function TabNavigation() {
 	return (
 		<Tab.Navigator
-			initialRouteName={screenNames.Home}
+			initialRouteName={screenNames.Profile}
 			tabBarOptions={{
 				activeTintColor: colors.pink,
 				inactiveTintColor: colors.black,
@@ -147,7 +147,7 @@ function MainNavigation() {
 					<Stack.Navigator
 						initialRouteName={
 							isLoggedIn && firstLogin
-								? screenNames.UpdateInfo
+								? screenNames.Profile
 								: screenNames.Home
 						}
 						screenOptions={navigatorScreenOptions}
