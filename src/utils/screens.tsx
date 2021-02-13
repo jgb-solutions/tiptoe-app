@@ -10,5 +10,7 @@ export const screenNames = {
   SignUp: "SignUp",
   PublicModelProfileScreen: "PublicModelProfileScreen",
   TermsCondition: "TermsCondition",
-  UpdateInfo: "UpdateInfo"
+  UpdateInfo: "UpdateInfo",
+  Setting: "Setting",
+  ChangePassword: "ChangePassword"
 }
