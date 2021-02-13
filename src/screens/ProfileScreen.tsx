@@ -14,8 +14,9 @@ import {
 	Body,
 } from "native-base"
 import { formatToUnits } from "../utils/formatNumber"
+import { screenNames } from "../utils/screens"
 
-import { ViewStyle, StyleSheet } from "react-native"
+import { ViewStyle, StyleSheet, Settings } from "react-native"
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
 
 import { colors } from "../utils/colors"
@@ -90,21 +91,28 @@ export default function ProfileScreen() {
 	const [isAmodel, setIsAmodel] = useState(currentUser?.model ? true : false)
 	const [showModelInfo, setShowModelInfo] = useState(false)
 
-	console.log(currentUser)
-	const goBack = () => navigation.goBack()
-
-	let _menu = null
+	let menu: any = null
 
 	const setMenuRef = (ref: any) => {
-		_menu = ref
+		menu = ref
 	}
 
 	const hideMenu = () => {
-		_menu.hide()
+		menu.hide()
 	}
 
 	const showMenu = () => {
-		_menu.show()
+		menu.show()
+	}
+
+	const settings = () => {
+		navigation.navigate(screenNames.Setting)
+		hideMenu()
+	}
+
+	const updateProfile = () => {
+		navigation.navigate(screenNames.UpdateInfo)
+		hideMenu()
 	}
 	return (
 		<Container>
@@ -114,7 +122,10 @@ export default function ProfileScreen() {
 				style={{ backgroundColor: colors.pink }}
 			>
 				<Left style={{ flexDirection: "row", alignItems: "center" }}>
-					<Button transparent onPress={goBack}>
+					<Button
+						transparent
+						onPress={() => navigation.navigate(screenNames.Home)}
+					>
 						<Icon name="arrow-back" style={{ color: colors.white }} />
 					</Button>
 
@@ -130,14 +141,19 @@ export default function ProfileScreen() {
 				<Right style={{ flex: 1 }}>
 					<Menu
 						ref={setMenuRef}
-						button={ <Icon onPress={showMenu} name="more" style={{ color: colors.white }} /> }
-						style={{ height:100 }}
+						button={
+							<Icon
+								onPress={showMenu}
+								name="more"
+								style={{ color: colors.white }}
+							/>
+						}
 					>
-						<MenuItem onPress={hideMenu} >Settings</MenuItem>
-						
-						{/* <MenuDivider style={{ height:10 }}/> */}
+						<MenuItem onPress={() => settings()}>Settings</MenuItem>
+						<MenuItem onPress={() => updateProfile()}>Update profile</MenuItem>
+						<MenuDivider />
 						<MenuItem onPress={logout}>Logout</MenuItem>
-					</Menu> 
+					</Menu>
 				</Right>
 			</Header>
 			<Content>
@@ -412,29 +428,162 @@ export default function ProfileScreen() {
 						<Text>{currentUser?.model?.youtube}</Text>
 					</View>
 				</View>
+				{!isAmodel && (
+					<Card style={{ marginTop: 30 }}>
+						<CardItem
+							header
+							style={{ flexDirection: "row", justifyContent: "space-between" }}
+						>
+							<Text style={{ fontWeight: "bold", fontSize: 18 }}>
+								Your Cards
+							</Text>
+							<TouchableOpacity>
+								<Icon
+									name="add"
+									style={{
+										fontSize: 24,
+										fontWeight: "bold",
+									}}
+								/>
+							</TouchableOpacity>
+						</CardItem>
+						<CardItem>
+							<Body>
+								<Text>...4856 / 08-25</Text>
+							</Body>
+						</CardItem>
+					</Card>
+				)}
 
-				<Card style={{ marginTop: 30 }}>
-					<CardItem
-						header
-						style={{ flexDirection: "row", justifyContent: "space-between" }}
-					>
-						<Text style={{ fontWeight: "bold", fontSize: 18 }}>Your Cards</Text>
-						<TouchableOpacity>
-							<Icon
-								name="add"
+				{isAmodel && (
+					<Card style={{ marginTop: 30 }}>
+						<CardItem
+							header
+							style={{ flexDirection: "row", justifyContent: "space-between" }}
+						>
+							<Text style={{ fontWeight: "bold", fontSize: 18 }}>
+								Your Models
+							</Text>
+						</CardItem>
+						<CardItem>
+							<Body
 								style={{
-									fontSize: 24,
-									fontWeight: "bold",
+									flexDirection: "row",
+									flexWrap: "wrap",
+									justifyContent: "flex-start",
 								}}
-							/>
-						</TouchableOpacity>
-					</CardItem>
-					<CardItem>
-						<Body>
-							<Text>...4856 / 08-25</Text>
-						</Body>
-					</CardItem>
-				</Card>
+							>
+								<TouchableOpacity
+									style={{
+										width: 80,
+										flexDirection: "column",
+										justifyContent: "center",
+										alignItems: "center",
+										marginHorizontal: 6,
+										marginBottom: 10,
+									}}
+								>
+									<Thumbnail
+										large
+										source={{
+											uri: currentUser?.avatarUrl,
+										}}
+									/>
+									<Text
+										style={{
+											fontWeight: "bold",
+											marginTop: 10,
+											color: colors.pink,
+										}}
+									>
+										Jessica12
+									</Text>
+								</TouchableOpacity>
+
+								<TouchableOpacity
+									style={{
+										width: 80,
+										flexDirection: "column",
+										justifyContent: "center",
+										alignItems: "center",
+										marginHorizontal: 6,
+										marginBottom: 10,
+									}}
+								>
+									<Thumbnail
+										large
+										source={{
+											uri: currentUser?.avatarUrl,
+										}}
+									/>
+									<Text
+										style={{
+											fontWeight: "bold",
+											marginTop: 10,
+											color: colors.pink,
+										}}
+									>
+										Ann21
+									</Text>
+								</TouchableOpacity>
+
+								<TouchableOpacity
+									style={{
+										width: 80,
+										flexDirection: "column",
+										justifyContent: "center",
+										alignItems: "center",
+										marginHorizontal: 6,
+										marginBottom: 10,
+									}}
+								>
+									<Thumbnail
+										large
+										source={{
+											uri: currentUser?.avatarUrl,
+										}}
+									/>
+									<Text
+										style={{
+											fontWeight: "bold",
+											marginTop: 10,
+											color: colors.pink,
+										}}
+									>
+										Rose32
+									</Text>
+								</TouchableOpacity>
+
+								<TouchableOpacity
+									style={{
+										width: 80,
+										flexDirection: "column",
+										justifyContent: "center",
+										alignItems: "center",
+										marginHorizontal: 6,
+										marginBottom: 10,
+									}}
+								>
+									<Thumbnail
+										large
+										source={{
+											uri: currentUser?.avatarUrl,
+										}}
+									/>
+									<Text
+										style={{
+											fontWeight: "bold",
+											marginTop: 10,
+											color: colors.pink,
+										}}
+									>
+										Kika2
+									</Text>
+								</TouchableOpacity>
+							</Body>
+						</CardItem>
+					</Card>
+				)}
 			</Content>
 		</Container>
 	)
