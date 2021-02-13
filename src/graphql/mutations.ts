@@ -52,6 +52,14 @@ export const UPDATE_USER = gql`
 	}
 `
 
+export const CHANGE_PASSWORD = gql`
+	mutation ChangePassword($input: ChangePasswordInput!) {
+		changePassword(input: $input) {
+			id
+		}
+	}
+`
+
 export const ADD_GENRE_MUTATION = gql`
 	mutation AddGenre($input: GenreInput!) {
 		addGenre(input: $input) {
