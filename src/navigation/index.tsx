@@ -14,7 +14,8 @@ import ProfileScreen from "../screens/ProfileScreen"
 import ChatListScreen from "../screens/ChatListScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
 import AddPhotoScreen from "../screens/AddPhotoScreen"
-// import SettingsScreen from "../screens/SettingsScreen"
+import SettingsScreen from "../screens/SettingsScreen"
+import ChangePasswordScreen from "../screens/ChangePasswordScreen"
 import LogInWithEmailScreen from "../screens/LogInWithEmailScreen."
 import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen"
 import PublicModelProfileScreen from "../screens/PublicModelProfileScreen"
@@ -33,7 +34,7 @@ const Tab = createBottomTabNavigator()
 function TabNavigation() {
 	return (
 		<Tab.Navigator
-			initialRouteName={screenNames.Home}
+			initialRouteName={screenNames.Profile}
 			tabBarOptions={{
 				activeTintColor: colors.pink,
 				inactiveTintColor: colors.black,
@@ -146,9 +147,7 @@ function MainNavigation() {
 				<ApolloProvider client={getClient()}>
 					<Stack.Navigator
 						initialRouteName={
-							isLoggedIn && firstLogin
-								? screenNames.UpdateInfo
-								: screenNames.Home
+							isLoggedIn && firstLogin ? screenNames.Profile : screenNames.Home
 						}
 						screenOptions={navigatorScreenOptions}
 					>
@@ -163,8 +162,16 @@ function MainNavigation() {
 							component={PublicModelProfileScreen}
 						/>
 						<Stack.Screen
+							name={screenNames.Setting}
+							component={SettingsScreen}
+						/>
+						<Stack.Screen
 							name={screenNames.UpdateInfo}
 							component={UpdateInfoScreen}
+						/>
+						<Stack.Screen
+							name={screenNames.ChangePassword}
+							component={ChangePasswordScreen}
 						/>
 					</Stack.Navigator>
 				</ApolloProvider>
