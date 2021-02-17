@@ -176,21 +176,21 @@ function MainNavigation() {
 					</Stack.Navigator>
 				</ApolloProvider>
 			) : (
-				<Stack.Navigator screenOptions={navigatorScreenOptions}>
-					<Stack.Screen
-						name={screenNames.LogIn}
-						component={LogInWithEmailScreen}
-					/>
-					<Stack.Screen
-						name={screenNames.SignUp}
-						component={SignUpWithEmailScreen}
-					/>
-					<Stack.Screen
-						name={screenNames.TermsCondition}
-						component={TermsConditionScreen}
-					/>
-				</Stack.Navigator>
-			)}
+					<Stack.Navigator screenOptions={navigatorScreenOptions} initialRouteName={screenNames.SignUp}>
+						<Stack.Screen
+							name={screenNames.LogIn}
+							component={LogInWithEmailScreen}
+						/>
+						<Stack.Screen
+							name={screenNames.SignUp}
+							component={SignUpWithEmailScreen}
+						/>
+						<Stack.Screen
+							name={screenNames.TermsCondition}
+							component={TermsConditionScreen}
+						/>
+					</Stack.Navigator>
+				)}
 		</NavigationContainer>
 	)
 }

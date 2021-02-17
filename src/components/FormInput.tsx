@@ -15,7 +15,7 @@ const FormInput = ({ error, success, placeholder, ...rest }: Props) => {
   return (
     <View style={styles.container}>
       <Item rounded style={{
-        borderColor: error ? colors.error : success ? colors.success : colors.black
+        borderColor: !!error ? colors.error : success ? colors.success : colors.black
       }} placeholderLabel>
         <Input
           placeholder={placeholder}

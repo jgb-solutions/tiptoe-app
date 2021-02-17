@@ -10,7 +10,6 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native'
-import { request } from 'graphql-request'
 import { useForm, Controller } from "react-hook-form"
 import { useNavigation } from '@react-navigation/native'
 
@@ -19,7 +18,8 @@ import FormInput from '../components/FormInput'
 import { LOG_USER_IN } from "../graphql/queries"
 import FormButton from '../components/FormButton'
 import useStore, { AppStateInterface } from "../store"
-import { GRAPHQL_API_URL } from "../utils/constants"
+import { graphqlClient } from "../utils/graphqlClient"
+import { emailRequired, validateEmailAddress } from "./SignUpWithEmailScreen"
 const TipToeLogo = require('../../assets/images/TipToeLogo.png')
 
 export interface Credentials {
@@ -28,7 +28,7 @@ export interface Credentials {
 }
 
 export default function LogInWithEmailScreen() {
-  const { control, handleSubmit, errors } = useForm<Credentials>({ mode: 'onBlur' })
+  const { control, handleSubmit, errors, formState } = useForm<Credentials>({ mode: 'onBlur' })
   const navigation = useNavigation()
   const [loginError, setLoginError] = useState("")
   const { doLogin } = useStore((state: AppStateInterface) =>
@@ -36,8 +36,7 @@ export default function LogInWithEmailScreen() {
 
   const handleLogin = async (credentials: Credentials) => {
     try {
-      const { login: userData } = await request(
-        GRAPHQL_API_URL,
+      const { login: userData } = await graphqlClient.request(
         LOG_USER_IN,
         { input: credentials },
       )
@@ -69,10 +68,17 @@ export default function LogInWithEmailScreen() {
                 onChangeText={value => onChange(value)}
                 value={value}
                 placeholder="Enter Your Email"
-                error={errors.email} />
+                error={errors.email}
+                success={formState.touched.email && !errors.email}
+              />
             )}
             name="email"
-            rules={{ required: "The email is required" }}
+            rules={{
+              required: emailRequired,
+              validate: {
+                validateEmailAddress,
+              }
+            }}
             defaultValue=""
           />
 
@@ -104,7 +110,8 @@ export default function LogInWithEmailScreen() {
         <FormButton
           btnStyle={{ marginBottom: 12 }}
           label="Log in"
-          onPress={handleSubmit(handleLogin)} />
+          onPress={handleSubmit(handleLogin)}
+        />
 
         <Text style={styles.smallText}>DON'T HAVE AN ACCOUNT?</Text>
         <TouchableOpacity
