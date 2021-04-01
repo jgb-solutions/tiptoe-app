@@ -226,7 +226,7 @@ export default function SignUpWithEmailScreen() {
 	const [signUpError, setsignUpError] = useState("")
 	const [termsCondition, setTermsCondition] = useState<boolean | false>(false)
 	const [submitForm, setSubmitForm] = useState<boolean | true>(true)
-	const [formData, setFormData] = useState({})
+	const [formData, setFormData] = useState<FormData | undefined>()
 
 	const { doLogin } = useStore((state: AppStateInterface) => ({
 		doLogin: state.doLogin,
@@ -241,9 +241,14 @@ export default function SignUpWithEmailScreen() {
 	const watchAllFields = watch()
 
 	const handleSubmitWithModel = (modelFormData: ModelFormData) => {
-		const userFormData = getValues()
+		if (!formData) {
+			// Show original form
+			handleHideModelForm()
+			// trigger validation
+			trigger()
+		}
 
-		const formDataWithModel = { ...userFormData, model: modelFormData }
+		const formDataWithModel: any = { ...formData, model: modelFormData }
 
 		handleSignUp(formDataWithModel)
 	}
@@ -262,7 +267,7 @@ export default function SignUpWithEmailScreen() {
 			}
 		} catch (error) {
 			setsignUpError(error.response.errors[0].message)
-			// console.error(error)
+			console.error(error)
 		}
 	}
 
@@ -271,6 +276,10 @@ export default function SignUpWithEmailScreen() {
 		trigger()
 
 		if (formState.isValid) {
+			// save existing values
+			setFormData(getValues())
+
+			// show/hide relevant screens
 			setShowModelForm(true)
 			setShowNextButton(false)
 		}
