@@ -28,6 +28,14 @@ export const SIGN_USER_UP = gql`
 	}
 `
 
+export const VERIFY_USER_EMAIL = gql`
+	mutation VerifyUserEmail($input: VerifyUserEmailInput!) {
+		verifyUserEmail(input: $input) {
+			exists
+		}
+	}
+`
+
 export const UPDATE_USER = gql`
 	mutation UpdateUser($input: UpdateUserInput!) {
 		updateUser(input: $input) {
