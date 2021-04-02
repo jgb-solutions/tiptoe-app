@@ -27,6 +27,7 @@ import { colors } from "../utils/colors"
 import useStore, { AppStateInterface } from "../store"
 import { screenNames } from "../utils/screens"
 import { getClient } from "../graphql/client"
+import SignUpWithEmailStep2Screen from "../screens/SignUpWithEmailStep2Screen"
 
 // Navigators setup
 const Stack = createStackNavigator()
@@ -189,6 +190,10 @@ function MainNavigation() {
 						<Stack.Screen
 							name={screenNames.SignUp}
 							component={SignUpWithEmailScreen}
+						/>
+						<Stack.Screen
+							name={screenNames.SignUpWithEmailStep2}
+							component={SignUpWithEmailStep2Screen}
 						/>
 						<Stack.Screen
 							name={screenNames.TermsCondition}
