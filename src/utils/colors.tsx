@@ -10,4 +10,5 @@ export const colors = {
   error: '#ff0000',
   success: '#00FF00',
   facebook: '#4267b2',
+  warning: '#e79d43'
 }

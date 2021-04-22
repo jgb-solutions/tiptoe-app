@@ -1,5 +1,3 @@
-import React, { useState } from "react"
-import Constants from "expo-constants"
 import {
 	Text,
 	View,
@@ -9,28 +7,28 @@ import {
 	SafeAreaView,
 	TouchableOpacity,
 } from "react-native"
-
+import { Icon } from "native-base"
+import Constants from "expo-constants"
+import React, { useState } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 
+
 import { colors } from "../utils/colors"
-import FormInput from "../components/FormInput"
-import { SIGN_USER_UP } from "../graphql/mutations"
-import FormButton from "../components/FormButton"
-import useStore, { AppStateInterface } from "../store"
 import Textarea from "react-native-textarea"
+import FormInput from "../components/FormInput"
+import FormButton from "../components/FormButton"
+import { SIGN_USER_UP } from "../graphql/mutations"
+import useStore, { AppStateInterface } from "../store"
 import { graphqlClient } from "../utils/graphqlClient"
-import { screenNames } from "../utils/screens"
+import { ModelFormData, UserFormData } from "./SignUpWithEmailScreen"
 
-import { ModelFormData, FormData } from "./SignUpWithEmailScreen"
-
-import { Icon } from "native-base"
-import { useEffect } from "react"
 
 type RouteParamsProps = RouteProp<
 	{
 		params: {
-			formData: any
+			userFormData: UserFormData,
+			updateModelInfo: (data: ModelFormData) => void
 		}
 	},
 	"params"
@@ -43,35 +41,33 @@ export default function SignUpWithEmailStep2Screen() {
 		control,
 		handleSubmit,
 		errors,
-		formState,
 		getValues,
 	} = useForm<ModelFormData>({
 		mode: "onBlur",
-		defaultValues: route.params?.formData?.model,
+		defaultValues: route.params?.userFormData?.model,
 	})
 
-	const [formData, setFormData] = useState<FormData | undefined>()
+	const userFormData = route.params?.userFormData
+	console.log(route.params)
+	const updateModelInfo = route.params?.updateModelInfo
+
 	const [signUpError, setsignUpError] = useState("")
 	const { doLogin } = useStore((state: AppStateInterface) => ({
 		doLogin: state.doLogin,
 	}))
 
-	useEffect(() => {
-		setFormData(route.params?.formData)
-	}, [route])
-
-	const { isValid } = formState
-
 	const handleSubmitWithModel = (modelFormData: ModelFormData) => {
-		const formDataWithModel: any = { ...formData, model: modelFormData }
+		const formDataWithModel: UserFormData = { ...userFormData, model: modelFormData }
 
 		handleSignUp(formDataWithModel)
 	}
 
-	const handleSignUp = async (formData: FormData) => {
+	const handleSignUp = async (userFormData: UserFormData) => {
+		console.log(userFormData)
+
 		try {
 			const { register: userData } = await graphqlClient.request(SIGN_USER_UP, {
-				input: formData,
+				input: userFormData,
 			})
 
 			if (userData) {
@@ -79,13 +75,15 @@ export default function SignUpWithEmailStep2Screen() {
 			}
 		} catch (error) {
 			setsignUpError(error.response.errors[0].message)
-			console.error(error)
+			console.log(error)
 		}
 	}
 
 	const goBack = () => {
-		const data: any = { ...formData, model: getValues() }
-		navigation.navigate(screenNames.SignUp, { formData: data })
+
+		updateModelInfo(getValues())
+
+		navigation.goBack()
 	}
 
 	return (
@@ -112,22 +110,6 @@ export default function SignUpWithEmailStep2Screen() {
 						<Text>Back</Text>
 					</TouchableOpacity>
 					<View style={{ marginBottom: 24 }}>
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<FormInput
-									onBlur={onBlur}
-									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
-									value={value}
-									placeholder="Enter Your Model Name"
-									error={errors.name}
-								/>
-							)}
-							name="name"
-							rules={{ required: "The model name is required" }}
-						/>
-
 						<Controller
 							control={control}
 							render={({ onChange, onBlur, value }) => (
@@ -184,7 +166,6 @@ export default function SignUpWithEmailStep2Screen() {
 								/>
 							)}
 							name="facebook"
-							// rules={{ required: "The stage name is required" }}
 						/>
 
 						<Controller
@@ -200,7 +181,6 @@ export default function SignUpWithEmailStep2Screen() {
 								/>
 							)}
 							name="instagram"
-							// rules={{ required: "The stage name is required" }}
 						/>
 
 						<Controller
@@ -216,7 +196,6 @@ export default function SignUpWithEmailStep2Screen() {
 								/>
 							)}
 							name="twitter"
-							// rules={{ required: "The Twitter URL is required" }}
 						/>
 
 						<Controller
@@ -232,14 +211,13 @@ export default function SignUpWithEmailStep2Screen() {
 								/>
 							)}
 							name="youtube"
-							// rules={{ required: "The Youtube URL is required" }}
 						/>
 
 						<FormButton
 							btnStyle={{ marginBottom: 12, alignSelf: "center" }}
 							label={"Sign up"}
 							onPress={handleSubmit(handleSubmitWithModel)}
-							// disabled={isValid}
+						// disabled={isValid}
 						/>
 					</View>
 				</View>
@@ -277,7 +255,6 @@ const styles = StyleSheet.create({
 	},
 	signUpError: {
 		textAlign: "center",
-		// textTransform: "uppercase",
 		color: colors.red,
 		fontSize: 18,
 		marginVertical: 20,

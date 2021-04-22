@@ -1,4 +1,3 @@
-import { Icon } from "native-base"
 import React, { useEffect, useState } from "react"
 import Constants from "expo-constants"
 import {
@@ -11,21 +10,22 @@ import {
 	SafeAreaView,
 	TouchableOpacity,
 } from "react-native"
-import Textarea from "react-native-textarea"
 import { useForm, Controller } from "react-hook-form"
-import { useNavigation, RouteProp, useRoute } from "@react-navigation/native"
+import { useNavigation } from "@react-navigation/native"
 
 import { colors } from "../utils/colors"
 import Checkbox from "../components/Checkbox"
+import { screenNames } from "../utils/screens"
 import FormInput from "../components/FormInput"
+import { emailRegex } from "../utils/checkEmail"
 import FormButton from "../components/FormButton"
 import { graphqlClient } from "../utils/graphqlClient"
 import useStore, { AppStateInterface } from "../store"
 import SelectPicker from "react-native-form-select-picker"
-const TipToeLogo = require("../../assets/images/TipToeLogo.png")
 import { SIGN_USER_UP, VERIFY_USER_EMAIL } from "../graphql/mutations"
-import { emailRegex } from "../utils/checkEmail"
-import { screenNames } from "../utils/screens"
+import { showToast } from "../utils"
+
+const TipToeLogo = require("../../assets/images/TipToeLogo.png")
 
 type UserType = "CONSUMER" | "MODEL"
 
@@ -41,7 +41,7 @@ export interface ModelFormData {
 	instagram: string
 }
 
-export interface FormData {
+export interface UserFormData {
 	name: string
 	email: string
 	password: string
@@ -51,14 +51,7 @@ export interface FormData {
 	model?: ModelFormData
 }
 
-type RouteParamsProps = RouteProp<
-	{
-		params: {
-			formData: any
-		}
-	},
-	"params"
->
+
 export const validateEmailUnique = async (email: string) => {
 	try {
 		const {
@@ -97,7 +90,7 @@ export default function SignUpWithEmailScreen() {
 		watch,
 		getValues,
 		trigger,
-	} = useForm<FormData>({
+	} = useForm<UserFormData>({
 		mode: "onBlur",
 	})
 	const watchUserType = watch("userType") // you can supply default value as second argument
@@ -105,42 +98,20 @@ export default function SignUpWithEmailScreen() {
 	const navigation = useNavigation()
 	const [signUpError, setsignUpError] = useState("")
 	const [termsCondition, setTermsCondition] = useState<boolean | false>(false)
-	const [submitForm, setSubmitForm] = useState<boolean | true>(true)
-	const [formData, setFormData] = useState<FormData | undefined>()
-	const [modelData, setModelData] = useState<ModelFormData | undefined>()
+	const [userFormData, setUserFormData] = useState<UserFormData | {}>({})
+	const [modelInfo, updateModelInfo] = useState<ModelFormData | {}>({})
 
 	const { doLogin } = useStore((state: AppStateInterface) => ({
 		doLogin: state.doLogin,
 	}))
-	const [showModelForm, setShowModelForm] = useState(false)
 	const [showSignUpButton, setshowSignUpButton] = useState(true)
 	const [showNextButton, setShowNextButton] = useState(false)
 
-	const { isValid } = formState
+	// const { isValid } = formState
 
-	const formIsValid = isValid && !!watchUserType && !!watchGender
-	const watchAllFields = watch()
+	// const formIsValid = isValid && !!watchUserType && !!watchGender
 
-	const route = useRoute<RouteParamsProps>()
-
-	useEffect(() => {
-		route.params && setModelData(route.params?.formData.model)
-	}, [route])
-
-	const handleSubmitWithModel = (modelFormData: ModelFormData) => {
-		if (!formData) {
-			// Show original form
-			handleHideModelForm()
-			// trigger validation
-			trigger()
-		}
-
-		const formDataWithModel: any = { ...formData, model: modelFormData }
-
-		handleSignUp(formDataWithModel)
-	}
-
-	const handleSignUp = async (formData: FormData) => {
+	const handleSignUp = async (formData: UserFormData) => {
 		try {
 			const { register: userData } = await graphqlClient.request(SIGN_USER_UP, {
 				input: formData,
@@ -159,19 +130,25 @@ export default function SignUpWithEmailScreen() {
 		// Make sure the user form is valid first
 		trigger()
 
+		if (!termsCondition) {
+			showToast(" You need to accept the terms and conditions first in order to go the next step.", {
+				textStyle: {
+					color: colors.warning
+				}
+			})
+
+			return
+		}
+
 		if (formState.isValid) {
 			// save existing values
-			setFormData(getValues())
+			setUserFormData({ model: modelInfo, ...getValues() })
+
 			navigation.navigate(screenNames.SignUpWithEmailStep2, {
-				formData: { ...formData, model: modelData },
+				userFormData,
+				updateModelInfo
 			})
 		}
-	}
-
-	const handleHideModelForm = () => {
-		setShowModelForm(false)
-		setShowNextButton(true)
-		setshowSignUpButton(false)
 	}
 
 	useEffect(() => {
@@ -282,8 +259,6 @@ export default function SignUpWithEmailScreen() {
 											if (!userType) return
 
 											onChange(userType)
-
-											if (userType === "MODEL") setSubmitForm(false)
 										}}
 										selected={value}
 										style={{ flexDirection: "row", justifyContent: "center" }}
@@ -373,7 +348,7 @@ export default function SignUpWithEmailScreen() {
 						btnStyle={{ marginBottom: 12 }}
 						label={"Sign up"}
 						onPress={handleSubmit(handleSignUp)}
-						disabled={!formIsValid && !termsCondition}
+					// disabled={!formIsValid && !termsCondition}
 					/>
 				)}
 
@@ -418,7 +393,6 @@ const styles = StyleSheet.create({
 	},
 	signUpError: {
 		textAlign: "center",
-		// textTransform: "uppercase",
 		color: colors.red,
 		fontSize: 18,
 		marginVertical: 20,
@@ -462,15 +436,5 @@ const styles = StyleSheet.create({
 		opacity: 0,
 		height: 0,
 		flex: 0,
-	},
-	textareaContainer: {
-		height: 180,
-		padding: 5,
-	},
-	textarea: {
-		textAlignVertical: "top", // hack android
-		height: 170,
-		fontSize: 18,
-		color: "#333",
 	},
 })
