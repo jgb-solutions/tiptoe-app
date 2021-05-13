@@ -1,8 +1,8 @@
 import { useQuery } from "@apollo/react-hooks"
 
 import { FETCH_MODEL } from "../graphql/queries"
-import { ApolloError } from "apollo-client"
-import ModelInterface from "../interfaces/ModelInterface"
+// import { ApolloError } from "apollo-client"
+// import ModelInterface from "../interfaces/ModelInterface"
 
 // type Model = {
 // 	data: {

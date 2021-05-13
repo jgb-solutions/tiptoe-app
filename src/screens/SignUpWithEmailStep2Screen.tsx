@@ -9,9 +9,9 @@ import {
 } from "react-native"
 import { Icon } from "native-base"
 import Constants from "expo-constants"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form"
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
+import { useNavigation, useRoute } from "@react-navigation/native"
 
 
 import { colors } from "../utils/colors"
@@ -21,35 +21,24 @@ import FormButton from "../components/FormButton"
 import { SIGN_USER_UP } from "../graphql/mutations"
 import useStore, { AppStateInterface } from "../store"
 import { graphqlClient } from "../utils/graphqlClient"
-import { ModelFormData, UserFormData } from "./SignUpWithEmailScreen"
-
-
-type RouteParamsProps = RouteProp<
-	{
-		params: {
-			userFormData: UserFormData,
-			updateModelInfo: (data: ModelFormData) => void
-		}
-	},
-	"params"
->
+import { screenNames } from "../utils/screens"
+import { ModelFormData, UserFormData, UserFormRouteParamsProps } from "./SignUpWithEmailScreen"
 
 export default function SignUpWithEmailStep2Screen() {
-	const navigation = useNavigation()
-	const route = useRoute<RouteParamsProps>()
+	const navigation = useNavigation<any>()
+	const route = useRoute<UserFormRouteParamsProps>()
 	const {
 		control,
 		handleSubmit,
 		errors,
 		getValues,
+		reset
 	} = useForm<ModelFormData>({
 		mode: "onBlur",
-		defaultValues: route.params?.userFormData?.model,
+		defaultValues: route.params?.userFormData.model
 	})
 
 	const userFormData = route.params?.userFormData
-	console.log(route.params)
-	const updateModelInfo = route.params?.updateModelInfo
 
 	const [signUpError, setsignUpError] = useState("")
 	const { doLogin } = useStore((state: AppStateInterface) => ({
@@ -80,10 +69,13 @@ export default function SignUpWithEmailStep2Screen() {
 	}
 
 	const goBack = () => {
+		const modelInfo = getValues()
 
-		updateModelInfo(getValues())
-
-		navigation.goBack()
+		navigation.navigate({
+			name: screenNames.SignUpWithEmail,
+			params: { modelInfo },
+			// merge: true,
+		})
 	}
 
 	return (

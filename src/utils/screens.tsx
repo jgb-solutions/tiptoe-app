@@ -7,7 +7,7 @@ export const screenNames = {
   Chat: "Chat",
   ChatList: "ChatList",
   LogIn: "LogIn",
-  SignUp: "SignUp",
+  SignUpWithEmail: "SignUpWithEmail",
   SignUpWithEmailStep2: "SignUpWithEmailStep2",
   PublicModelProfileScreen: "PublicModelProfileScreen",
   TermsCondition: "TermsCondition",

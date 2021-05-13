@@ -159,6 +159,26 @@ export const FETCH_ROOMS = gql`
 	}
 `
 
+export const FETCH_MODEL = gql`
+	query modelDetail($hash: String!) {
+		model(hash: $hash) {
+			id
+			name
+			stageName
+			posterUrl
+			facebook
+			hash
+			instagram
+			photosCount
+			followersCount
+			followedByMe
+			roomWithMe {
+				id
+			}
+		}
+	}
+`
+
 export const FETCH_MODELS = gql`
 	query modelsData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
 		# Latest 10 Models
@@ -177,7 +197,6 @@ export const FETCH_MODELS = gql`
 		}
 	}
 `
-
 
 export const FETCH_CATEGORIES = gql`
 	query categories {

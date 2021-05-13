@@ -11,7 +11,7 @@ import {
 	TouchableOpacity,
 } from "react-native"
 import { useForm, Controller } from "react-hook-form"
-import { useNavigation } from "@react-navigation/native"
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 
 import { colors } from "../utils/colors"
 import Checkbox from "../components/Checkbox"
@@ -81,6 +81,16 @@ export const emailFieldRules = {
 	},
 }
 
+export type UserFormRouteParamsProps = RouteProp<
+	{
+		params: {
+			userFormData: UserFormData,
+			modelInfo?: ModelFormData,
+		}
+	},
+	"params"
+>
+
 export default function SignUpWithEmailScreen() {
 	const {
 		control,
@@ -96,10 +106,12 @@ export default function SignUpWithEmailScreen() {
 	const watchUserType = watch("userType") // you can supply default value as second argument
 	const watchGender = watch("gender") // you can supply default value as second argument
 	const navigation = useNavigation()
+	const route = useRoute<UserFormRouteParamsProps>()
+
 	const [signUpError, setsignUpError] = useState("")
 	const [termsCondition, setTermsCondition] = useState<boolean | false>(false)
 	const [userFormData, setUserFormData] = useState<UserFormData | {}>({})
-	const [modelInfo, updateModelInfo] = useState<ModelFormData | {}>({})
+	const [modelInfo, setModelInfo] = useState<ModelFormData | {}>({})
 
 	const { doLogin } = useStore((state: AppStateInterface) => ({
 		doLogin: state.doLogin,
@@ -110,6 +122,16 @@ export default function SignUpWithEmailScreen() {
 	// const { isValid } = formState
 
 	// const formIsValid = isValid && !!watchUserType && !!watchGender
+
+	React.useEffect(() => {
+		if (route.params?.modelInfo) {
+			setModelInfo(route.params?.modelInfo)
+		}
+	}, [route.params?.modelInfo])
+
+	useEffect(() => {
+		navigation.navigate(screenNames.SignUpWithEmailStep2, { userFormData })
+	}, [userFormData])
 
 	const handleSignUp = async (formData: UserFormData) => {
 		try {
@@ -128,7 +150,11 @@ export default function SignUpWithEmailScreen() {
 
 	const handleShowModelForm = () => {
 		// Make sure the user form is valid first
-		trigger()
+		if (!formState.isValid) {
+			trigger()
+
+			return
+		}
 
 		if (!termsCondition) {
 			showToast(" You need to accept the terms and conditions first in order to go the next step.", {
@@ -140,15 +166,9 @@ export default function SignUpWithEmailScreen() {
 			return
 		}
 
-		if (formState.isValid) {
-			// save existing values
-			setUserFormData({ model: modelInfo, ...getValues() })
-
-			navigation.navigate(screenNames.SignUpWithEmailStep2, {
-				userFormData,
-				updateModelInfo
-			})
-		}
+		// save existing values. updatiing the user form date will navigate to the next
+		// screen when succeeded.
+		setUserFormData({ model: modelInfo, ...getValues() })
 	}
 
 	useEffect(() => {
@@ -179,7 +199,7 @@ export default function SignUpWithEmailScreen() {
 								<FormInput
 									onBlur={onBlur}
 									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
+									onChangeText={onChange}
 									value={value}
 									placeholder="Enter Your Full Name"
 									error={errors.name}
@@ -195,7 +215,7 @@ export default function SignUpWithEmailScreen() {
 								<FormInput
 									onBlur={onBlur}
 									autoCapitalize="none"
-									onChangeText={onChange}
+									onChangeText={text => onChange(text.toLowerCase())}
 									value={value}
 									placeholder="Enter Your Email"
 									error={errors.email}
@@ -213,7 +233,7 @@ export default function SignUpWithEmailScreen() {
 									secureTextEntry
 									autoCapitalize="none"
 									onBlur={onBlur}
-									onChangeText={(value) => onChange(value)}
+									onChangeText={onChange}
 									value={value}
 									placeholder="Please Choose A Password"
 									error={errors.password}
@@ -229,7 +249,7 @@ export default function SignUpWithEmailScreen() {
 								<FormInput
 									onBlur={onBlur}
 									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
+									onChangeText={onChange}
 									value={value}
 									placeholder="Enter Your Phone"
 									error={errors.telephone}
@@ -238,81 +258,83 @@ export default function SignUpWithEmailScreen() {
 							name="telephone"
 							rules={{ required: "The phone is required" }}
 						/>
+						<View style={{ marginBottom: 15 }}>
+							<View
+								style={{
+									borderColor: errors.userType ? colors.error : colors.black,
+									paddingHorizontal: 10,
+									borderWidth: 0.6,
+									borderRadius: 50,
+								}}
+							>
+								<Controller
+									name="userType"
+									control={control}
+									render={({ onChange, value }) => (
+										<SelectPicker
+											dismissable
+											doneButtonText="OK"
+											onValueChange={(userType: string) => {
+												if (!userType) return
 
-						<View
-							style={{
-								borderColor: errors.userType ? colors.error : colors.black,
-								paddingHorizontal: 10,
-								borderWidth: 0.6,
-								borderRadius: 50,
-								marginBottom: 15,
-							}}
-						>
-							<Controller
-								name="userType"
-								control={control}
-								render={({ onChange, onBlur, value }) => (
-									<SelectPicker
-										dismissable
-										doneButtonText="OK"
-										onValueChange={(userType: string) => {
-											if (!userType) return
-
-											onChange(userType)
-										}}
-										selected={value}
-										style={{ flexDirection: "row", justifyContent: "center" }}
-										placeholder="Signup as"
-										placeholderStyle={{
-											textAlign: "center",
-											fontSize: 18,
-										}}
-									>
-										<SelectPicker.Item label={"Consumer"} value={"CONSUMER"} />
-										<SelectPicker.Item label={"Model"} value={"MODEL"} />
-									</SelectPicker>
-								)}
-							/>
+												onChange(userType)
+											}}
+											selected={value}
+											style={{ flexDirection: "row", justifyContent: "center" }}
+											placeholder="Signup as"
+											placeholderStyle={{
+												textAlign: "center",
+												fontSize: 18,
+											}}
+										>
+											<SelectPicker.Item label={"Consumer"} value={"CONSUMER"} />
+											<SelectPicker.Item label={"Model"} value={"MODEL"} />
+										</SelectPicker>
+									)}
+									rules={{ required: "The type is required" }}
+								/>
+							</View>
 							{!!errors.userType && !watchUserType && (
 								<Text style={styles.errorText}>{errors.userType.message}</Text>
 							)}
 						</View>
+						<View style={{ marginBottom: 15 }}>
+							<View
+								style={{
+									borderColor: errors.userType ? colors.error : colors.black,
+									paddingHorizontal: 10,
+									borderWidth: 0.6,
+									borderRadius: 50,
+								}}
+							>
+								<Controller
+									name="gender"
+									control={control}
+									render={({ onChange, value }) => (
+										<SelectPicker
+											dismissable
+											doneButtonText="OK"
+											onValueChange={(gender: string) => {
+												if (!gender) return
 
-						<View
-							style={{
-								borderColor: errors.userType ? colors.error : colors.black,
-								paddingHorizontal: 10,
-								borderWidth: 0.6,
-								borderRadius: 50,
-								marginBottom: 15,
-							}}
-						>
-							<Controller
-								name="gender"
-								control={control}
-								render={({ onChange, onBlur, value }) => (
-									<SelectPicker
-										dismissable
-										doneButtonText="OK"
-										onValueChange={(gender: string) => {
-											if (!gender) return
-
-											onChange(gender)
-										}}
-										selected={value}
-										style={{ flexDirection: "row", justifyContent: "center" }}
-										placeholder="Check for your gender"
-										placeholderStyle={{
-											textAlign: "center",
-											fontSize: 18,
-										}}
-									>
-										<SelectPicker.Item label={"Male"} value={"MALE"} />
-										<SelectPicker.Item label={"Female"} value={"FEMALE"} />
-										<SelectPicker.Item label={"Other"} value={"OTHER"} />
-									</SelectPicker>
-								)}
-							/>
+												onChange(gender)
+											}}
+											selected={value}
+											style={{ flexDirection: "row", justifyContent: "center" }}
+											placeholder="Check for your gender"
+											placeholderStyle={{
+												textAlign: "center",
+												fontSize: 18,
+											}}
+										>
+											<SelectPicker.Item label={"Male"} value={"MALE"} />
+											<SelectPicker.Item label={"Female"} value={"FEMALE"} />
+											<SelectPicker.Item label={"Other"} value={"OTHER"} />
+										</SelectPicker>
+									)}
+									rules={{ required: "The gender is required" }}
+								/>
+							</View>
 							{!!errors.gender && !watchGender && (
 								<Text style={styles.errorText}>{errors.gender.message}</Text>
 							)}

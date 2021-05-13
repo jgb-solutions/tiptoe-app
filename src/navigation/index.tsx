@@ -182,25 +182,25 @@ function MainNavigation() {
 					</Stack.Navigator>
 				</ApolloProvider>
 			) : (
-					<Stack.Navigator screenOptions={navigatorScreenOptions} initialRouteName={screenNames.SignUp}>
-						<Stack.Screen
-							name={screenNames.LogIn}
-							component={LogInWithEmailScreen}
-						/>
-						<Stack.Screen
-							name={screenNames.SignUp}
-							component={SignUpWithEmailScreen}
-						/>
-						<Stack.Screen
-							name={screenNames.SignUpWithEmailStep2}
-							component={SignUpWithEmailStep2Screen}
-						/>
-						<Stack.Screen
-							name={screenNames.TermsCondition}
-							component={TermsConditionScreen}
-						/>
-					</Stack.Navigator>
-				)}
+				<Stack.Navigator screenOptions={navigatorScreenOptions} initialRouteName={screenNames.SignUpWithEmail}>
+					<Stack.Screen
+						name={screenNames.LogIn}
+						component={LogInWithEmailScreen}
+					/>
+					<Stack.Screen
+						name={screenNames.SignUpWithEmail}
+						component={SignUpWithEmailScreen}
+					/>
+					<Stack.Screen
+						name={screenNames.SignUpWithEmailStep2}
+						component={SignUpWithEmailStep2Screen}
+					/>
+					<Stack.Screen
+						name={screenNames.TermsCondition}
+						component={TermsConditionScreen}
+					/>
+				</Stack.Navigator>
+			)}
 		</NavigationContainer>
 	)
 }

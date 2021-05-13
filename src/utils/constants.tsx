@@ -3,8 +3,8 @@ import { Dimensions, Platform } from "react-native"
 
 export const APP_NAME = `TipToe`
 
-// const API_HOST = '192.168.43.41'
-const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
+const API_HOST = '192.168.1.147'
+// const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 
 
 let API_URL_ = ''
