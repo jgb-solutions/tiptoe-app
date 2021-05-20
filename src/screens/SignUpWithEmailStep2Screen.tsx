@@ -13,7 +13,6 @@ import React, { useState, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { useNavigation, useRoute } from "@react-navigation/native"
 
-
 import { colors } from "../utils/colors"
 import Textarea from "react-native-textarea"
 import FormInput from "../components/FormInput"
@@ -22,21 +21,20 @@ import { SIGN_USER_UP } from "../graphql/mutations"
 import useStore, { AppStateInterface } from "../store"
 import { graphqlClient } from "../utils/graphqlClient"
 import { screenNames } from "../utils/screens"
-import { ModelFormData, UserFormData, UserFormRouteParamsProps } from "./SignUpWithEmailScreen"
+import {
+	ModelFormData,
+	UserFormData,
+	UserFormRouteParamsProps,
+} from "./SignUpWithEmailScreen"
 
 export default function SignUpWithEmailStep2Screen() {
 	const navigation = useNavigation<any>()
 	const route = useRoute<UserFormRouteParamsProps>()
-	const {
-		control,
-		handleSubmit,
-		errors,
-		getValues,
-		reset
-	} = useForm<ModelFormData>({
-		mode: "onBlur",
-		defaultValues: route.params?.userFormData.model
-	})
+	const { control, handleSubmit, errors, getValues, reset } =
+		useForm<ModelFormData>({
+			mode: "onBlur",
+			defaultValues: route.params?.userFormData.model,
+		})
 
 	const userFormData = route.params?.userFormData
 
@@ -46,7 +44,10 @@ export default function SignUpWithEmailStep2Screen() {
 	}))
 
 	const handleSubmitWithModel = (modelFormData: ModelFormData) => {
-		const formDataWithModel: UserFormData = { ...userFormData, model: modelFormData }
+		const formDataWithModel: UserFormData = {
+			...userFormData,
+			model: modelFormData,
+		}
 
 		handleSignUp(formDataWithModel)
 	}
@@ -102,6 +103,7 @@ export default function SignUpWithEmailStep2Screen() {
 						<Text>Back</Text>
 					</TouchableOpacity>
 					<View style={{ marginBottom: 24 }}>
+
 						<Controller
 							control={control}
 							render={({ onChange, onBlur, value }) => (
@@ -209,7 +211,7 @@ export default function SignUpWithEmailStep2Screen() {
 							btnStyle={{ marginBottom: 12, alignSelf: "center" }}
 							label={"Sign up"}
 							onPress={handleSubmit(handleSubmitWithModel)}
-						// disabled={isValid}
+							// disabled={isValid}
 						/>
 					</View>
 				</View>
