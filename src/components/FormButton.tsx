@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { StyleSheet, View, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native'
 
 import { colors } from '../utils/colors'
 
@@ -10,7 +10,7 @@ type Props = {
   icon?: ReactNode,
   onPress: () => void,
   disabled?: boolean
-  color?: TextStyle;
+  color?: TextStyle
 }
 
 const FormButton = ({ btnStyle, label, labelStyle, icon, onPress, disabled, color }: Props) => {

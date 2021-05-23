@@ -13,17 +13,16 @@ import {
 	CardItem,
 	Body,
 } from "native-base"
-import { formatToUnits } from "../utils/formatNumber"
-import { screenNames } from "../utils/screens"
-
-import { ViewStyle, StyleSheet, Settings } from "react-native"
+import dateFormat from "dateformat"
+import { useNavigation } from "@react-navigation/native"
+import { ViewStyle, StyleSheet, TouchableOpacity } from "react-native"
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
 
+
 import { colors } from "../utils/colors"
+import { screenNames } from "../utils/screens"
+import { formatToUnits } from "../utils/formatNumber"
 import useStore, { AppStateInterface } from "../store"
-import { RouteProp, useNavigation } from "@react-navigation/native"
-import { TouchableOpacity } from "react-native-gesture-handler"
-var dateFormat = require("dateformat")
 
 type StatsProps = {
 	number: number
@@ -63,17 +62,16 @@ const Button = ({
 
 	return (
 		<TouchableOpacity
-			style={[
-				{
-					alignItems: "center",
-					justifyContent: "center",
-					paddingHorizontal: 8,
-					paddingVertical: 2,
-					borderRadius: 6,
-					opacity: disable ? 0.7 : 1,
-					backgroundColor: transparent ? "transparent" : undefined,
-					...style,
-				},
+			style={[{
+				alignItems: "center",
+				justifyContent: "center",
+				paddingHorizontal: 8,
+				paddingVertical: 2,
+				borderRadius: 6,
+				opacity: disable ? 0.7 : 1,
+				backgroundColor: transparent ? "transparent" : undefined,
+			},
+				style,
 			]}
 			onPress={handleOnPress}
 		>
@@ -186,16 +184,14 @@ export default function ProfileScreen() {
 								}}
 							>
 								<Stats
-									title={`Post${
-										currentUser?.model?.photosCount !== 1 ? "s" : ""
-									}`}
+									title={`Post${currentUser?.model?.photosCount !== 1 ? "s" : ""
+										}`}
 									number={123}
 								/>
 								<Stats
 									style={{ marginLeft: 12 }}
-									title={`Follower${
-										currentUser?.model?.followersCount !== 1 ? "s" : ""
-									}`}
+									title={`Follower${currentUser?.model?.followersCount !== 1 ? "s" : ""
+										}`}
 									number={1234}
 								/>
 							</View>

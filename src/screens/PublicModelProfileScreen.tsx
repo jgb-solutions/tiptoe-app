@@ -217,126 +217,126 @@ export default function PublicModelProfileScreen() {
           }} onPress={() => refetchModel()}><Text>Retry?</Text></Button>
         </NegativeResponse>
       ) : (
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              ListHeaderComponent={() => (
-                <>
-                  {
-                    modelLoading ? (
-                      <Spinner color={colors.pink} />
-                    ) : modelError ? (
-                      <Text>An error occurred</Text>
-                    ) : (
-                          <View style={{ padding: 12, }}>
-                            <View style={{
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              alignItems: "center",
-                              marginBottom: 8
-                            }}>
-                              <Thumbnail
-                                large
-                                source={{ uri: modelData.model.posterUrl }}
-                                style={{}}
-                              />
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={() => (
+            <>
+              {
+                modelLoading ? (
+                  <Spinner color={colors.pink} />
+                ) : modelError ? (
+                  <Text>An error occurred</Text>
+                ) : (
+                  <View style={{ padding: 12, }}>
+                    <View style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: "center",
+                      marginBottom: 8
+                    }}>
+                      <Thumbnail
+                        large
+                        source={{ uri: modelData.model.posterUrl }}
+                        style={{}}
+                      />
 
-                              <View style={{
-                                flex: 1,
-                                marginLeft: 48,
-                                flexDirection: "row",
-                                justifyContent: 'flex-end',
-                                alignItems: "center"
-                              }}>
-                                <Stats
-                                  title={`Post${modelData.model.photosCount !== 1 ? 's' : ''}`}
-                                  number={modelData.model.photosCount}
-                                />
-                                <Stats
-                                  style={{ marginLeft: 12 }}
-                                  title={`Follower${modelData.model.followersCount !== 1 ? 's' : ''}`}
-                                  number={modelData.model.followersCount}
-                                />
-                              </View>
-                            </View>
+                      <View style={{
+                        flex: 1,
+                        marginLeft: 48,
+                        flexDirection: "row",
+                        justifyContent: 'flex-end',
+                        alignItems: "center"
+                      }}>
+                        <Stats
+                          title={`Post${modelData.model.photosCount !== 1 ? 's' : ''}`}
+                          number={modelData.model.photosCount}
+                        />
+                        <Stats
+                          style={{ marginLeft: 12 }}
+                          title={`Follower${modelData.model.followersCount !== 1 ? 's' : ''}`}
+                          number={modelData.model.followersCount}
+                        />
+                      </View>
+                    </View>
 
-                            <View style={{ marginBottom: 24 }}>
-                              <Text>{modelData.model.stageName}</Text>
-                              <Text>{modelData.model.bio}</Text>
-                              {/* <Text>Followed by <Text>joerckman</Text>, {' '}
+                    <View style={{ marginBottom: 24 }}>
+                      <Text>{modelData.model.stageName}</Text>
+                      <Text>{modelData.model.bio}</Text>
+                      {/* <Text>Followed by <Text>joerckman</Text>, {' '}
                                 <Text>mc_chris_haiti509</Text> {' '} and <Text>2 others</Text>
                               </Text> */}
-                            </View>
+                    </View>
 
-                            <View style={{ flexDirection: 'row', marginBottom: 24 }}>
-                              <Button style={{
-                                flex: 1,
-                                backgroundColor: colors.pink
-                              }} onPress={handleToggleFollow} disable={toggleFollowLoading}>
-                                <Text style={{ color: colors.white }}>{modelData.model.followedByMe ? 'Unfollow' : 'Follow'}</Text>
-                              </Button>
-                              <Button style={{
-                                flex: 1,
-                                backgroundColor: colors.white,
-                                borderWidth: 1,
-                                borderColor: colors.pink,
-                                marginLeft: 4
-                              }} onPress={handleFetchOrCreateChatRoom}
-                                disable={createRoomLoading}>
-                                <Text style={{ color: colors.black }}>Message</Text>
-                              </Button>
-                              <Button style={{
-                                marginLeft: 4,
-                                borderColor: colors.pink,
-                                borderWidth: 1,
-                              }}>
-                                <Icon name="arrow-down" />
-                              </Button>
-                            </View>
-                          </View>
-                        )}
-                  {currentPhoto && (
-                    <Modal
-                      isVisible
-                      useNativeDriver
-                      onBackButtonPress={() => setCurrentPhoto(null)}
-                      onBackdropPress={() => setCurrentPhoto(null)}
-                    >
-                      <View style={{ borderRadius: 15, overflow: 'hidden' }}>
-                        <PhotoCard hideHeader photo={currentPhoto} />
-                      </View>
-                    </Modal>
-                  )}
-                </>
+                    <View style={{ flexDirection: 'row', marginBottom: 24 }}>
+                      <Button style={{
+                        flex: 1,
+                        backgroundColor: colors.pink
+                      }} onPress={handleToggleFollow} disable={toggleFollowLoading}>
+                        <Text style={{ color: colors.white }}>{modelData.model.followedByMe ? 'Unfollow' : 'Follow'}</Text>
+                      </Button>
+                      <Button style={{
+                        flex: 1,
+                        backgroundColor: colors.white,
+                        borderWidth: 1,
+                        borderColor: colors.pink,
+                        marginLeft: 4
+                      }} onPress={handleFetchOrCreateChatRoom}
+                        disable={createRoomLoading}>
+                        <Text style={{ color: colors.black }}>Message</Text>
+                      </Button>
+                      <Button style={{
+                        marginLeft: 4,
+                        borderColor: colors.pink,
+                        borderWidth: 1,
+                      }}>
+                        <Icon name="arrow-down" />
+                      </Button>
+                    </View>
+                  </View>
+                )}
+              {currentPhoto && (
+                <Modal
+                  isVisible
+                  useNativeDriver
+                  onBackButtonPress={() => setCurrentPhoto(null)}
+                  onBackdropPress={() => setCurrentPhoto(null)}
+                >
+                  <View style={{ borderRadius: 15, overflow: 'hidden' }}>
+                    <PhotoCard hideHeader photo={currentPhoto} />
+                  </View>
+                </Modal>
+              )}
+            </>
 
-              )}
-              numColumns={3}
-              onLayout={event => setThumbWidth(event.nativeEvent.layout.width)}
-              ListEmptyComponent={() => (
-                <NegativeResponse>
-                  <Text>That model has no photos yet.</Text>
-                </NegativeResponse>
-              )}
-              data={photosData.photos.data}
-              keyExtractor={(photo) => photo.hash}
-              onRefresh={() => refetchPhotos()}
-              refreshing={photosLoading}
-              renderItem={({ item: photo }: { item: PhotoInterface }) => (
-                <TouchableOpacity
-                  style={{
-                    borderWidth: 1,
-                    borderColor: colors.pink
-                  }}
-                  onPress={() => goToPhoto(photo)}>
-                  <Image
-                    source={{ uri: photo.url }}
-                    style={{
-                      width: thumbWidth / 3,
-                      height: thumbWidth / 3
-                    }}
-                    resizeMode='cover' />
-                </TouchableOpacity>
-              )} />
           )}
+          numColumns={3}
+          onLayout={event => setThumbWidth(event.nativeEvent.layout.width)}
+          ListEmptyComponent={() => (
+            <NegativeResponse>
+              <Text>That model has no photos yet.</Text>
+            </NegativeResponse>
+          )}
+          data={photosData.photos.data}
+          keyExtractor={(photo) => photo.hash}
+          onRefresh={() => refetchPhotos()}
+          refreshing={photosLoading}
+          renderItem={({ item: photo }: { item: PhotoInterface }) => (
+            <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                borderColor: colors.pink
+              }}
+              onPress={() => goToPhoto(photo)}>
+              <Image
+                source={{ uri: photo.url }}
+                style={{
+                  width: thumbWidth / 3,
+                  height: thumbWidth / 3
+                }}
+                resizeMode='cover' />
+            </TouchableOpacity>
+          )} />
+      )}
 
     </Container >
   )

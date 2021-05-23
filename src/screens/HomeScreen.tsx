@@ -72,46 +72,46 @@ export default function HomeScreen() {
 					<Text>An error occurred</Text>
 				</NegativeResponse>
 			) : (
-						<FlatList
-							ListHeaderComponent={
-								<>
-									<ThumbnailScrollList
-										thumbnails={homeData.models.data.map((model: ModelInterface) => ({
-											title: model.stageName,
-											hash: model.hash,
-											imageUrl: model.posterUrl
-										}))}
+				<FlatList
+					ListHeaderComponent={
+						<>
+							<ThumbnailScrollList
+								thumbnails={homeData.models.data.map((model: ModelInterface) => ({
+									title: model.stageName,
+									hash: model.hash,
+									imageUrl: model.posterUrl
+								}))}
 
-										onPress={(hash) => {
-											navigation.navigate(
-												screenNames.PublicModelProfileScreen, {
-												hash: `${hash}`
-											})
-										}}
-									/>
-								</>
-							}
-							ListEmptyComponent={() => (
-								<View style={{
-									flex: 1,
-									alignItems: 'center',
-									paddingTop: 12
-								}}>
-									<Text>Your timeline is empty! You should start following some models.</Text>
-								</View>
-							)}
-							data={photosData.photos.data}
-							keyExtractor={(card) => `${card.hash}`}
-							renderItem={({ item: photo }: { item: PhotoInterface }) => (
-								<PhotoCard photo={photo} />
-							)}
-							onRefresh={() => refetchPhotos}
-							refreshing={photosLoading}
-							onEndReached={() => loadMorePhotos()}
-							onEndReachedThreshold={.9}
-						/>
-
+								onPress={(hash) => {
+									navigation.navigate(
+										screenNames.PublicModelProfileScreen, {
+										hash: `${hash}`
+									})
+								}}
+							/>
+						</>
+					}
+					ListEmptyComponent={() => (
+						<View style={{
+							flex: 1,
+							alignItems: 'center',
+							paddingTop: 12
+						}}>
+							<Text>Your timeline is empty! You should start following some models.</Text>
+						</View>
 					)}
+					data={photosData.photos.data}
+					keyExtractor={(card) => `${card.hash}`}
+					renderItem={({ item: photo }: { item: PhotoInterface }) => (
+						<PhotoCard photo={photo} />
+					)}
+					onRefresh={() => refetchPhotos}
+					refreshing={photosLoading}
+					onEndReached={() => loadMorePhotos()}
+					onEndReachedThreshold={.9}
+				/>
+
+			)}
 		</Page>
 	)
 }

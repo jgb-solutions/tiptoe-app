@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Constants from "expo-constants"
 import {
 	Text,
@@ -10,26 +10,28 @@ import {
 	SafeAreaView,
 	TouchableOpacity,
 } from "react-native"
-
-import Checkbox from "../components/Checkbox"
-
-import { request } from "graphql-request"
 import { useForm, Controller } from "react-hook-form"
-import { useNavigation } from "@react-navigation/native"
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 
 import { colors } from "../utils/colors"
+import Checkbox from "../components/Checkbox"
+import { screenNames } from "../utils/screens"
 import FormInput from "../components/FormInput"
-import { SIGN_USER_UP } from "../graphql/mutations"
+import { emailRegex } from "../utils/checkEmail"
 import FormButton from "../components/FormButton"
+import { graphqlClient } from "../utils/graphqlClient"
 import useStore, { AppStateInterface } from "../store"
-import { GRAPHQL_API_URL } from "../utils/constants"
-const TipToeLogo = require("../../assets/images/TipToeLogo.png")
 import SelectPicker from "react-native-form-select-picker"
-import Textarea from "react-native-textarea"
+import { SIGN_USER_UP, VERIFY_USER_EMAIL } from "../graphql/mutations"
+import { showToast } from "../utils"
 
-import { Icon } from "native-base"
-export interface Model {
-	name: string
+const TipToeLogo = require("../../assets/images/TipToeLogo.png")
+
+type UserType = "CONSUMER" | "MODEL"
+
+type Gender = "FEMALE" | "MALE" | "OTHER"
+
+export interface ModelFormData {
 	stageName: string
 	bio: string
 	facebook: string
@@ -37,80 +39,149 @@ export interface Model {
 	youtube: string
 	instagram: string
 }
-export interface Credentials {
+
+export interface UserFormData {
 	name: string
 	email: string
 	password: string
-	userType: string
-	gender: string
+	userType: UserType
+	gender: Gender
 	telephone: number
-	model?: Model
+	model?: ModelFormData
 }
 
-enum UserType {
-	CONSUMER,
-	MODEL,
+
+export const validateEmailUnique = async (email: string) => {
+	try {
+		const {
+			verifyUserEmail: { exists },
+		} = await graphqlClient.request(VERIFY_USER_EMAIL, {
+			input: { email },
+		})
+
+		return exists ? "A user with this email already exists." : true
+	} catch (error) {
+		// console.error(error.response.errors[0].message)
+		return "We could not validate your email."
+	}
 }
 
-enum Gender {
-	FEMALE,
-	MALE,
-	OTHER,
+export const validateEmailAddress = (email: string) => {
+	return emailRegex.test(email) ? true : "Your email address is not valid"
 }
+
+export const emailRequired = "The email is required"
+
+export const emailFieldRules = {
+	required: emailRequired,
+	validate: {
+		validateEmailAddress,
+		validateEmailUnique,
+	},
+}
+
+export type UserFormRouteParamsProps = RouteProp<
+	{
+		params: {
+			userFormData: UserFormData,
+			modelInfo?: ModelFormData,
+		}
+	},
+	"params"
+>
 
 export default function SignUpWithEmailScreen() {
-	const { control, handleSubmit, errors, formState } = useForm<Credentials>({
+	const {
+		control,
+		handleSubmit,
+		errors,
+		formState,
+		watch,
+		getValues,
+		trigger,
+	} = useForm<UserFormData>({
 		mode: "onBlur",
 	})
+	const watchUserType = watch("userType") // you can supply default value as second argument
+	const watchGender = watch("gender") // you can supply default value as second argument
 	const navigation = useNavigation()
+	const route = useRoute<UserFormRouteParamsProps>()
+
 	const [signUpError, setsignUpError] = useState("")
-	const [userType, setUserType] = useState<any | UserType>()
 	const [termsCondition, setTermsCondition] = useState<boolean | false>(false)
-	const [form, setForm] = useState<boolean | true>(true)
-	const [submitForm, setSubmitForm] = useState<boolean | true>(true)
+	const [userFormData, setUserFormData] = useState<UserFormData | {}>({})
+	const [modelInfo, setModelInfo] = useState<ModelFormData | {}>({})
+
 	const { doLogin } = useStore((state: AppStateInterface) => ({
 		doLogin: state.doLogin,
 	}))
-	const [gender, setGender] = useState<any | Gender>()
+	const [showSignUpButton, setshowSignUpButton] = useState(true)
+	const [showNextButton, setShowNextButton] = useState(false)
 
-	const { isValid } = formState
-	const userTypeGender = !!userType && !!gender
+	// const { isValid } = formState
 
-	const formIsValid = isValid && userTypeGender
+	// const formIsValid = isValid && !!watchUserType && !!watchGender
 
-	const handleSignUp = async (credentials: Credentials) => {
-		credentials.userType = userType
-		credentials.gender = gender
+	React.useEffect(() => {
+		if (route.params?.modelInfo) {
+			setModelInfo(route.params?.modelInfo)
+		}
+	}, [route.params?.modelInfo])
+
+	useEffect(() => {
+		navigation.navigate(screenNames.SignUpWithEmailStep2, { userFormData })
+	}, [userFormData])
+
+	const handleSignUp = async (formData: UserFormData) => {
 		try {
-			const { register: userData } = await request(
-				GRAPHQL_API_URL,
-				SIGN_USER_UP,
-				{
-					input: credentials,
-				}
-			)
+			const { register: userData } = await graphqlClient.request(SIGN_USER_UP, {
+				input: formData,
+			})
 
 			if (userData) {
 				doLogin(userData)
 			}
-
-			if (errors) {
-				setsignUpError("something went wrong. Please check again")
-			}
 		} catch (error) {
 			setsignUpError(error.response.errors[0].message)
+			console.error(error)
 		}
 	}
 
-	const nextFrom = () => {
-		setForm(!form)
-		setSubmitForm(!submitForm)
+	const handleShowModelForm = () => {
+		// Make sure the user form is valid first
+		if (!formState.isValid) {
+			trigger()
+
+			return
+		}
+
+		if (!termsCondition) {
+			showToast(" You need to accept the terms and conditions first in order to go the next step.", {
+				textStyle: {
+					color: colors.warning
+				}
+			})
+
+			return
+		}
+
+		// save existing values. updatiing the user form date will navigate to the next
+		// screen when succeeded.
+		setUserFormData({ model: modelInfo, ...getValues() })
 	}
 
-	const typeOfUser = (value: any) => {
-		setUserType(value)
-		value === "MODEL" && setSubmitForm(false)
-	}
+	useEffect(() => {
+		if (!watchUserType) return
+
+		if (watchUserType === "MODEL") {
+			setshowSignUpButton(false)
+			setShowNextButton(true)
+		} else {
+			setshowSignUpButton(true)
+			setShowNextButton(false)
+		}
+	}, [watchUserType])
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView contentContainerStyle={styles.contentContainer}>
@@ -120,29 +191,14 @@ export default function SignUpWithEmailScreen() {
 				<Text style={styles.signUpError}>{signUpError}</Text>
 
 				<View style={styles.inputsContainer}>
-					{!form && (
-						<TouchableOpacity
-							onPress={() => nextFrom()}
-							style={{ marginBottom: 10, flexDirection:'row' }}
-						>
-							<Icon
-								name="arrow-back"
-								style={{
-									fontSize: 24,
-									color: "black",
-								}}
-							/> 
-							<Text>Back</Text>
-						</TouchableOpacity>
-					)}
-					<View style={!form && styles.displayNone}>
+					<View>
 						<Controller
 							control={control}
 							render={({ onChange, onBlur, value }) => (
 								<FormInput
 									onBlur={onBlur}
 									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
+									onChangeText={onChange}
 									value={value}
 									placeholder="Enter Your Full Name"
 									error={errors.name}
@@ -150,7 +206,6 @@ export default function SignUpWithEmailScreen() {
 							)}
 							name="name"
 							rules={{ required: "The full name is required" }}
-							defaultValue=""
 						/>
 
 						<Controller
@@ -159,15 +214,15 @@ export default function SignUpWithEmailScreen() {
 								<FormInput
 									onBlur={onBlur}
 									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
+									onChangeText={text => onChange(text.toLowerCase())}
 									value={value}
 									placeholder="Enter Your Email"
 									error={errors.email}
+									success={formState.touched.email && !errors.email}
 								/>
 							)}
 							name="email"
-							rules={{ required: "The email is required" }}
-							defaultValue=""
+							rules={emailFieldRules}
 						/>
 
 						<Controller
@@ -177,7 +232,7 @@ export default function SignUpWithEmailScreen() {
 									secureTextEntry
 									autoCapitalize="none"
 									onBlur={onBlur}
-									onChangeText={(value) => onChange(value)}
+									onChangeText={onChange}
 									value={value}
 									placeholder="Please Choose A Password"
 									error={errors.password}
@@ -185,7 +240,6 @@ export default function SignUpWithEmailScreen() {
 							)}
 							name="password"
 							rules={{ required: "The password is required" }}
-							defaultValue=""
 						/>
 
 						<Controller
@@ -194,7 +248,7 @@ export default function SignUpWithEmailScreen() {
 								<FormInput
 									onBlur={onBlur}
 									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
+									onChangeText={onChange}
 									value={value}
 									placeholder="Enter Your Phone"
 									error={errors.telephone}
@@ -202,249 +256,122 @@ export default function SignUpWithEmailScreen() {
 							)}
 							name="telephone"
 							rules={{ required: "The phone is required" }}
-							defaultValue=""
 						/>
+						<View style={{ marginBottom: 15 }}>
+							<View
+								style={{
+									borderColor: errors.userType ? colors.error : colors.black,
+									paddingHorizontal: 10,
+									borderWidth: 0.6,
+									borderRadius: 50,
+								}}
+							>
+								<Controller
+									name="userType"
+									control={control}
+									render={({ onChange, value }) => (
+										<SelectPicker
+											dismissable
+											doneButtonText="OK"
+											onValueChange={(userType: string) => {
+												if (!userType) return
 
-						<View
-							style={{
-								borderColor: errors.userType ? colors.error : colors.black,
-								paddingHorizontal: 10,
-								borderWidth: 0.6,
-								borderRadius: 50,
-								marginBottom: 15,
-							}}
-						>
-							<Controller
-								name="userType"
-								control={control}
-								as={
-									<SelectPicker
-										onValueChange={(value) => typeOfUser(value)}
-										selected={userType}
-										style={{ flexDirection: "row", justifyContent: "center" }}
-										placeholder="Signup as"
-										placeholderStyle={{
-											textAlign: "center",
-											fontSize: 18,
-										}}
-									>
-										<SelectPicker.Item label={"Consumer"} value={"CONSUMER"} />
-										<SelectPicker.Item label={"Model"} value={"MODEL"} />
-									</SelectPicker>
-								}
-							/>
-							{!!errors.userType && !userType && (
+												onChange(userType)
+											}}
+											selected={value}
+											style={{ flexDirection: "row", justifyContent: "center" }}
+											placeholder="Signup as"
+											placeholderStyle={{
+												textAlign: "center",
+												fontSize: 18,
+											}}
+										>
+											<SelectPicker.Item label={"Consumer"} value={"CONSUMER"} />
+											<SelectPicker.Item label={"Model"} value={"MODEL"} />
+										</SelectPicker>
+									)}
+									rules={{ required: "The type is required" }}
+								/>
+							</View>
+							{!!errors.userType && !watchUserType && (
 								<Text style={styles.errorText}>{errors.userType.message}</Text>
 							)}
 						</View>
+						<View style={{ marginBottom: 15 }}>
+							<View
+								style={{
+									borderColor: errors.userType ? colors.error : colors.black,
+									paddingHorizontal: 10,
+									borderWidth: 0.6,
+									borderRadius: 50,
+								}}
+							>
+								<Controller
+									name="gender"
+									control={control}
+									render={({ onChange, value }) => (
+										<SelectPicker
+											dismissable
+											doneButtonText="OK"
+											onValueChange={(gender: string) => {
+												if (!gender) return
 
-						<View
-							style={{
-								borderColor: errors.userType ? colors.error : colors.black,
-								paddingHorizontal: 10,
-								borderWidth: 0.6,
-								borderRadius: 50,
-								marginBottom: 15,
-							}}
-						>
-							<Controller
-								name="gender"
-								control={control}
-								as={
-									<SelectPicker
-										onValueChange={(value) => {
-											setGender(value)
-										}}
-										selected={gender}
-										style={{ flexDirection: "row", justifyContent: "center" }}
-										placeholder="Check for your gender"
-										placeholderStyle={{
-											textAlign: "center",
-											fontSize: 18,
-										}}
-									>
-										<SelectPicker.Item label={"Male"} value={"MALE"} />
-										<SelectPicker.Item label={"Female"} value={"FEMALE"} />
-										<SelectPicker.Item label={"Other"} value={"OTHER"} />
-									</SelectPicker>
-								}
-							/>
-							{!!errors.gender && !gender && (
+												onChange(gender)
+											}}
+											selected={value}
+											style={{ flexDirection: "row", justifyContent: "center" }}
+											placeholder="Check for your gender"
+											placeholderStyle={{
+												textAlign: "center",
+												fontSize: 18,
+											}}
+										>
+											<SelectPicker.Item label={"Male"} value={"MALE"} />
+											<SelectPicker.Item label={"Female"} value={"FEMALE"} />
+											<SelectPicker.Item label={"Other"} value={"OTHER"} />
+										</SelectPicker>
+									)}
+									rules={{ required: "The gender is required" }}
+								/>
+							</View>
+							{!!errors.gender && !watchGender && (
 								<Text style={styles.errorText}>{errors.gender.message}</Text>
 							)}
 						</View>
 					</View>
-					<View style={form && styles.displayNone}>
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<FormInput
-									onBlur={onBlur}
-									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
-									value={value}
-									placeholder="Enter Your Model Name"
-									error={errors.model?.name}
-								/>
-							)}
-							name="model.name"
-							// rules={{ required: "The model name is required" }}
-							defaultValue=""
+
+					<View style={styles.checkboxesTermsCondition}>
+						<Checkbox
+							checked={termsCondition}
+							onValueChanged={() => setTermsCondition(!termsCondition)}
+							label={""}
 						/>
-
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<FormInput
-									onBlur={onBlur}
-									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
-									value={value}
-									placeholder="Enter Your Stage Name"
-									error={errors.model?.stageName}
-								/>
-							)}
-							name="model.stageName"
-							// rules={{ required: "The stage name is required" }}
-							defaultValue=""
-						/>
-
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<FormInput
-									onBlur={onBlur}
-									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
-									value={value}
-									placeholder="Enter Your Facebook URL"
-									error={errors.model?.facebook}
-								/>
-							)}
-							name="model.facebook"
-							// rules={{ required: "The stage name is required" }}
-							defaultValue=""
-						/>
-
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<FormInput
-									onBlur={onBlur}
-									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
-									value={value}
-									placeholder="Enter Your Instagram URL"
-									error={errors.model?.instagram}
-								/>
-							)}
-							name="model.instagram"
-							// rules={{ required: "The stage name is required" }}
-							defaultValue=""
-						/>
-
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<FormInput
-									onBlur={onBlur}
-									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
-									value={value}
-									placeholder="Enter Your Twitter URL"
-									error={errors.model?.twitter}
-								/>
-							)}
-							name="model.twitter"
-							// rules={{ required: "The Twitter URL is required" }}
-							defaultValue=""
-						/>
-
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<FormInput
-									onBlur={onBlur}
-									autoCapitalize="none"
-									onChangeText={(value) => onChange(value)}
-									value={value}
-									placeholder="Enter Your Youtube URL"
-									error={errors.model?.youtube}
-								/>
-							)}
-							name="model.youtube"
-							// rules={{ required: "The Youtube URL is required" }}
-							defaultValue=""
-						/>
-
-						<View
-							style={{
-								borderColor: colors.black,
-								padding: 15,
-								borderWidth: 0.6,
-								borderRadius: 50,
-								marginBottom: 15,
-							}}
-						>
-							<Controller
-								control={control}
-								render={({ onChange, onBlur, value }) => (
-									<Textarea
-										containerStyle={styles.textareaContainer}
-										style={styles.textarea}
-										onChangeText={(value: string) => onChange(value)}
-										defaultValue={value}
-										maxLength={300}
-										placeholder={"Tell about you"}
-										placeholderTextColor={"#c7c7c7"}
-										underlineColorAndroid={"transparent"}
-									/>
-								)}
-								name="model.bio"
-							/>
-						</View>
-					</View>
-
-					<View
-						style={
-							submitForm || userType === "CONSUMER"
-								? styles.simpleContainer
-								: styles.displayNone
-						}
-					>
-						<View style={styles.checkboxesTermsCondition}>
-							<Checkbox
-								checked={termsCondition}
-								onValueChanged={() => setTermsCondition(!termsCondition)}
-								label={""}
-							/>
-							<Text style={{ marginLeft: 10 }}>
-								<TouchableOpacity
-									onPress={() => navigation.navigate("TermsCondition")}
-								>
-									<Text>Accept our terms and condition</Text>
-								</TouchableOpacity>
-							</Text>
-						</View>
+						<Text style={{ marginLeft: 10 }}>
+							<TouchableOpacity
+								onPress={() => navigation.navigate("TermsCondition")}
+							>
+								<Text>Accept our terms and condition</Text>
+							</TouchableOpacity>
+						</Text>
 					</View>
 				</View>
 
-				<FormButton
-					btnStyle={{ marginBottom: 12 }}
-					label={userType !== "CONSUMER" && form ? "Next" : "Sign up"}
-					onPress={
-						submitForm || userType === "CONSUMER"
-							? handleSubmit(handleSignUp)
-							: () => nextFrom()
-					}
-					disabled={formIsValid && !termsCondition}
-					color={{
-						color:
-							termsCondition || userType === "MODEL"
-								? colors.black
-								: colors.lightGrey,
-					}}
-				/>
+				{showNextButton && (
+					<FormButton
+						btnStyle={{ marginBottom: 12 }}
+						label={"Next"}
+						onPress={handleShowModelForm}
+					/>
+				)}
+
+				{showSignUpButton && (
+					<FormButton
+						btnStyle={{ marginBottom: 12 }}
+						label={"Sign up"}
+						onPress={handleSubmit(handleSignUp)}
+					// disabled={!formIsValid && !termsCondition}
+					/>
+				)}
 
 				<Text style={styles.smallText}>ALREADY HAVE AN ACCOUNT?</Text>
 				<TouchableOpacity
@@ -487,7 +414,6 @@ const styles = StyleSheet.create({
 	},
 	signUpError: {
 		textAlign: "center",
-		// textTransform: "uppercase",
 		color: colors.red,
 		fontSize: 18,
 		marginVertical: 20,
@@ -531,15 +457,5 @@ const styles = StyleSheet.create({
 		opacity: 0,
 		height: 0,
 		flex: 0,
-	},
-	textareaContainer: {
-		height: 180,
-		padding: 5,
-	},
-	textarea: {
-		textAlignVertical: "top", // hack android
-		height: 170,
-		fontSize: 18,
-		color: "#333",
 	},
 })

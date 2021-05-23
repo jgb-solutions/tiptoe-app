@@ -2,7 +2,6 @@ import RoomInterface from "./RoomInterface"
 
 export default interface ModelInterface {
 	id: string
-	name: string
 	stageName: string
 	hash: string
 	posterUrl: string

@@ -14,6 +14,7 @@ import ProfileScreen from "../screens/ProfileScreen"
 import ChatListScreen from "../screens/ChatListScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
 import AddPhotoScreen from "../screens/AddPhotoScreen"
+import AddPhotoStep2Screen from "../screens/AddPhotoStep2Screen"
 import SettingsScreen from "../screens/SettingsScreen"
 import ChangePasswordScreen from "../screens/ChangePasswordScreen"
 import LogInWithEmailScreen from "../screens/LogInWithEmailScreen."
@@ -26,6 +27,7 @@ import { colors } from "../utils/colors"
 import useStore, { AppStateInterface } from "../store"
 import { screenNames } from "../utils/screens"
 import { getClient } from "../graphql/client"
+import SignUpWithEmailStep2Screen from "../screens/SignUpWithEmailStep2Screen"
 
 // Navigators setup
 const Stack = createStackNavigator()
@@ -173,17 +175,25 @@ function MainNavigation() {
 							name={screenNames.ChangePassword}
 							component={ChangePasswordScreen}
 						/>
+						<Stack.Screen
+							name={screenNames.AddPhotoStep2}
+							component={AddPhotoStep2Screen}
+						/>
 					</Stack.Navigator>
 				</ApolloProvider>
 			) : (
-				<Stack.Navigator screenOptions={navigatorScreenOptions}>
+				<Stack.Navigator screenOptions={navigatorScreenOptions} initialRouteName={screenNames.SignUpWithEmail}>
 					<Stack.Screen
 						name={screenNames.LogIn}
 						component={LogInWithEmailScreen}
 					/>
 					<Stack.Screen
-						name={screenNames.SignUp}
+						name={screenNames.SignUpWithEmail}
 						component={SignUpWithEmailScreen}
+					/>
+					<Stack.Screen
+						name={screenNames.SignUpWithEmailStep2}
+						component={SignUpWithEmailStep2Screen}
 					/>
 					<Stack.Screen
 						name={screenNames.TermsCondition}
