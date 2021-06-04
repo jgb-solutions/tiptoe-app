@@ -244,35 +244,6 @@ export const SEARCH_QUERY = gql`
 	}
 `
 
-export const LOG_USER_IN = gql`
-	query logUserIn($input: LoginInput!) {
-		login(input: $input) {
-			token
-			data {
-				id
-				active
-				admin
-				name
-				email
-				firstLogin
-				avatarUrl
-				telephone
-				insertedAt
-				userType
-				gender
-				model {
-					bio
-					facebook
-					insertedAt
-					instagram
-					name
-					twitter
-					youtube
-				}
-			}
-		}
-	}
-`
 
 export const FACEBOOK_LOGIN_URL = gql`
 	query facebookLoginUrl {

@@ -11,20 +11,14 @@ interface FilterProps {
 
 export default function useModels({ random }: FilterProps = {}) {
 	const [hasMore, setHasMore] = useState(true)
-	const {
-		loading,
-		error,
-		data,
-		fetchMore,
-		refetch,
-		subscribeToMore,
-	} = useQuery(FETCH_MODELS, {
-		variables: {
-			take: FETCH_MODELS_NUMBER,
-			orderBy: [{ field: "insertAt", order: "DESC" }],
-			random,
-		},
-	})
+	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
+		useQuery(FETCH_MODELS, {
+			variables: {
+				take: FETCH_MODELS_NUMBER,
+				orderBy: [{ field: "created_at", order: "DESC" }],
+				random,
+			},
+		})
 
 	const loadMoreModels = () => {
 		const { currentPage } = data.models.paginationInfo

@@ -3,15 +3,15 @@ import ModelInterface from "./ModelInterface"
 export default interface UserInterface {
 	active: boolean
 	admin: boolean
-	avatarUrl: string
+	avatar: string
 	email: string
-	firstLogin: boolean
+	first_login: boolean
 	id: string
-	insertedAt: Date
-	model?: ModelInterface
+	created_at: Date
+	modele?: ModelInterface
 	name: string
 	telephone: string
-	userType: string
+	user_type: string
 	gender: string
-	updatedAt: Date
+	updated_at: Date
 }

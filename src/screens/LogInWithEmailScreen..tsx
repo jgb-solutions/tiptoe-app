@@ -15,7 +15,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import { colors } from "../utils/colors"
 import FormInput from '../components/FormInput'
-import { LOG_USER_IN } from "../graphql/queries"
+import { LOG_USER_IN } from "../graphql/mutations"
 import FormButton from '../components/FormButton'
 import useStore, { AppStateInterface } from "../store"
 import { graphqlClient } from "../utils/graphqlClient"
@@ -23,7 +23,7 @@ import { emailRequired, validateEmailAddress } from "./SignUpWithEmailScreen"
 const TipToeLogo = require('../../assets/images/TipToeLogo.png')
 
 export interface Credentials {
-  email: string
+  username: string
   password: string
 }
 
@@ -68,11 +68,11 @@ export default function LogInWithEmailScreen() {
                 onChangeText={value => onChange(value)}
                 value={value}
                 placeholder="Enter Your Email"
-                error={errors.email}
-                success={formState.touched.email && !errors.email}
+                error={errors.username}
+                success={formState.touched.username && !errors.username}
               />
             )}
-            name="email"
+            name="username"
             rules={{
               required: emailRequired,
               validate: {

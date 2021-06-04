@@ -34,7 +34,8 @@ const expoEnv = Constants.manifest.env
 // }
 
 
-API_URL_ = `http://${API_HOST || 'localhost'}:4000`
+// API_URL_ = `http://${API_HOST || 'localhost'}:4000`
+API_URL_ = 'http://tiptoe-web-laravel.test' 
 SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
 
 export const API_URL = API_URL_

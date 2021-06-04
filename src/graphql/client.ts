@@ -48,13 +48,13 @@ const getClient = () => {
 			}),
 			// auth link
 			setContext((_, { headers }) => {
-				// get the authentication token from local storage if it exists
-				const token = useStore.getState().authData.token
+				// get the authentication access_token from local storage if it exists
+				const access_token = useStore.getState().authData.access_token
 				// return the headers to the context so httpLink can read them
 				return {
 					headers: {
 						...headers,
-						authorization: `Bearer ${token}`,
+						authorization: `Bearer ${access_token}`,
 					},
 				}
 			}),

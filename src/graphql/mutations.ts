@@ -23,7 +23,37 @@ export const SIGN_USER_UP = gql`
 					youtube
 				}
 			}
-			token
+			access_token
+		}
+	}
+`
+
+export const LOG_USER_IN = gql`
+	mutation logUserIn($input: LoginInput!) {
+		login(input: $input) {
+			access_token
+			user {
+				id
+				active
+				admin
+				name
+				email
+				first_login
+				avatar
+				telephone
+				created_at
+				user_type
+				gender
+				modele {
+					stage_name
+					bio
+					facebook
+					instagram
+					twitter
+					youtube
+					created_at
+				}
+			}
 		}
 	}
 `
@@ -119,9 +149,9 @@ export const FACEOOK_LOGIN = gql`
 				avatar_url
 				telephone
 				first_login
-				insertAt
+				created_at
 			}
-			token
+			access_token
 		}
 	}
 `

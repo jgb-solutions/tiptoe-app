@@ -12,21 +12,15 @@ interface FilterProps {
 
 export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 	const [hasMore, setHasMore] = useState(true)
-	const {
-		loading,
-		error,
-		data,
-		fetchMore,
-		refetch,
-		subscribeToMore,
-	} = useQuery(FETCH_PHOTOS, {
-		variables: {
-			take: FETCH_PHOTOS_NUMBER,
-			orderBy: [{ field: "insertAt", order: "DESC" }],
-			modelHash,
-			random,
-		},
-	})
+	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
+		useQuery(FETCH_PHOTOS, {
+			variables: {
+				take: FETCH_PHOTOS_NUMBER,
+				orderBy: [{ field: "created_at", order: "DESC" }],
+				modelHash,
+				random,
+			},
+		})
 
 	const loadMorePhotos = () => {
 		const { currentPage } = data.photos.paginationInfo

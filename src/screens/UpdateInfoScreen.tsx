@@ -27,12 +27,12 @@ const GENDERS = ['Male', 'Female', 'Other']
 
 export default function UpdateInfoScreen() {
 	const navigation = useNavigation()
-	const currentUser = useStore((state: AppStateInterface) => (state.authData.data))
+	const currentUser = useStore((state: AppStateInterface) => (state.authData.user))
 	const { control, handleSubmit } = useForm<UserInterface>({
 		mode: "onBlur",
 		defaultValues: currentUser
 	})
-	const [avatarUrl, setAvatarUrl] = useState<any | null>()
+	const [avatar, setAvatar] = useState<any | null>()
 	const { updateUser, data } = useUpdateUser()
 
 	useEffect(() => {
@@ -68,7 +68,7 @@ export default function UpdateInfoScreen() {
 		})
 
 		if (!result.cancelled) {
-			setAvatarUrl(result.uri)
+			setAvatar(result.uri)
 		}
 	}
 
@@ -86,7 +86,7 @@ export default function UpdateInfoScreen() {
 						<Image
 							style={styles.headerPictureStyle}
 							source={{
-								uri: avatarUrl ? avatarUrl : currentUser?.avatarUrl
+								uri: avatar ? avatar : currentUser?.avatar
 							}}
 						/>
 					</View>
@@ -174,7 +174,7 @@ export default function UpdateInfoScreen() {
 							/>
 						</View>
 					</Item>
-					{currentUser?.model && (
+					{currentUser?.modele && (
 						<View>
 							<Text style={styles.modelTitle}>Model information</Text>
 

@@ -12,8 +12,8 @@ export const { persist, purge } = configurePersist({
 })
 
 export interface UserDataInterface {
-	data?: UserInterface
-	token?: string
+	user?: UserInterface
+	access_token?: string
 }
 
 export interface AuthDataInterface extends UserDataInterface {

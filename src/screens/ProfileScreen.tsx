@@ -84,9 +84,9 @@ export default function ProfileScreen() {
 	const navigation = useNavigation()
 	const { logout, currentUser } = useStore((state: AppStateInterface) => ({
 		logout: state.doLogout,
-		currentUser: state.authData.data,
+		currentUser: state.authData.user,
 	}))
-	const [isAmodel, setIsAmodel] = useState(currentUser?.model ? true : false)
+	const [isAmodel, setIsAmodel] = useState(currentUser?.modele ? true : false)
 	const [showModelInfo, setShowModelInfo] = useState(false)
 
 	let menu: any = null
@@ -112,6 +112,8 @@ export default function ProfileScreen() {
 		navigation.navigate(screenNames.UpdateInfo)
 		hideMenu()
 	}
+
+	console.log(currentUser)
 	return (
 		<Container>
 			<Header
@@ -168,8 +170,8 @@ export default function ProfileScreen() {
 							large
 							source={{
 								uri: !showModelInfo
-									? currentUser?.avatarUrl
-									: currentUser?.model?.posterUrl,
+									? currentUser?.avatar
+									: currentUser?.modele?.posterUrl,
 							}}
 						/>
 
@@ -184,13 +186,13 @@ export default function ProfileScreen() {
 								}}
 							>
 								<Stats
-									title={`Post${currentUser?.model?.photosCount !== 1 ? "s" : ""
+									title={`Post${currentUser?.modele?.photosCount !== 1 ? "s" : ""
 										}`}
 									number={123}
 								/>
 								<Stats
 									style={{ marginLeft: 12 }}
-									title={`Follower${currentUser?.model?.followersCount !== 1 ? "s" : ""
+									title={`Follower${currentUser?.modele?.followersCount !== 1 ? "s" : ""
 										}`}
 									number={1234}
 								/>
@@ -209,7 +211,7 @@ export default function ProfileScreen() {
 									<Text style={{ fontSize: 24, fontWeight: "bold" }}>
 										{currentUser?.name}
 									</Text>
-									<Text style={{ fontSize: 18 }}>{currentUser?.userType}</Text>
+									<Text style={{ fontSize: 18 }}>{currentUser?.user_type}</Text>
 								</View>
 							</View>
 						)}
@@ -258,6 +260,7 @@ export default function ProfileScreen() {
 									borderWidth: 1,
 									paddingVertical: 10,
 									width: 180,
+									borderRadius: 0
 								}}
 								onPress={() => setShowModelInfo(false)}
 								disable={!showModelInfo}
@@ -277,6 +280,7 @@ export default function ProfileScreen() {
 									justifyContent: "center",
 									paddingVertical: 10,
 									width: 180,
+									borderRadius: 0
 								}}
 								onPress={() => setShowModelInfo(true)}
 								disable={showModelInfo}
@@ -332,23 +336,11 @@ export default function ProfileScreen() {
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							Joined on
 						</Text>
-						<Text>{dateFormat(currentUser?.insertedAt, "fullDate")}</Text>
+						{/* <Text>{dateFormat(currentUser?.created_at, "fullDate")}</Text> */}
 					</View>
 				</View>
 				<View style={!showModelInfo && styles.displayNone}>
-					<View
-						style={{
-							flexDirection: "row",
-							borderTopColor: "#EFEFEF",
-							borderTopWidth: 1,
-							padding: 12,
-						}}
-					>
-						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
-							Model Name
-						</Text>
-						<Text>{currentUser?.model?.name}</Text>
-					</View>
+					
 
 					<View
 						style={{
@@ -361,7 +353,7 @@ export default function ProfileScreen() {
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							Stage Name
 						</Text>
-						<Text>{currentUser?.model?.stageName}</Text>
+						<Text>{currentUser?.modele?.stageName}</Text>
 					</View>
 
 					<View
@@ -376,7 +368,7 @@ export default function ProfileScreen() {
 							Facebook
 						</Text>
 
-						<Text>{currentUser?.model?.facebook}</Text>
+						<Text>{currentUser?.modele?.facebook}</Text>
 					</View>
 
 					<View
@@ -391,7 +383,7 @@ export default function ProfileScreen() {
 							instagram
 						</Text>
 
-						<Text>{currentUser?.model?.instagram}</Text>
+						<Text>{currentUser?.modele?.instagram}</Text>
 					</View>
 
 					<View
@@ -406,7 +398,7 @@ export default function ProfileScreen() {
 							twitter
 						</Text>
 
-						<Text>{currentUser?.model?.twitter}</Text>
+						<Text>{currentUser?.modele?.twitter}</Text>
 					</View>
 
 					<View
@@ -421,7 +413,7 @@ export default function ProfileScreen() {
 							youtube
 						</Text>
 
-						<Text>{currentUser?.model?.youtube}</Text>
+						<Text>{currentUser?.modele?.youtube}</Text>
 					</View>
 				</View>
 				{!isAmodel && (
@@ -482,7 +474,7 @@ export default function ProfileScreen() {
 									<Thumbnail
 										large
 										source={{
-											uri: currentUser?.avatarUrl,
+											uri: currentUser?.avatar,
 										}}
 									/>
 									<Text
@@ -509,7 +501,7 @@ export default function ProfileScreen() {
 									<Thumbnail
 										large
 										source={{
-											uri: currentUser?.avatarUrl,
+											uri: currentUser?.avatar,
 										}}
 									/>
 									<Text
@@ -536,7 +528,7 @@ export default function ProfileScreen() {
 									<Thumbnail
 										large
 										source={{
-											uri: currentUser?.avatarUrl,
+											uri: currentUser?.avatar,
 										}}
 									/>
 									<Text
@@ -563,7 +555,7 @@ export default function ProfileScreen() {
 									<Thumbnail
 										large
 										source={{
-											uri: currentUser?.avatarUrl,
+											uri: currentUser?.avatar,
 										}}
 									/>
 									<Text
