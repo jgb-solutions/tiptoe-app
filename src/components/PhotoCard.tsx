@@ -49,22 +49,22 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 						<TouchableOpacity
 							onPress={() => {
 								navigation.navigate(screenNames.PublicModelProfileScreen, {
-									hash: `${photo.model.hash}`,
+									hash: `${photo.modele.hash}`,
 								})
 							}}
 						>
-							<Thumbnail small source={{ uri: photo.model.poster }} />
+							<Thumbnail small source={{ uri: photo.modele.poster }} />
 						</TouchableOpacity>
 
 						<Body>
 							<TouchableOpacity
 								onPress={() => {
 									navigation.navigate(screenNames.PublicModelProfileScreen, {
-										hash: `${photo.model.hash}`,
+										hash: `${photo.modele.hash}`,
 									})
 								}}
 							>
-								<Text>{photo.model.stage_name}</Text>
+								<Text>{photo.modele.stage_name}</Text>
 							</TouchableOpacity>
 						</Body>
 					</Left>
@@ -73,7 +73,7 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 			<DoubleTap onDoubleTap={() => handleToggleLike(photo)}>
 				<CardItem cardBody>
 					<Image
-						source={{ uri: photo.url }}
+						source={{ uri: photo.uri }}
 						style={{
 							flex: 1,
 							height: SCREEN_WIDTH,
