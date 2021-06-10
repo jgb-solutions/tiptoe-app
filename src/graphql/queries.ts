@@ -5,7 +5,7 @@ export const FETCH_HOME_SCREEN = gql`
 		models(take: $take, page: $page, orderBy: $orderBy) {
 			data {
 				hash
-				posterUrl
+				poster
 				stageName
 				name
 			}
@@ -17,11 +17,11 @@ export const FETCH_HOME_SCREEN = gql`
 				caption
 				url
 				likesCount
-				insertedAt
+				created_at
 				model {
 					stageName
 					hash
-					posterUrl
+					poster
 				}
 			}
 		}
@@ -35,7 +35,7 @@ export const FETCH_MANAGE_SCREEN = gql`
 				data {
 					hash
 					title
-					posterUrl
+					poster
 					artist {
 						stage_name
 						hash
@@ -55,7 +55,7 @@ export const FETCH_MANAGE_SCREEN = gql`
 				data {
 					stage_name
 					hash
-					posterUrl
+					poster
 				}
 			}
 
@@ -67,7 +67,7 @@ export const FETCH_MANAGE_SCREEN = gql`
 					artist {
 						stage_name
 						hash
-						posterUrl
+						poster
 					}
 				}
 			}
@@ -98,10 +98,10 @@ export const FETCH_PHOTOS = gql`
 				url
 				likesCount
 				likedByMe
-				insertedAt
+				created_at
 				model {
 					stageName
-					posterUrl
+					poster
 					hash
 				}
 			}
@@ -123,10 +123,10 @@ export const FETCH_FAVORITE_PHOTOS = gql`
 				url
 				likesCount
 				likedByMe
-				insertedAt
+				created_at
 				model {
 					stageName
-					posterUrl
+					poster
 					hash
 				}
 			}
@@ -143,14 +143,14 @@ export const FETCH_ROOMS = gql`
 		me {
 			rooms {
 				id
-				insertedAt
+				created_at
 				messages {
 					text
 				}
 				chatUser {
 					id
 					name
-					avatarUrl
+					avatar
 					type
 					modelHash
 				}
@@ -165,7 +165,7 @@ export const FETCH_MODEL = gql`
 			id
 			name
 			stageName
-			posterUrl
+			poster
 			facebook
 			hash
 			instagram
@@ -185,7 +185,7 @@ export const FETCH_MODELS = gql`
 		models(take: $take, page: $page, orderBy: $orderBy) {
 			data {
 				hash
-				posterUrl
+				poster
 				stageName
 				name
 			}
@@ -220,7 +220,7 @@ export const SEARCH_QUERY = gql`
 			tracks {
 				hash
 				title
-				posterUrl
+				poster
 				artist {
 					hash
 					stage_name
@@ -229,7 +229,7 @@ export const SEARCH_QUERY = gql`
 			artists {
 				hash
 				stage_name
-				posterUrl
+				poster
 			}
 			albums {
 				hash
@@ -243,7 +243,6 @@ export const SEARCH_QUERY = gql`
 		}
 	}
 `
-
 
 export const FACEBOOK_LOGIN_URL = gql`
 	query facebookLoginUrl {
