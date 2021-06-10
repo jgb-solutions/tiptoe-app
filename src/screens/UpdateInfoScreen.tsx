@@ -25,13 +25,11 @@ import useUpdateUser from '../hooks/useUpdateUser'
 
 const GENDERS = ['MALE', 'FEMALE', 'OTHER']
 
-export interface Credentials {
-	
-}
-
 export default function UpdateInfoScreen() {
 	const navigation = useNavigation()
 	const currentUser = useStore((state: AppStateInterface) => (state.authData.user))
+
+	
 	const { control, handleSubmit, errors } = useForm<UserInterface>({
 		mode: "onBlur",
 		defaultValues: currentUser
@@ -92,7 +90,7 @@ export default function UpdateInfoScreen() {
 			onPressLeft={() =>
 				navigation.navigate("TabNavigation", { screen: screenNames.Home })
 			}
-			leftStyle={{ flex: 1.2 }}
+			leftStyle={{ flex: 0 }}
 			noContent
 		>
 			<ScrollView>

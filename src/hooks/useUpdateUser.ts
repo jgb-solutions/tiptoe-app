@@ -9,7 +9,7 @@ export type updatedUserProps = {
 	email: string
 	gender: string
 	telephone: string
-	modele?: ModelInterface
+	modele?: ModelInterface 
 }
 
 export default function useUpdateUser() {

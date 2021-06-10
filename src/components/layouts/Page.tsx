@@ -85,13 +85,13 @@ export default function Page({
           />
           {title}
         </Body>
-        {!noRight && (
+        {/* {!noRight && (
           <Right style={[{ flex: 1 }, { ...rightStyle }]}>
             <Button transparent onPress={handlePressRight}>
               <Icon name='chatbubbles' style={{ color: colors.white }} />
             </Button>
           </Right>
-        )}
+        )} */}
       </Header>
       {noContent ? (
         <View style={{ flex: 1 }}>{children}</View>
