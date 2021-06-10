@@ -208,17 +208,17 @@ export default function PublicModelProfileScreen() {
 								</View>
 							)}
 							data={photosData.photos.data}
-							keyExtractor={(photo) => photo.hash}
+							keyExtractor={(photo) => photo.has}
 							renderItem={({ item: photo }: { item: PhotoInterface }) => (
 								<TouchableOpacity
-									style={{
+									style={{ 
 										borderWidth: 1,
 										borderColor: colors.pink,
 									}}
 									onPress={() => goToPhoto(photo)}
 								>
 									<Image
-										source={{ uri: photo.url }}
+										source={{ uri: photo.uri }}
 										style={{
 											width: thumbWidth / 3,
 											height: thumbWidth / 3,

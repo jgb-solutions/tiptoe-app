@@ -15,15 +15,15 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
 		useQuery(FETCH_PHOTOS, {
 			variables: {
-				take: FETCH_PHOTOS_NUMBER,
+				first: FETCH_PHOTOS_NUMBER,
 				orderBy: [{ field: "created_at", order: "DESC" }],
-				modelHash,
-				random,
+				// modelHash,
+				// random,
 			},
 		})
 
 	const loadMorePhotos = () => {
-		const { currentPage } = data.photos.paginationInfo
+		const { currentPage } = data.photos.paginatorInfo
 
 		fetchMore({
 			variables: {

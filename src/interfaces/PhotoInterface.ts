@@ -1,8 +1,8 @@
 export default interface PhotoInterface {
 	id: string
 	caption: string
-	hash: string
-	url: string
+	has: string
+	uri: string
 	featured: boolean
 	detail: string
 	likesCount: number
@@ -13,7 +13,7 @@ export default interface PhotoInterface {
 		name: string
 		slug: string
 	}
-	model: {
+	modele: {
 		stage_name: string
 		hash: string
 		poster: string

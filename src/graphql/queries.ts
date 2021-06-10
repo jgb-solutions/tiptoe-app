@@ -2,7 +2,7 @@ import gql from "graphql-tag"
 
 export const FETCH_HOME_SCREEN = gql`
 	query homescreenData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
-		models(take: $take, page: $page, orderBy: $orderBy) {
+		modeles(first: $take, page: $page, orderBy: $orderBy) {
 			data {
 				hash
 				poster
@@ -11,20 +11,40 @@ export const FETCH_HOME_SCREEN = gql`
 			}
 		}
 
-		photos(take: $take, page: $page, orderBy: $orderBy) {
+		photos(first: $take, page: $page, orderBy: $orderBy) {
 			data {
 				hash
 				caption
-				url
+				uri
 				likesCount
 				created_at
 				model {
 					stage_name
-					hash
+					has
 					poster
 				}
 			}
 		}
+
+		# query {
+#   photos (first: 10) {
+#     data {
+#       id
+#       uri
+#       modele {
+#         id
+#         stage_name
+#       }
+#       category{
+#         name
+#       }
+#     }
+#     paginatorInfo {
+#       currentPage
+#       lastPage
+#     }
+#   }
+# }
 	}
 `
 
@@ -38,7 +58,7 @@ export const FETCH_MANAGE_SCREEN = gql`
 					poster
 					artist {
 						stage_name
-						hash
+						has
 					}
 				}
 			}
@@ -76,48 +96,80 @@ export const FETCH_MANAGE_SCREEN = gql`
 `
 
 export const FETCH_PHOTOS = gql`
-	query photosData(
-		$page: Int
-		$take: Int
-		$orderBy: [OrderByClause!]
-		$modelHash: String
-		$random: Boolean
-	) {
-		# Latest 10 photos
-		photos(
-			take: $take
-			page: $page
-			orderBy: $orderBy
-			modelHash: $modelHash
-			random: $random
+	# query photos(
+	# 	$page: Int
+	# 	$first: Int
+	# 	# $orderBy: [OrderByClause!]
+	# 	# $modelHash: String
+	# 	# $random: Boolean
+	# ) {
+	# 	# Latest 10 photos
+	# 	photos(
+	# 		first: $take
+	# 		page: $page
+	# 		# orderBy: $orderBy
+	# 		# modelHash: $modelHash
+	# 		# random: $random
+	# 	) {
+	# 		data {
+	# 			id
+	# 			has
+	# 			caption
+	# 			uri 
+	# 			# likesCount 
+	# 			# likedByMe  
+	# 			created_at
+	# 			modele {
+	# 				stage_name
+	# 				poster
+	# 				has
+	# 			}
+	# 		}
+	# 		paginatorInfo{
+	# 			currentPage
+	# 			lastPage
+	# 		}
+	# 	}
+	# }
+
+	query {
+		photos (
+			page: 1
+			first: 10
+			orderBy: {
+				column: "created_at", 
+				order: DESC 
+			}
 		) {
 			data {
-				id
-				hash
-				caption
-				url
-				likesCount
-				likedByMe
-				created_at
-				model {
+				id 
+				uri
+				modele {
 					stage_name
 					poster
-					hash
+					has
+				}
+				category{ 
+					name
 				}
 			}
-			paginationInfo {
-				hasMorePages
+			paginatorInfo {
 				currentPage
+				lastPage
 			}
 		}
 	}
+
+
+
+
 `
 
 export const FETCH_FAVORITE_PHOTOS = gql`
 	query favoritePhotosData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
-		favoritePhotos(take: $take, page: $page, orderBy: $orderBy) {
+		favoritePhotos(first: $take, page: $page, orderBy: $orderBy) {
 			data {
-				id
+				id 
 				hash
 				caption
 				url
