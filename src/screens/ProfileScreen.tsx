@@ -18,11 +18,11 @@ import { useNavigation } from "@react-navigation/native"
 import { ViewStyle, StyleSheet, TouchableOpacity } from "react-native"
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
 
-
 import { colors } from "../utils/colors"
 import { screenNames } from "../utils/screens"
 import { formatToUnits } from "../utils/formatNumber"
 import useStore, { AppStateInterface } from "../store"
+import moment from "moment"
 
 type StatsProps = {
 	number: number
@@ -62,15 +62,16 @@ const Button = ({
 
 	return (
 		<TouchableOpacity
-			style={[{
-				alignItems: "center",
-				justifyContent: "center",
-				paddingHorizontal: 8,
-				paddingVertical: 2,
-				borderRadius: 6,
-				opacity: disable ? 0.7 : 1,
-				backgroundColor: transparent ? "transparent" : undefined,
-			},
+			style={[
+				{
+					alignItems: "center",
+					justifyContent: "center",
+					paddingHorizontal: 8,
+					paddingVertical: 2,
+					borderRadius: 6,
+					opacity: disable ? 0.7 : 1,
+					backgroundColor: transparent ? "transparent" : undefined,
+				},
 				style,
 			]}
 			onPress={handleOnPress}
@@ -112,8 +113,8 @@ export default function ProfileScreen() {
 		navigation.navigate(screenNames.UpdateInfo)
 		hideMenu()
 	}
-
 	console.log(currentUser)
+
 	return (
 		<Container>
 			<Header
@@ -171,7 +172,7 @@ export default function ProfileScreen() {
 							source={{
 								uri: !showModelInfo
 									? currentUser?.avatar
-									: currentUser?.modele?.posterUrl,
+									: currentUser?.modele?.poster,
 							}}
 						/>
 
@@ -186,15 +187,17 @@ export default function ProfileScreen() {
 								}}
 							>
 								<Stats
-									title={`Post${currentUser?.modele?.photosCount !== 1 ? "s" : ""
-										}`}
-									number={123}
+									title={`Post${
+										currentUser?.modele?.photos?.length !== 1 ? "s" : ""
+									}`}
+									number={currentUser?.modele?.photos?.length}
 								/>
 								<Stats
 									style={{ marginLeft: 12 }}
-									title={`Follower${currentUser?.modele?.followersCount !== 1 ? "s" : ""
-										}`}
-									number={1234}
+									title={`Follower${
+										currentUser?.modele?.followers.length !== 1 ? "s" : ""
+									}`}
+									number={currentUser?.modele?.followers.length}
 								/>
 							</View>
 						) : (
@@ -260,7 +263,7 @@ export default function ProfileScreen() {
 									borderWidth: 1,
 									paddingVertical: 10,
 									width: 180,
-									borderRadius: 0
+									borderRadius: 0,
 								}}
 								onPress={() => setShowModelInfo(false)}
 								disable={!showModelInfo}
@@ -280,7 +283,7 @@ export default function ProfileScreen() {
 									justifyContent: "center",
 									paddingVertical: 10,
 									width: 180,
-									borderRadius: 0
+									borderRadius: 0,
 								}}
 								onPress={() => setShowModelInfo(true)}
 								disable={showModelInfo}
@@ -297,73 +300,36 @@ export default function ProfileScreen() {
 					)}
 				</View>
 				<View style={showModelInfo && styles.displayNone}>
-					<View
-						style={{
-							flexDirection: "row",
-							borderTopColor: "#EFEFEF",
-							borderTopWidth: 1,
-							padding: 12,
-						}}
-					>
+					<View style={styles.infos}>
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							Name
 						</Text>
 						<Text>{currentUser?.name}</Text>
 					</View>
 
-					<View
-						style={{
-							flexDirection: "row",
-							borderTopColor: "#EFEFEF",
-							borderTopWidth: 1,
-							padding: 12,
-						}}
-					>
+					<View style={styles.infos}>
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							Gender
 						</Text>
 						<Text>{currentUser?.gender}</Text>
 					</View>
 
-					<View
-						style={{
-							flexDirection: "row",
-							borderTopColor: "#EFEFEF",
-							borderTopWidth: 1,
-							padding: 12,
-						}}
-					>
+					<View style={styles.infos}>
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							Joined on
 						</Text>
-						{/* <Text>{dateFormat(currentUser?.created_at, "fullDate")}</Text> */}
+						<Text>{moment(currentUser?.created_at).format('MMMM Do, YYYY')}</Text>
 					</View>
 				</View>
 				<View style={!showModelInfo && styles.displayNone}>
-					
-
-					<View
-						style={{
-							flexDirection: "row",
-							borderTopColor: "#EFEFEF",
-							borderTopWidth: 1,
-							padding: 12,
-						}}
-					>
+					<View style={styles.infos}>
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							Stage Name
 						</Text>
 						<Text>{currentUser?.modele?.stageName}</Text>
 					</View>
 
-					<View
-						style={{
-							flexDirection: "row",
-							borderTopColor: "#EFEFEF",
-							borderTopWidth: 1,
-							padding: 12,
-						}}
-					>
+					<View style={styles.infos}>
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							Facebook
 						</Text>
@@ -371,14 +337,7 @@ export default function ProfileScreen() {
 						<Text>{currentUser?.modele?.facebook}</Text>
 					</View>
 
-					<View
-						style={{
-							flexDirection: "row",
-							borderTopColor: "#EFEFEF",
-							borderTopWidth: 1,
-							padding: 12,
-						}}
-					>
+					<View style={styles.infos}>
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							instagram
 						</Text>
@@ -386,14 +345,7 @@ export default function ProfileScreen() {
 						<Text>{currentUser?.modele?.instagram}</Text>
 					</View>
 
-					<View
-						style={{
-							flexDirection: "row",
-							borderTopColor: "#EFEFEF",
-							borderTopWidth: 1,
-							padding: 12,
-						}}
-					>
+					<View style={styles.infos}>
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							twitter
 						</Text>
@@ -401,14 +353,7 @@ export default function ProfileScreen() {
 						<Text>{currentUser?.modele?.twitter}</Text>
 					</View>
 
-					<View
-						style={{
-							flexDirection: "row",
-							borderTopColor: "#EFEFEF",
-							borderTopWidth: 1,
-							padding: 12,
-						}}
-					>
+					<View style={styles.infos}>
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							youtube
 						</Text>
@@ -416,7 +361,7 @@ export default function ProfileScreen() {
 						<Text>{currentUser?.modele?.youtube}</Text>
 					</View>
 				</View>
-				{!isAmodel && (
+				{isAmodel && (
 					<Card style={{ marginTop: 30 }}>
 						<CardItem
 							header
@@ -461,112 +406,36 @@ export default function ProfileScreen() {
 									justifyContent: "flex-start",
 								}}
 							>
-								<TouchableOpacity
-									style={{
-										width: 80,
-										flexDirection: "column",
-										justifyContent: "center",
-										alignItems: "center",
-										marginHorizontal: 6,
-										marginBottom: 10,
-									}}
-								>
+								<TouchableOpacity style={styles.modelTouch}>
 									<Thumbnail
 										large
 										source={{
 											uri: currentUser?.avatar,
 										}}
 									/>
-									<Text
-										style={{
-											fontWeight: "bold",
-											marginTop: 10,
-											color: colors.pink,
-										}}
-									>
-										Jessica12
-									</Text>
+
+									<Text style={styles.modelName}>Jessica12</Text>
 								</TouchableOpacity>
 
-								<TouchableOpacity
-									style={{
-										width: 80,
-										flexDirection: "column",
-										justifyContent: "center",
-										alignItems: "center",
-										marginHorizontal: 6,
-										marginBottom: 10,
-									}}
-								>
+								<TouchableOpacity style={styles.modelTouch}>
 									<Thumbnail
 										large
 										source={{
 											uri: currentUser?.avatar,
 										}}
 									/>
-									<Text
-										style={{
-											fontWeight: "bold",
-											marginTop: 10,
-											color: colors.pink,
-										}}
-									>
-										Ann21
-									</Text>
+
+									<Text style={styles.modelName}>Ann21</Text>
 								</TouchableOpacity>
 
-								<TouchableOpacity
-									style={{
-										width: 80,
-										flexDirection: "column",
-										justifyContent: "center",
-										alignItems: "center",
-										marginHorizontal: 6,
-										marginBottom: 10,
-									}}
-								>
+								<TouchableOpacity style={styles.modelTouch}>
 									<Thumbnail
 										large
 										source={{
 											uri: currentUser?.avatar,
 										}}
 									/>
-									<Text
-										style={{
-											fontWeight: "bold",
-											marginTop: 10,
-											color: colors.pink,
-										}}
-									>
-										Rose32
-									</Text>
-								</TouchableOpacity>
-
-								<TouchableOpacity
-									style={{
-										width: 80,
-										flexDirection: "column",
-										justifyContent: "center",
-										alignItems: "center",
-										marginHorizontal: 6,
-										marginBottom: 10,
-									}}
-								>
-									<Thumbnail
-										large
-										source={{
-											uri: currentUser?.avatar,
-										}}
-									/>
-									<Text
-										style={{
-											fontWeight: "bold",
-											marginTop: 10,
-											color: colors.pink,
-										}}
-									>
-										Kika2
-									</Text>
+									<Text style={styles.modelName}>Rose32</Text>
 								</TouchableOpacity>
 							</Body>
 						</CardItem>
@@ -582,5 +451,24 @@ const styles = StyleSheet.create({
 		opacity: 0,
 		height: 0,
 		flex: 0,
+	},
+	infos: {
+		flexDirection: "row",
+		borderTopColor: "#EFEFEF",
+		borderTopWidth: 0.5,
+		padding: 12,
+	},
+	modelTouch: {
+		width: 80,
+		flexDirection: "column",
+		justifyContent: "center",
+		alignItems: "center",
+		marginHorizontal: 6,
+		marginBottom: 10,
+	},
+	modelName: {
+		fontWeight: "bold",
+		marginTop: 10,
+		color: colors.pink,
 	},
 })

@@ -9,9 +9,10 @@ export default interface UserInterface {
 	id: string
 	created_at: Date
 	modele?: ModelInterface
+	modeles?: ModelInterface
 	name: string
 	telephone: string
-	user_type: string
+	user_type: string 
 	gender: string
 	updated_at: Date
 }

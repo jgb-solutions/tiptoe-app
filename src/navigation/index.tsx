@@ -134,11 +134,11 @@ function TabNavigation() {
 }
 
 function MainNavigation() {
-	const { isLoggedIn, phoenixSocket, firstLogin } = useStore(
+	const { isLoggedIn, phoenixSocket, first_login } = useStore(
 		(state: AppStateInterface) => ({
 			isLoggedIn: state.authData.isLoggedIn,
 			phoenixSocket: state.socket,
-			firstLogin: state.authData.data?.firstLogin,
+			first_login: state.authData.user?.first_login,
 		})
 	)
 	const navigatorScreenOptions = { headerShown: false }
@@ -149,7 +149,7 @@ function MainNavigation() {
 				<ApolloProvider client={getClient()}>
 					<Stack.Navigator
 						initialRouteName={
-							isLoggedIn && firstLogin ? screenNames.Profile : screenNames.Home
+							isLoggedIn && first_login ? screenNames.Profile : screenNames.Home
 						}
 						screenOptions={navigatorScreenOptions}
 					>

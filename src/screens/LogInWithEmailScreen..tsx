@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { useForm, Controller } from "react-hook-form"
 import { useNavigation } from '@react-navigation/native'
+import { screenNames } from "../utils/screens"
 
 import { colors } from "../utils/colors"
 import FormInput from '../components/FormInput'
@@ -116,7 +117,7 @@ export default function LogInWithEmailScreen() {
         <Text style={styles.smallText}>DON'T HAVE AN ACCOUNT?</Text>
         <TouchableOpacity
           style={{ marginBottom: 80 }}
-          onPress={() => navigation.navigate('SignUp')}>
+          onPress={() => navigation.navigate(screenNames.SignUpWithEmail)}>
           <Text style={[styles.smallText, { fontWeight: 'bold' }]}>SIGN UP</Text>
         </TouchableOpacity>
       </ScrollView>

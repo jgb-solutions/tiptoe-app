@@ -7,7 +7,8 @@ export default interface PhotoInterface {
 	detail: string
 	likesCount: number
 	likedByMe: boolean
-	insertedAt: Date
+	created_at: Date
+	length: any
 	category: {
 		name: string
 		slug: string
@@ -15,6 +16,6 @@ export default interface PhotoInterface {
 	model: {
 		stageName: string
 		hash: string
-		posterUrl: string
+		poster: string
 	}
 }
