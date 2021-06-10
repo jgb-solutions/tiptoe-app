@@ -27,21 +27,21 @@ export default function GlobalStuff() {
 				},
 			})
 			socket.onError((error) => {
-				if (error) {
-					if (!error.isTrusted) {
-						showToast("Your connection is unstable..", {
-							duration: 4000,
-						})
-					}
+				// if (error) {
+				// 	if (!error.isTrusted) {
+				// 		showToast("Your connection is unstable..", {
+				// 			duration: 4000,
+				// 		})
+				// 	}
 
-					if (error.message.includes("403")) {
-						showToast("Your session has expired. Please log in again.", {
-							duration: 4000,
-						})
+				// 	if (error.message.includes("403")) {
+				// 		showToast("Your session has expired. Please log in again.", {
+				// 			duration: 4000,
+				// 		})
 
-						logout()
-					}
-				}
+				// 		logout()
+				// 	}
+				// }
 			})
 
 			socket.connect()
