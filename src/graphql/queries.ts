@@ -6,7 +6,7 @@ export const FETCH_HOME_SCREEN = gql`
 			data {
 				hash
 				poster
-				stageName
+				stage_name
 				name
 			}
 		}
@@ -19,7 +19,7 @@ export const FETCH_HOME_SCREEN = gql`
 				likesCount
 				created_at
 				model {
-					stageName
+					stage_name
 					hash
 					poster
 				}
@@ -100,7 +100,7 @@ export const FETCH_PHOTOS = gql`
 				likedByMe
 				created_at
 				model {
-					stageName
+					stage_name
 					poster
 					hash
 				}
@@ -125,7 +125,7 @@ export const FETCH_FAVORITE_PHOTOS = gql`
 				likedByMe
 				created_at
 				model {
-					stageName
+					stage_name
 					poster
 					hash
 				}
@@ -164,7 +164,7 @@ export const FETCH_MODEL = gql`
 		model(hash: $hash) {
 			id
 			name
-			stageName
+			stage_name
 			poster
 			facebook
 			hash
@@ -186,7 +186,7 @@ export const FETCH_MODELS = gql`
 			data {
 				hash
 				poster
-				stageName
+				stage_name
 				name
 			}
 

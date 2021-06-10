@@ -64,7 +64,7 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 									})
 								}}
 							>
-								<Text>{photo.model.stageName}</Text>
+								<Text>{photo.model.stage_name}</Text>
 							</TouchableOpacity>
 						</Body>
 					</Left>

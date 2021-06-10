@@ -103,7 +103,6 @@ export default function SignUpWithEmailStep2Screen() {
 						<Text>Back</Text>
 					</TouchableOpacity>
 					<View style={{ marginBottom: 24 }}>
-
 						<Controller
 							control={control}
 							render={({ onChange, onBlur, value }) => (
@@ -113,10 +112,10 @@ export default function SignUpWithEmailStep2Screen() {
 									onChangeText={(value) => onChange(value)}
 									value={value}
 									placeholder="Enter Your Stage Name"
-									error={errors.stageName}
+									error={errors.stage_name}
 								/>
 							)}
-							name="stageName"
+							name="stage_name"
 							rules={{ required: "The stage name is required" }}
 						/>
 

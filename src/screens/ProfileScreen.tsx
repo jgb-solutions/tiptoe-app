@@ -318,7 +318,9 @@ export default function ProfileScreen() {
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							Joined on
 						</Text>
-						<Text>{moment(currentUser?.created_at).format('MMMM Do, YYYY')}</Text>
+						<Text>
+							{moment(currentUser?.created_at).format("MMMM Do, YYYY")}
+						</Text>
 					</View>
 				</View>
 				<View style={!showModelInfo && styles.displayNone}>
@@ -326,7 +328,7 @@ export default function ProfileScreen() {
 						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
 							Stage Name
 						</Text>
-						<Text>{currentUser?.modele?.stageName}</Text>
+						<Text>{currentUser?.modele?.stage_name}</Text>
 					</View>
 
 					<View style={styles.infos}>

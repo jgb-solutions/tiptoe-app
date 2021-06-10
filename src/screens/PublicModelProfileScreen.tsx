@@ -181,7 +181,7 @@ export default function PublicModelProfileScreen() {
 
 	const makeChatUserFromModel = (model: ModelInterface): ChatUserInterface => ({
 		id: model.id,
-		name: model.stageName,
+		name: model.stage_name,
 		avatar: model.poster,
 		type: "model",
 		modelHash: model.hash,
@@ -211,7 +211,7 @@ export default function PublicModelProfileScreen() {
 							color: colors.white,
 						}}
 					>
-						{model?.stageName}
+						{model?.stage_name}
 					</Text>
 				</Left>
 				<Right style={{ flex: 1 }}>
@@ -289,7 +289,7 @@ export default function PublicModelProfileScreen() {
 									</View>
 
 									<View style={{ marginBottom: 24 }}>
-										<Text>{modelData.model.stageName}</Text>
+										<Text>{modelData.model.stage_name}</Text>
 										<Text>{modelData.model.bio}</Text>
 										{/* <Text>Followed by <Text>joerckman</Text>, {' '}
                                 <Text>mc_chris_haiti509</Text> {' '} and <Text>2 others</Text>

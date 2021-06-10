@@ -14,7 +14,7 @@ export default interface PhotoInterface {
 		slug: string
 	}
 	model: {
-		stageName: string
+		stage_name: string
 		hash: string
 		poster: string
 	}

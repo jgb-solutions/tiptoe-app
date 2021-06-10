@@ -79,7 +79,7 @@ export default function HomeScreen() {
 							<ThumbnailScrollList
 								thumbnails={homeData.models.data.map(
 									(model: ModelInterface) => ({
-										title: model.stageName,
+										title: model.stage_name,
 										hash: model.hash,
 										imageUrl: model.poster,
 									})

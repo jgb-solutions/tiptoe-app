@@ -32,7 +32,7 @@ type user_type = "CONSUMER" | "MODEL"
 type Gender = "FEMALE" | "MALE" | "OTHER"
 
 export interface ModelFormData {
-	stageName: string
+	stage_name: string
 	bio: string
 	facebook: string
 	twitter: string
