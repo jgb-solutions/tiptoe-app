@@ -23,12 +23,16 @@ import useStore, { AppStateInterface } from "../store"
 import UserInterface from "../interfaces/UserInterface"
 import useUpdateUser from '../hooks/useUpdateUser'
 
-const GENDERS = ['Male', 'Female', 'Other']
+const GENDERS = ['MALE', 'FEMALE', 'OTHER']
+
+export interface Credentials {
+	
+}
 
 export default function UpdateInfoScreen() {
 	const navigation = useNavigation()
 	const currentUser = useStore((state: AppStateInterface) => (state.authData.user))
-	const { control, handleSubmit } = useForm<UserInterface>({
+	const { control, handleSubmit, errors } = useForm<UserInterface>({
 		mode: "onBlur",
 		defaultValues: currentUser
 	})
@@ -41,9 +45,20 @@ export default function UpdateInfoScreen() {
 		}
 	}, [data])
 
-	const onSubmit = (credentials: any) => {
-		updateUser(credentials)
-	}
+	const onSubmit = async (credentials: any) => {
+		credentials.id = currentUser?.id
+		const payload = {
+			...credentials, 
+			modele: {
+				update: {
+					id: currentUser?.modele?.id,
+					...credentials.modele
+				}
+			}
+		}
+
+		updateUser(payload)
+	  }
 
 	const getPermissionForPhotos = async () => {
 		const { status } = await ImagePicker.requestCameraRollPermissionsAsync()
@@ -149,7 +164,7 @@ export default function UpdateInfoScreen() {
 										}}
 									>
 										{GENDERS.map((gender, index) => (
-											<SelectPicker.Item key={index} label={gender} value={gender.toLowerCase()} />
+											<SelectPicker.Item key={index} label={gender.toLowerCase()} value={gender} />
 										))}
 									</SelectPicker>
 								)}
@@ -180,7 +195,7 @@ export default function UpdateInfoScreen() {
 
 							<Item style={styles.items}>
 								<View style={styles.inputContainer}>
-									<Label style={styles.label}>Model name</Label>
+									<Label style={styles.label}>Model stage name</Label>
 									<Controller
 										control={control}
 										render={({ onChange, onBlur, value }) => (
@@ -190,10 +205,11 @@ export default function UpdateInfoScreen() {
 												onChangeText={(value) => onChange(value)}
 											/>
 										)}
-										name="model.name"
+										name="modele.stage_name"
 										rules={{ required: "The model name is required" }}
 									/>
 								</View>
+								
 							</Item>
 
 							<Item style={styles.items}>
@@ -209,7 +225,7 @@ export default function UpdateInfoScreen() {
 												placeholder="Put The Facebook Link Here"
 											/>
 										)}
-										name="model.facebook"
+										name="modele.facebook"
 									/>
 								</View>
 							</Item>
@@ -227,7 +243,7 @@ export default function UpdateInfoScreen() {
 												placeholder="Put The Instagram Link Here"
 											/>
 										)}
-										name="model.instagram"
+										name="modele.instagram"
 									/>
 								</View>
 							</Item>
@@ -245,7 +261,7 @@ export default function UpdateInfoScreen() {
 												placeholder="Put The Twitter Link Here"
 											/>
 										)}
-										name="model.twitter"
+										name="modele.twitter"
 									/>
 								</View>
 							</Item>
@@ -263,7 +279,7 @@ export default function UpdateInfoScreen() {
 												placeholder="Put The Youtube Link Here"
 											/>
 										)}
-										name="model.youtube"
+										name="modele.youtube"
 									/>
 								</View>
 							</Item>
@@ -285,7 +301,7 @@ export default function UpdateInfoScreen() {
 												underlineColorAndroid={"transparent"}
 											/>
 										)}
-										name="model.bio"
+										name="modele.bio"
 									/>
 								</View>
 							</Item>

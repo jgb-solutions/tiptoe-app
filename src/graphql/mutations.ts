@@ -7,20 +7,75 @@ export const SIGN_USER_UP = gql`
 				id
 				name
 				email
-				firstLogin
-				avatarUrl
+				first_login
+				avatar
 				telephone
-				insertedAt
-				userType
+				created_at
+				user_type
 				gender
-				model {
+				modele {
+					id
+					stage_name
 					bio
 					facebook
-					insertedAt
 					instagram
-					name
 					twitter
 					youtube
+					poster
+					followers {
+						id
+						name
+					}
+					photos {
+						id
+						uri
+						image_bucket
+						caption
+						detail
+						featured
+						publish
+						category {
+							id
+							name
+						}
+						users {
+							id
+							name
+						}
+					}
+					created_at
+				}
+				modeles {
+					id
+					stage_name
+					bio
+					facebook
+					instagram
+					twitter
+					youtube
+					poster
+					followers {
+						id
+						name
+					}
+					photos {
+						id
+						uri
+						image_bucket
+						caption
+						detail
+						featured
+						publish
+						category {
+							id
+							name
+						}
+						users {
+							id
+							name
+						}
+					}
+					created_at
 				}
 			}
 			access_token
@@ -45,12 +100,67 @@ export const LOG_USER_IN = gql`
 				user_type
 				gender
 				modele {
+					id
 					stage_name
 					bio
 					facebook
 					instagram
 					twitter
 					youtube
+					poster
+					followers {
+						id
+						name
+					}
+					photos {
+						id
+						uri
+						image_bucket
+						caption
+						detail
+						featured
+						publish
+						category {
+							id
+							name
+						}
+						users {
+							id
+							name
+						}
+					}
+					created_at
+				}
+				modeles {
+					id
+					stage_name
+					bio
+					facebook
+					instagram
+					twitter
+					youtube
+					poster
+					followers {
+						id
+						name
+					}
+					photos {
+						id
+						uri
+						image_bucket
+						caption
+						detail
+						featured
+						publish
+						category {
+							id
+							name
+						}
+						users {
+							id
+							name
+						}
+					}
 					created_at
 				}
 			}
@@ -72,17 +182,18 @@ export const UPDATE_USER = gql`
 			id
 			name
 			email
-			firstLogin
-			avatarUrl
+			first_login
+			avatar
 			telephone
-			insertedAt
-			userType
+			created_at
+			user_type
 			gender
-			model {
+			modele {
+				id
 				bio
 				facebook
 				instagram
-				name
+				stage_name
 				twitter
 				youtube
 			}
