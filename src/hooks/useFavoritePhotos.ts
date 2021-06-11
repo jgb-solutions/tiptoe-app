@@ -12,13 +12,13 @@ export default function useFavoritePhotos() {
 			fetchPolicy: "network-only",
 			// notifyOnNetworkStatusChange: true,
 			variables: {
-				take: FETCH_FAVORITE_PHOTOS_NUMBER,
-				orderBy: [{ field: "created_at", order: "DESC" }],
+				first: FETCH_FAVORITE_PHOTOS_NUMBER,
+				orderBy: [{ column: "created_at", order: "DESC" }],
 			},
 		})
 
 	const loadMorePhotos = () => {
-		const { currentPage } = data.favoritePhotos.paginationInfo
+		const { currentPage } = data.favoritePhotos.paginatorInfo
 
 		fetchMore({
 			variables: {
@@ -26,8 +26,8 @@ export default function useFavoritePhotos() {
 			},
 			updateQuery: (previousResult, { fetchMoreResult }) => {
 				if (
-					get(previousResult, "paginationInfo.currentPage") ==
-					get(fetchMoreResult, "paginationInfo.currentPage")
+					get(previousResult, "paginatorInfo.currentPage") ==
+					get(fetchMoreResult, "paginatorInfo.currentPage")
 				)
 					return
 
@@ -37,7 +37,7 @@ export default function useFavoritePhotos() {
 					"favoritePhotos"
 				)
 
-				setHasMore(newInfo.paginationInfo.hasMorePages)
+				setHasMore(newInfo.paginatorInfo.hasMorePages)
 
 				return {
 					photos: {

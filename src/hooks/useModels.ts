@@ -14,14 +14,13 @@ export default function useModels({ random }: FilterProps = {}) {
 	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
 		useQuery(FETCH_MODELS, {
 			variables: {
-				take: FETCH_MODELS_NUMBER,
-				orderBy: [{ field: "created_at", order: "DESC" }],
-				random,
+				first: FETCH_MODELS_NUMBER,
+				orderBy: [{ column: "created_at", order: "DESC" }],
 			},
 		})
 
 	const loadMoreModels = () => {
-		const { currentPage } = data.models.paginationInfo
+		const { currentPage } = data.modeles.paginatorInfo
 
 		fetchMore({
 			variables: {
@@ -29,15 +28,15 @@ export default function useModels({ random }: FilterProps = {}) {
 			},
 			updateQuery: (previousResult, { fetchMoreResult }) => {
 				if (
-					get(previousResult, "paginationInfo.currentPage") ==
-					get(fetchMoreResult, "paginationInfo.currentPage")
+					get(previousResult, "paginatorInfo.currentPage") ==
+					get(fetchMoreResult, "paginatorInfo.currentPage")
 				)
-					return
+				return
 
-				const oldModels = get(previousResult, "models.data")
-				const { data: newModels, ...newInfo } = get(fetchMoreResult, "models")
+				const oldModels = get(previousResult, "modeles.data")
+				const { data: newModels, ...newInfo } = get(fetchMoreResult, "modeles")
 
-				setHasMore(newInfo.paginationInfo.hasMorePages)
+				setHasMore(newInfo.paginatorInfo.hasMorePages)
 
 				return {
 					models: {

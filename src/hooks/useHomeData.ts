@@ -11,8 +11,8 @@ export default function useHomeData() {
 	} = useQuery(FETCH_HOME_SCREEN, {
 		notifyOnNetworkStatusChange: true,
 		variables: {
-			take: HOMEPAGE_PER_PAGE_NUMBER,
-			orderBy: [{ field: "created_at", order: "DESC" }],
+			first: HOMEPAGE_PER_PAGE_NUMBER,
+			orderBy: [{ column: "created_at", order: "DESC" }],
 		},
 	})
 

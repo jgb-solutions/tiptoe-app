@@ -142,7 +142,7 @@ export default function PublicModelProfileScreen() {
 					<Button
 						first={index === 0}
 						last={index === segmentOptions.length - 1}
-						key={segmentName}
+						key={index}
 						active={segmentName === segmentNameChosen}
 						style={{
 							backgroundColor:
@@ -165,7 +165,57 @@ export default function PublicModelProfileScreen() {
 				))}
 			</Segment>
 
-			{segmentNameChosen === "Photos" ? (
+			{segmentNameChosen === "Models" && (
+				<>
+					{modelsLoading ? (
+						<Spinner color={colors.pink} />
+					) : modelsError ? (
+						<NegativeResponse>
+							<Text>An error occurred</Text>
+						</NegativeResponse>
+					) : (
+						<FlatList
+							showsVerticalScrollIndicator={false}
+							numColumns={3}
+							onLayout={(event) =>
+								setThumbWidth(event.nativeEvent.layout.width)
+							}
+							ListEmptyComponent={() => (
+								<NegativeResponse>
+									<Text>You have no favorite photos yet.</Text>
+								</NegativeResponse>
+							)}
+							data={modelsData.modeles.data}
+							keyExtractor={(modele) => modele.hash}
+							renderItem={({ item: modele }: { item: ModelInterface }) => (
+								<TouchableOpacity
+									style={{
+										borderWidth: 1,
+										borderColor: colors.pink,
+									}}
+									onPress={() => goToModel(modele?.hash)}
+								>
+									{console.log(modele)}
+									<Image
+										source={{ uri: modele?.poster }}
+										style={{
+											width: thumbWidth / 3,
+											height: thumbWidth / 3,
+										}}
+										resizeMode="cover"
+									/>
+								</TouchableOpacity>
+							)}
+							onRefresh={refetchModels}
+							refreshing={modelsLoading}
+							onEndReached={loadMoreModels}
+							onEndReachedThreshold={0.9}
+						/>
+					)}
+				</>
+			) } 
+
+			{segmentNameChosen === "Photos" && (
 				<>
 					{photosLoading ? (
 						<Spinner color={colors.pink} />
@@ -173,7 +223,7 @@ export default function PublicModelProfileScreen() {
 						<NegativeResponse>
 							<Text>An error occurred</Text>
 						</NegativeResponse>
-					) : (
+					) : ( 
 						<FlatList
 							showsVerticalScrollIndicator={false}
 							ListHeaderComponent={() => (
@@ -208,14 +258,15 @@ export default function PublicModelProfileScreen() {
 								</View>
 							)}
 							data={photosData.photos.data}
-							keyExtractor={(photo) => photo.has}
+							keyExtractor={(item, index) => item.id}
 							renderItem={({ item: photo }: { item: PhotoInterface }) => (
 								<TouchableOpacity
-									style={{ 
+									style={{
 										borderWidth: 1,
 										borderColor: colors.pink,
 									}}
 									onPress={() => goToPhoto(photo)}
+									key={photo.uri}
 								>
 									<Image
 										source={{ uri: photo.uri }}
@@ -230,53 +281,6 @@ export default function PublicModelProfileScreen() {
 							onRefresh={() => refetchPhotos()}
 							refreshing={photosLoading}
 							onEndReached={() => loadMorePhotos()}
-							onEndReachedThreshold={0.9}
-						/>
-					)}
-				</>
-			) : (
-				<>
-					{modelsLoading ? (
-						<Spinner color={colors.pink} />
-					) : modelsError ? (
-						<NegativeResponse>
-							<Text>An error occurred</Text>
-						</NegativeResponse>
-					) : (
-						<FlatList
-							showsVerticalScrollIndicator={false}
-							numColumns={3}
-							onLayout={(event) =>
-								setThumbWidth(event.nativeEvent.layout.width)
-							}
-							ListEmptyComponent={() => (
-								<NegativeResponse>
-									<Text>You have no favorite photos yet.</Text>
-								</NegativeResponse>
-							)}
-							data={modelsData.models.data}
-							keyExtractor={(model) => model.hash}
-							renderItem={({ item: model }: { item: ModelInterface }) => (
-								<TouchableOpacity
-									style={{
-										borderWidth: 1,
-										borderColor: colors.pink,
-									}}
-									onPress={() => goToModel(model.hash)}
-								>
-									<Image
-										source={{ uri: model.poster }}
-										style={{
-											width: thumbWidth / 3,
-											height: thumbWidth / 3,
-										}}
-										resizeMode="cover"
-									/>
-								</TouchableOpacity>
-							)}
-							onRefresh={refetchModels}
-							refreshing={modelsLoading}
-							onEndReached={loadMoreModels}
 							onEndReachedThreshold={0.9}
 						/>
 					)}

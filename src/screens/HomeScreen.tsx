@@ -77,7 +77,7 @@ export default function HomeScreen() {
 					ListHeaderComponent={
 						<>
 							<ThumbnailScrollList
-								thumbnails={homeData.models.data.map(
+								thumbnails={homeData.modeles.data.map(
 									(model: ModelInterface) => ({
 										title: model.stage_name,
 										hash: model.hash,
@@ -106,7 +106,7 @@ export default function HomeScreen() {
 						</View>
 					)}
 					data={photosData.photos.data}
-					keyExtractor={(card) => `${card.hash}`}
+					keyExtractor={(card) => `${card.has}`}
 					renderItem={({ item: photo }: { item: PhotoInterface }) => (
 						<PhotoCard photo={photo} />
 					)}

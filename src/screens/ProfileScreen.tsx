@@ -301,21 +301,21 @@ export default function ProfileScreen() {
 				</View>
 				<View style={showModelInfo && styles.displayNone}>
 					<View style={styles.infos}>
-						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
+						<Text style={styles.mediaText}>
 							Name
 						</Text>
 						<Text>{currentUser?.name}</Text>
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
+						<Text style={styles.mediaText}>
 							Gender
 						</Text>
 						<Text>{currentUser?.gender}</Text>
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
+						<Text style={styles.mediaText}>
 							Joined on
 						</Text>
 						<Text>
@@ -325,14 +325,14 @@ export default function ProfileScreen() {
 				</View>
 				<View style={!showModelInfo && styles.displayNone}>
 					<View style={styles.infos}>
-						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
+						<Text style={styles.mediaText}>
 							Stage Name
 						</Text>
 						<Text>{currentUser?.modele?.stage_name}</Text>
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
+						<Text style={styles.mediaText}>
 							Facebook
 						</Text>
 
@@ -340,7 +340,7 @@ export default function ProfileScreen() {
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
+						<Text style={styles.mediaText}>
 							instagram
 						</Text>
 
@@ -348,7 +348,7 @@ export default function ProfileScreen() {
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
+						<Text style={styles.mediaText}>
 							twitter
 						</Text>
 
@@ -356,7 +356,7 @@ export default function ProfileScreen() {
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={{ fontWeight: "bold", marginRight: 20, width: 100 }}>
+						<Text style={styles.mediaText}>
 							youtube
 						</Text>
 
@@ -473,4 +473,5 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		color: colors.pink,
 	},
+	mediaText: { fontWeight: "bold", marginRight: 20, width: 100 }
 })

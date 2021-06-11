@@ -16,9 +16,7 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 		useQuery(FETCH_PHOTOS, {
 			variables: {
 				first: FETCH_PHOTOS_NUMBER,
-				orderBy: [{ field: "created_at", order: "DESC" }],
-				// modelHash,
-				// random,
+				orderBy: [{ column: "created_at", order: "DESC" }],
 			},
 		})
 
@@ -31,15 +29,15 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 			},
 			updateQuery: (previousResult, { fetchMoreResult }) => {
 				if (
-					get(previousResult, "paginationInfo.currentPage") ==
-					get(fetchMoreResult, "paginationInfo.currentPage")
+					get(previousResult, "paginatorInfo.currentPage") ==
+					get(fetchMoreResult, "paginatorInfo.currentPage")
 				)
 					return
 
 				const oldPhotos = get(previousResult, "photos.data")
 				const { data: newPhotos, ...newInfo } = get(fetchMoreResult, "photos")
 
-				setHasMore(newInfo.paginationInfo.hasMorePages)
+				setHasMore(newInfo.paginatorInfo.hasMorePages)
 
 				return {
 					photos: {
