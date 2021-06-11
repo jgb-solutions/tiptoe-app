@@ -101,20 +101,21 @@ export const FETCH_MODELS = gql`
 `
 
 export const FETCH_MODEL = gql`
-	query modelDetail($hash: String!) {
-		model(hash: $hash) {
+	query modelDetail($id: ID) { 
+		modele(id: $id) {
 			id
-			name
 			stage_name
 			poster
 			facebook
-			hash
+			has
 			instagram
-			photosCount
-			followersCount
-			followedByMe
-			roomWithMe {
-				id
+			photos {
+				id 
+				uri
+			}
+			followers {
+				id 
+				name
 			}
 		}
 	}

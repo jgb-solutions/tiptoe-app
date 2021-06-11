@@ -95,7 +95,7 @@ const Button = ({
 type RouteParamsProps = RouteProp<
 	{
 		params: {
-			hash: string
+			id: string
 		}
 	},
 	"params"
@@ -106,30 +106,32 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window")
 export default function PublicModelProfileScreen() {
 	const navigation = useNavigation()
 	const route = useRoute<RouteParamsProps>()
-	const modelHash = route.params.hash
+	const modeleId = route.params.id
 	const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
 	const {
 		toggleFollow,
 		data: toggleFollowData,
 		loading: toggleFollowLoading,
 	} = useToggleFollow()
-	const {
-		createRoom,
-		loading: createRoomLoading,
-		error: createRoomError,
-		data: createRoomData,
-	} = useCreateRoom()
+
+	// const {
+	// 	createRoom,
+	// 	loading: createRoomLoading,
+	// 	error: createRoomError,
+	// 	data: createRoomData,
+	// } = useCreateRoom()
+
 	const { modelData, modelLoading, modelError, refetchModel } =
-		useModel(modelHash)
+		useModel(modeleId)
 	const { photosLoading, photosError, photosData, refetchPhotos } = usePhotos({
-		modelHash,
+		modeleId,
 	})
 	const [model, setModel] = useState<ModelInterface | undefined>()
 	const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
 	React.useEffect(() => {
 		if (modelData) {
-			setModel(modelData.model)
+			setModel(modelData.modele)
 		}
 	}, [modelData])
 
@@ -139,53 +141,53 @@ export default function PublicModelProfileScreen() {
 		}
 	}, [toggleFollowData])
 
-	React.useEffect(() => {
-		if (createRoomData) {
-			const room = createRoomData.createRoom
-			goToChatScreen({
-				...room,
-				chatUser: makeChatUserFromModel(modelData.model),
-			})
-		}
-	}, [createRoomData])
+	// React.useEffect(() => {
+	// 	if (createRoomData) {
+	// 		const room = createRoomData.createRoom
+	// 		goToChatScreen({
+	// 			...room,
+	// 			chatUser: makeChatUserFromModel(modelData.model),
+	// 		})
+	// 	}
+	// }, [createRoomData])
 
 	const handleToggleFollow = () => {
 		// TO DO FOR PAYMENT CHECK
 		// if (!false) {
-		//   alert("you have to pay to be able to follow this model.")
+		//   alert("you have to pay to be able to follow this modele.")
 		//   return
 		// }
 
-		toggleFollow({ modelId: modelData.model.id })
+		toggleFollow({ modelId: modelData.modele.id })
 	}
 
-	const handleFetchOrCreateChatRoom = () => {
-		const room = modelData.model.roomWithMe
-		if (room) {
-			goToChatScreen({
-				...room,
-				chatUser: makeChatUserFromModel(modelData.model),
-			})
-		} else {
-			// time to create the room
-			createRoom({ modelId: modelData.model.id })
-		}
-	}
+	// const handleFetchOrCreateChatRoom = () => {
+	// 	const room = modelData.modele.roomWithMe
+	// 	if (room) {
+	// 		goToChatScreen({
+	// 			...room,
+	// 			chatUser: makeChatUserFromModel(modelData.model),
+	// 		})
+	// 	} else {
+	// 		// time to create the room
+	// 		createRoom({ modelId: modelData.modele.id })
+	// 	}
+	// }
 
-	const goToChatScreen = (room: RoomInterface) => {
-		navigation.navigate(screenNames.Chat, {
-			room,
-			fromModelScreen: true,
-		})
-	}
+	// const goToChatScreen = (room: RoomInterface) => {
+	// 	navigation.navigate(screenNames.Chat, {
+	// 		room,
+	// 		fromModelScreen: true,
+	// 	})
+	// }
 
-	const makeChatUserFromModel = (model: ModelInterface): ChatUserInterface => ({
-		id: model.id,
-		name: model.stage_name,
-		avatar: model.poster,
-		type: "model",
-		modelHash: model.hash,
-	})
+	// const makeChatUserFromModel = (modele: ModelInterface): ChatUserInterface => ({
+	// 	id: modele.id,
+	// 	name: modele.stage_name,
+	// 	avatar: modele.poster,
+	// 	type: "model",
+	// 	modelHash: modele.hash,
+	// })
 
 	const goBack = () => navigation.goBack()
 
@@ -249,7 +251,7 @@ export default function PublicModelProfileScreen() {
 								<Text>An error occurred</Text>
 							) : (
 								<View style={{ padding: 12 }}>
-									<View
+									<View 
 										style={{
 											flexDirection: "row",
 											justifyContent: "space-between",
@@ -259,7 +261,7 @@ export default function PublicModelProfileScreen() {
 									>
 										<Thumbnail
 											large
-											source={{ uri: modelData.model.poster }}
+											source={{ uri: modelData.modele.poster }}
 											style={{}}
 										/>
 
@@ -274,23 +276,23 @@ export default function PublicModelProfileScreen() {
 										>
 											<Stats
 												title={`Post${
-													modelData.model.photosCount !== 1 ? "s" : ""
+													modelData.modele.photos.length !== 1 ? "s" : ""
 												}`}
-												number={modelData.model.photosCount}
+												number={modelData.modele.photos.length}
 											/>
 											<Stats
 												style={{ marginLeft: 12 }}
 												title={`Follower${
-													modelData.model.followersCount !== 1 ? "s" : ""
+													modelData.modele.followers.length !== 1 ? "s" : ""
 												}`}
-												number={modelData.model.followersCount}
+												number={modelData.modele.followers.length}
 											/>
 										</View>
 									</View>
 
-									<View style={{ marginBottom: 24 }}>
-										<Text>{modelData.model.stage_name}</Text>
-										<Text>{modelData.model.bio}</Text>
+									<View style={{ marginBottom: 24, marginLeft:20, }}>
+										<Text>{modelData.modele.stage_name}</Text>
+										<Text>{modelData.modele.bio}</Text>
 										{/* <Text>Followed by <Text>joerckman</Text>, {' '}
                                 <Text>mc_chris_haiti509</Text> {' '} and <Text>2 others</Text>
                               </Text> */}
@@ -306,22 +308,10 @@ export default function PublicModelProfileScreen() {
 											disable={toggleFollowLoading}
 										>
 											<Text style={{ color: colors.white }}>
-												{modelData.model.followedByMe ? "Unfollow" : "Follow"}
+												{modelData.modele.followedByMe ? "Unfollow" : "Follow"}
 											</Text>
 										</Button>
-										<Button
-											style={{
-												flex: 1,
-												backgroundColor: colors.white,
-												borderWidth: 1,
-												borderColor: colors.pink,
-												marginLeft: 4,
-											}}
-											onPress={handleFetchOrCreateChatRoom}
-											disable={createRoomLoading}
-										>
-											<Text style={{ color: colors.black }}>Message</Text>
-										</Button>
+										
 										<Button
 											style={{
 												marginLeft: 4,
@@ -356,7 +346,7 @@ export default function PublicModelProfileScreen() {
 						</NegativeResponse>
 					)}
 					data={photosData.photos.data}
-					keyExtractor={(photo) => photo.hash}
+					keyExtractor={(photo) => photo.id}
 					onRefresh={() => refetchPhotos()}
 					refreshing={photosLoading}
 					renderItem={({ item: photo }: { item: PhotoInterface }) => (
@@ -368,7 +358,7 @@ export default function PublicModelProfileScreen() {
 							onPress={() => goToPhoto(photo)}
 						>
 							<Image
-								source={{ uri: photo.url }}
+								source={{ uri: photo.uri }}
 								style={{
 									width: thumbWidth / 3,
 									height: thumbWidth / 3,
