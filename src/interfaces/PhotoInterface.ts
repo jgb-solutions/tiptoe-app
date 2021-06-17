@@ -5,8 +5,8 @@ export default interface PhotoInterface {
 	uri: string
 	featured: boolean
 	detail: string
-	likesCount: number
-	likedByMe: boolean
+	likes_count: number
+	liked_by_me: boolean
 	created_at: Date
 	length: any
 	category: {
@@ -17,5 +17,10 @@ export default interface PhotoInterface {
 		stage_name: string
 		hash: string
 		poster: string
+	}
+	users: {
+		id: String
+		name: String
+		length: any
 	}
 }

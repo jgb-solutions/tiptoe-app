@@ -48,7 +48,11 @@ export default function HomeScreen() {
 
 				const newData = data.map((photo: PhotoInterface) => {
 					return photo.id === unlikedPhoto.id
-						? { ...photo, likedByMe: false, likesCount: photo.likesCount - 1 }
+						? {
+								...photo,
+								liked_by_me: false,
+								likes_count: photo.likes_count - 1,
+						  }
 						: photo
 				})
 

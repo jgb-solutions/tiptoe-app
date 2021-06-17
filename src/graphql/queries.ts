@@ -2,20 +2,27 @@ import gql from "graphql-tag"
 
 export const FETCH_HOME_SCREEN = gql`
 	query homescreenData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
-		modeles(page: 1, first: 10, orderBy: { column: "created_at", order: DESC }) {
+		modeles(
+			page: $page
+			first: $take
+			orderBy: $orderBy
+		) {
 			data {
+				id
 				has
 				poster
 				stage_name
 			}
 		}
 
-		photos(page: 1, first: 10, orderBy: { column: "created_at", order: DESC }) {
+		photos(page: $page, first: $take, orderBy: $orderBy) {
 			data {
+				id
 				has
 				caption
 				uri
-				# likesCount
+				likes_count 
+				liked_by_me
 				created_at
 				modele {
 					stage_name
@@ -38,6 +45,9 @@ export const FETCH_PHOTOS = gql`
 					poster
 					has
 				}
+				
+				likes_count 
+				liked_by_me
 				category {
 					name
 				}
@@ -51,57 +61,51 @@ export const FETCH_PHOTOS = gql`
 `
 
 export const FETCH_FAVORITE_PHOTOS = gql`
-	query favoritePhotosData($page: Int, $first: Int, $orderBy: [OrderByClause!]) {
-		favoritePhotos(page: 1, first: 10, orderBy: { column: "created_at", order: DESC }) {
-			data {
+	query favoritePhotosData(
+		$user_id: Int
+		$page: Int
+		$first: Int
+		$orderBy: [OrderByClause!]
+	) {
+		favoritePhoto(user_id: $user_id, page: $page, first: $first, orderBy: $orderBy) {
+			id
+			uri
+			has 
+			caption
+			created_at
+			modele {
 				id 
-				has 
-				caption
-				uri 
-				# likesCount
-				# likedByMe
-				created_at
-				modele {
-					stage_name
-					poster
-					has
-				}
+				stage_name
+				poster 
 			}
-			paginatorInfo {
-				hasMorePages
-				currentPage
-			}
+			likes_count 
+			liked_by_me
 		}
 	}
 `
 
 export const FETCH_MODELS = gql`
 	query modeles($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
-		modeles(
-			page: $page
-			first: $take
-			orderBy: $orderBy
-		){
+		modeles(page: $page, first: $take, orderBy: $orderBy) {
 			data {
 				id
 				stage_name
 				poster
-				# followers{
-				# 	id 
-				# 	name
-				# }
+				followers{
+					id 
+					name
+				}
 			}
-			paginatorInfo{
-			currentPage
-			lastPage
+			paginatorInfo {
+				currentPage
+				lastPage
 			}
 		}
-	
 	}
 `
 
 export const FETCH_MODEL = gql`
-	query modelDetail($id: ID) { 
+	query modelDetail($id: ID) {
 		modele(id: $id) {
 			id
 			stage_name
@@ -110,11 +114,11 @@ export const FETCH_MODEL = gql`
 			has
 			instagram
 			photos {
-				id 
+				id
 				uri
 			}
 			followers {
-				id 
+				id
 				name
 			}
 		}

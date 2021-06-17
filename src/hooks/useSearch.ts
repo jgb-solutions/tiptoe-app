@@ -16,9 +16,9 @@ export default function useFavoritePhotos() {
 				orderBy: [{ column: "created_at", order: "DESC" }],
 			},
 		})
-
+ 
 	const loadMorePhotos = () => {
-		const { currentPage } = data.favoritePhotos.paginatorInfo
+		const { currentPage } = data.favoritePhoto.paginatorInfo
 
 		fetchMore({
 			variables: {
@@ -28,13 +28,13 @@ export default function useFavoritePhotos() {
 				if (
 					get(previousResult, "paginatorInfo.currentPage") ==
 					get(fetchMoreResult, "paginatorInfo.currentPage")
-				)
+				) 
 					return
 
-				const oldPhotos = get(previousResult, "favoritePhotos.data")
+				const oldPhotos = get(previousResult, "favoritePhoto.data")
 				const { data: newPhotos, ...newInfo } = get(
 					fetchMoreResult,
-					"favoritePhotos"
+					"favoritePhoto" 
 				)
 
 				setHasMore(newInfo.paginatorInfo.hasMorePages)

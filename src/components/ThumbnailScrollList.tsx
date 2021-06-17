@@ -35,10 +35,10 @@ export default function ThumbnailScrollList({ thumbnails, onPress }: Props) {
         padding: 6
       }}
       showsHorizontalScrollIndicator={false}
-    >
-      {thumbnails.map((thumbnail) => (
-        <TouchableOpacity key={thumbnail.hash} onPress={() => handleOnPress(thumbnail.hash)}>
-          <Body key={thumbnail.hash} style={{ marginRight: 12 }}>
+    > 
+      {thumbnails.map((thumbnail, idx) => (
+        <TouchableOpacity key={idx} onPress={() => handleOnPress(thumbnail.hash)}>
+          <Body key={idx} style={{ marginRight: 12 }}>
             <View style={{
               marginBottom: 5,
               borderWidth: !!viewWidth ? 3 : undefined,

@@ -39,7 +39,7 @@ export default function PublicModelProfileScreen() {
     hasMorePhotos,
     refetch,
     subscribeToMore
-  } = useFavoritePhotos()
+  } = useFavoritePhotos(3)
   const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function PublicModelProfileScreen() {
       document: PHOTO_UPDATES_SUBSCRIPTION,
       variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
+        if (!subscriptionData.data) return prev 
 
         const { favoritePhotos: { data, ...otherInfo } } = prev
 
@@ -68,6 +68,7 @@ export default function PublicModelProfileScreen() {
 
     return () => unsubscribe()
   }, [])
+
 
   React.useEffect(() => {
     const unsubscribeFocus = navigation.addListener('focus', () => {
@@ -90,8 +91,8 @@ export default function PublicModelProfileScreen() {
 
   const goToPhoto = (photo: PhotoInterface) => {
     setCurrentPhoto(photo)
-  }
-
+  } 
+ 
   return (
     <Container>
       <Header
@@ -144,14 +145,14 @@ export default function PublicModelProfileScreen() {
                   <Text>You have no favorite photos yet.</Text>
                 </View>
               )}
-              data={data.favoritePhotos.data}
-              keyExtractor={(photo) => photo.has}
+              data={data.favoritePhoto}
+              keyExtractor={(photo) => photo.id} 
               renderItem={({ item: photo }: { item: PhotoInterface }) => (
                 <TouchableOpacity
                   style={{
                     borderWidth: 1,
                     borderColor: colors.pink
-                  }}
+                  }}  
                   onPress={() => goToPhoto(photo)}>
                   <Image
                     source={{ uri: photo.uri }}

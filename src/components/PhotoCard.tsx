@@ -32,13 +32,13 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 	const { toggleLike } = useToggleLike()
 
 	const handleToggleLike = (photo: PhotoInterface) => {
-		const { likedByMe } = photo
+		const { liked_by_me } = photo
 
 		toggleLike({ photoId: photo.id })
 
-		photo.likedByMe = !likedByMe
+		photo.liked_by_me = !liked_by_me
 
-		photo.likesCount += likedByMe ? -1 : 1
+		photo.likes_count += liked_by_me ? -1 : 1
 	}
 
 	return (
@@ -83,12 +83,11 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 					/>
 				</CardItem>
 			</DoubleTap>
-
 			<CardItem>
 				<Left>
 					<Button transparent onPress={() => handleToggleLike(photo)}>
 						<Icon
-							name={photo.likedByMe ? "heart" : "heart-empty"}
+							name={photo.liked_by_me ? "heart" : "heart-empty"}
 							style={{
 								color: colors.pink,
 								fontSize: 36,
@@ -100,7 +99,8 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 								color: colors.darkGrey,
 							}}
 						>
-							{photo.likesCount} like{photo.likesCount !== 1 ? "s" : ""}
+							{photo.likes_count + 1} like
+							{photo.likes_count + 1 !== 1 ? "s" : ""}
 						</Text>
 					</Button>
 				</Left>
