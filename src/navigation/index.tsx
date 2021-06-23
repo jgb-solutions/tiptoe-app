@@ -182,7 +182,7 @@ function MainNavigation() {
 					</Stack.Navigator>
 				</ApolloProvider>
 			) : (
-				<Stack.Navigator screenOptions={navigatorScreenOptions} initialRouteName={screenNames.SignUpWithEmail}>
+				<Stack.Navigator screenOptions={navigatorScreenOptions} initialRouteName={screenNames.LogIn}> 
 					<Stack.Screen
 						name={screenNames.LogIn}
 						component={LogInWithEmailScreen}

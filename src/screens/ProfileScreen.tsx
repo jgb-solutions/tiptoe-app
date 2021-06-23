@@ -113,8 +113,6 @@ export default function ProfileScreen() {
 		navigation.navigate(screenNames.UpdateInfo)
 		hideMenu()
 	}
-	console.log(currentUser)
-
 	return (
 		<Container>
 			<Header
@@ -301,23 +299,17 @@ export default function ProfileScreen() {
 				</View>
 				<View style={showModelInfo && styles.displayNone}>
 					<View style={styles.infos}>
-						<Text style={styles.mediaText}>
-							Name
-						</Text>
+						<Text style={styles.mediaText}>Name</Text>
 						<Text>{currentUser?.name}</Text>
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={styles.mediaText}>
-							Gender
-						</Text>
+						<Text style={styles.mediaText}>Gender</Text>
 						<Text>{currentUser?.gender}</Text>
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={styles.mediaText}>
-							Joined on
-						</Text>
+						<Text style={styles.mediaText}>Joined on</Text>
 						<Text>
 							{moment(currentUser?.created_at).format("MMMM Do, YYYY")}
 						</Text>
@@ -325,72 +317,36 @@ export default function ProfileScreen() {
 				</View>
 				<View style={!showModelInfo && styles.displayNone}>
 					<View style={styles.infos}>
-						<Text style={styles.mediaText}>
-							Stage Name
-						</Text>
+						<Text style={styles.mediaText}>Stage Name</Text>
 						<Text>{currentUser?.modele?.stage_name}</Text>
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={styles.mediaText}>
-							Facebook
-						</Text>
+						<Text style={styles.mediaText}>Facebook</Text>
 
 						<Text>{currentUser?.modele?.facebook}</Text>
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={styles.mediaText}>
-							instagram
-						</Text>
+						<Text style={styles.mediaText}>instagram</Text>
 
 						<Text>{currentUser?.modele?.instagram}</Text>
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={styles.mediaText}>
-							twitter
-						</Text>
+						<Text style={styles.mediaText}>twitter</Text>
 
 						<Text>{currentUser?.modele?.twitter}</Text>
 					</View>
 
 					<View style={styles.infos}>
-						<Text style={styles.mediaText}>
-							youtube
-						</Text>
+						<Text style={styles.mediaText}>youtube</Text>
 
 						<Text>{currentUser?.modele?.youtube}</Text>
 					</View>
 				</View>
-				{isAmodel && (
-					<Card style={{ marginTop: 30 }}>
-						<CardItem
-							header
-							style={{ flexDirection: "row", justifyContent: "space-between" }}
-						>
-							<Text style={{ fontWeight: "bold", fontSize: 18 }}>
-								Your Cards
-							</Text>
-							<TouchableOpacity>
-								<Icon
-									name="add"
-									style={{
-										fontSize: 24,
-										fontWeight: "bold",
-									}}
-								/>
-							</TouchableOpacity>
-						</CardItem>
-						<CardItem>
-							<Body>
-								<Text>...4856 / 08-25</Text>
-							</Body>
-						</CardItem>
-					</Card>
-				)}
 
-				{isAmodel && (
+				{!isAmodel && (
 					<Card style={{ marginTop: 30 }}>
 						<CardItem
 							header
@@ -408,37 +364,25 @@ export default function ProfileScreen() {
 									justifyContent: "flex-start",
 								}}
 							>
-								<TouchableOpacity style={styles.modelTouch}>
-									<Thumbnail
-										large
-										source={{
-											uri: currentUser?.avatar,
-										}}
-									/>
-
-									<Text style={styles.modelName}>Jessica12</Text>
-								</TouchableOpacity>
-
-								<TouchableOpacity style={styles.modelTouch}>
-									<Thumbnail
-										large
-										source={{
-											uri: currentUser?.avatar,
-										}}
-									/>
-
-									<Text style={styles.modelName}>Ann21</Text>
-								</TouchableOpacity>
-
-								<TouchableOpacity style={styles.modelTouch}>
-									<Thumbnail
-										large
-										source={{
-											uri: currentUser?.avatar,
-										}}
-									/>
-									<Text style={styles.modelName}>Rose32</Text>
-								</TouchableOpacity>
+								{currentUser?.modeles?.map((modele: any) => (
+									<TouchableOpacity 
+									onPress={() => {
+										navigation.navigate(screenNames.PublicModelProfileScreen, {
+											hash: `${modele.hash}`,
+										})
+									}}
+									key={modele.id} 
+									style={styles.modelTouch}
+									>
+										<Thumbnail
+											large
+											source={{
+												uri: modele.poster,
+											}}
+										/>
+										<Text style={styles.modelName}>{modele.stage_name}</Text>
+									</TouchableOpacity>
+								))}
 							</Body>
 						</CardItem>
 					</Card>
@@ -473,5 +417,5 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		color: colors.pink,
 	},
-	mediaText: { fontWeight: "bold", marginRight: 20, width: 100 }
+	mediaText: { fontWeight: "bold", marginRight: 20, width: 100 },
 })
