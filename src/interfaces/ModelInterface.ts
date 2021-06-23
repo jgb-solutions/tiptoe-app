@@ -24,4 +24,5 @@ export default interface ModelInterface {
 	followers: FollowerInterface
 	followedByMe: boolean
 	roomWithMe?: RoomInterface
+	map: any
 }

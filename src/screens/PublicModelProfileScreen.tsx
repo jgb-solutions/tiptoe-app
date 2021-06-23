@@ -23,17 +23,12 @@ import Modal from "react-native-modal"
 
 import { colors } from "../utils/colors"
 import useModel from "../hooks/useModel"
-import usePhotos from "../hooks/usePhotos"
 import { formatToUnits } from "../utils/formatNumber"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import ModelInterface from "../interfaces/ModelInterface"
-import RoomInterface from "../interfaces/RoomInterface"
 import PhotoCard from "../components/PhotoCard"
 import useToggleFollow from "../hooks/useToggleFollow"
-import { screenNames } from "../utils/screens"
-import ChatUserInterface from "../interfaces/ChatUserInterface"
 import NegativeResponse from "../components/NegativeResponse"
-import useCreateRoom from "../hooks/useCreateRoom"
 
 type StatsProps = {
 	number: number
@@ -95,7 +90,7 @@ const Button = ({
 type RouteParamsProps = RouteProp<
 	{
 		params: {
-			id: string
+			hash: string
 		}
 	},
 	"params"
@@ -106,7 +101,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window")
 export default function PublicModelProfileScreen() {
 	const navigation = useNavigation()
 	const route = useRoute<RouteParamsProps>()
-	const modeleId = route.params.id
+	const hash = route.params.hash
 	const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
 	const {
 		toggleFollow,
@@ -114,18 +109,10 @@ export default function PublicModelProfileScreen() {
 		loading: toggleFollowLoading,
 	} = useToggleFollow()
 
-	// const {
-	// 	createRoom,
-	// 	loading: createRoomLoading,
-	// 	error: createRoomError,
-	// 	data: createRoomData,
-	// } = useCreateRoom()
-
 	const { modelData, modelLoading, modelError, refetchModel } =
-		useModel(modeleId)
-	const { photosLoading, photosError, photosData, refetchPhotos } = usePhotos({
-		modeleId,
-	})
+		useModel(hash)
+
+		
 	const [model, setModel] = useState<ModelInterface | undefined>()
 	const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
@@ -141,16 +128,6 @@ export default function PublicModelProfileScreen() {
 		}
 	}, [toggleFollowData])
 
-	// React.useEffect(() => {
-	// 	if (createRoomData) {
-	// 		const room = createRoomData.createRoom
-	// 		goToChatScreen({
-	// 			...room,
-	// 			chatUser: makeChatUserFromModel(modelData.model),
-	// 		})
-	// 	}
-	// }, [createRoomData])
-
 	const handleToggleFollow = () => {
 		// TO DO FOR PAYMENT CHECK
 		// if (!false) {
@@ -160,34 +137,6 @@ export default function PublicModelProfileScreen() {
 
 		toggleFollow({ modelId: modelData.modele.id })
 	}
-
-	// const handleFetchOrCreateChatRoom = () => {
-	// 	const room = modelData.modele.roomWithMe
-	// 	if (room) {
-	// 		goToChatScreen({
-	// 			...room,
-	// 			chatUser: makeChatUserFromModel(modelData.model),
-	// 		})
-	// 	} else {
-	// 		// time to create the room
-	// 		createRoom({ modelId: modelData.modele.id })
-	// 	}
-	// }
-
-	// const goToChatScreen = (room: RoomInterface) => {
-	// 	navigation.navigate(screenNames.Chat, {
-	// 		room,
-	// 		fromModelScreen: true,
-	// 	})
-	// }
-
-	// const makeChatUserFromModel = (modele: ModelInterface): ChatUserInterface => ({
-	// 	id: modele.id,
-	// 	name: modele.stage_name,
-	// 	avatar: modele.poster,
-	// 	type: "model",
-	// 	modelHash: modele.hash,
-	// })
 
 	const goBack = () => navigation.goBack()
 
@@ -223,9 +172,9 @@ export default function PublicModelProfileScreen() {
 				</Right>
 			</Header>
 
-			{modelLoading || photosLoading ? (
+			{modelLoading ? (
 				<Spinner color={colors.pink} />
-			) : modelError || photosError ? (
+			) : modelError  ? (
 				<NegativeResponse>
 					<Text>An error occurred</Text>
 					<Button
@@ -345,10 +294,8 @@ export default function PublicModelProfileScreen() {
 							<Text>That model has no photos yet.</Text>
 						</NegativeResponse>
 					)}
-					data={photosData.photos.data}
+					data={modelData.modele.photos}
 					keyExtractor={(photo) => photo.id}
-					onRefresh={() => refetchPhotos()}
-					refreshing={photosLoading}
 					renderItem={({ item: photo }: { item: PhotoInterface }) => (
 						<TouchableOpacity
 							style={{

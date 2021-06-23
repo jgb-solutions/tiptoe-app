@@ -6,18 +6,18 @@ import { FETCH_PHOTOS } from "../graphql/queries"
 import { FETCH_PHOTOS_NUMBER } from "../utils/constants"
 
 interface FilterProps {
-	modeleId?: string
+	hash?: string
 	random?: boolean
 }
 
-export default function usePhotos({ modeleId, random }: FilterProps = {}) {
+export default function usePhotos({ hash, random }: FilterProps = {}) {
 	const [hasMore, setHasMore] = useState(true)
 	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
 		useQuery(FETCH_PHOTOS, {
 			variables: {
 				first: FETCH_PHOTOS_NUMBER,
 				orderBy: [{ column: "created_at", order: "DESC" }],
-				id: modeleId,
+				hash: hash,
 			},
 		})
 

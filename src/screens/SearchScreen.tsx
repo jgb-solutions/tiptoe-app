@@ -99,9 +99,9 @@ export default function PublicModelProfileScreen() {
 		setCurrentPhoto(photo)
 	}
 
-	const goToModel = (id: any) => {
+	const goToModel = (hash: String) => {
 		navigation.navigate(screenNames.PublicModelProfileScreen, {
-			id: id,
+			hash: `${hash}`,
 		})
 	}
 
@@ -193,10 +193,10 @@ export default function PublicModelProfileScreen() {
 										borderWidth: 1,
 										borderColor: colors.pink,
 									}}
-									onPress={() => goToModel(modele?.id)}
+									onPress={() => goToModel(modele.hash)} 
 								>
 									<Image
-										source={{ uri: modele?.poster }}
+										source={{ uri: modele.poster }}
 										style={{
 											width: thumbWidth / 3,
 											height: thumbWidth / 3,

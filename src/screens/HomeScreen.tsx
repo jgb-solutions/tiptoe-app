@@ -110,10 +110,10 @@ export default function HomeScreen() {
 						</View>
 					)}
 					data={photosData.photos.data}
-					keyExtractor={(card) => `${card.has}`}
+					keyExtractor={(card) => `${card.hash}`}
 					renderItem={({ item: photo }: { item: PhotoInterface }) => (
 						<PhotoCard photo={photo} />
-					)}
+					)}  
 					onRefresh={() => refetchPhotos}
 					refreshing={photosLoading}
 					onEndReached={() => loadMorePhotos()}

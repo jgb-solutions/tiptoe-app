@@ -6,7 +6,7 @@ import { FETCH_CATEGORIES } from "../graphql/queries"
 export default function useCategories() {
 	const {
 		data,
-	} = useQuery(FETCH_CATEGORIES)
+	} = useQuery(FETCH_CATEGORIES) 
 
 	return {
 		categoriesData: data,

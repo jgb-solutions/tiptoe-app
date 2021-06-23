@@ -9,7 +9,7 @@ export const FETCH_HOME_SCREEN = gql`
 		) {
 			data {
 				id
-				has
+				hash
 				poster
 				stage_name
 			}
@@ -18,15 +18,16 @@ export const FETCH_HOME_SCREEN = gql`
 		photos(page: $page, first: $take, orderBy: $orderBy) {
 			data {
 				id
-				has
+				hash
 				caption
 				uri
+				type
 				likes_count 
 				liked_by_me
 				created_at
 				modele {
 					stage_name
-					has
+					hash
 					poster
 				}
 			}
@@ -40,10 +41,11 @@ export const FETCH_PHOTOS = gql`
 			data {
 				id
 				uri
+				type
 				modele {
 					stage_name
 					poster
-					has
+					hash
 				}
 				
 				likes_count 
@@ -70,7 +72,8 @@ export const FETCH_FAVORITE_PHOTOS = gql`
 		favoritePhoto(user_id: $user_id, page: $page, first: $first, orderBy: $orderBy) {
 			id
 			uri
-			has 
+			type
+			hash 
 			caption
 			created_at
 			modele {
@@ -91,6 +94,7 @@ export const FETCH_MODELS = gql`
 				id
 				stage_name
 				poster
+				hash
 				followers{
 					id 
 					name
@@ -105,17 +109,20 @@ export const FETCH_MODELS = gql`
 `
 
 export const FETCH_MODEL = gql`
-	query modelDetail($id: ID) {
-		modele(id: $id) {
+	query modelDetail($hash: String) { 
+		modele(hash: $hash) {
 			id
 			stage_name
 			poster
 			facebook
-			has
+			hash
 			instagram
 			photos {
 				id
 				uri
+				type
+				likes_count 
+				liked_by_me
 			}
 			followers {
 				id
@@ -127,9 +134,11 @@ export const FETCH_MODEL = gql`
 
 export const FETCH_CATEGORIES = gql`
 	query categories {
-		id
-		name
-		slug
+		categories {
+			id
+			name
+			slug
+		}
 	}
 `
 

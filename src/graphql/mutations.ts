@@ -17,6 +17,7 @@ export const SIGN_USER_UP = gql`
 					id
 					stage_name
 					bio
+					hash
 					facebook
 					instagram
 					twitter
@@ -29,7 +30,7 @@ export const SIGN_USER_UP = gql`
 					photos {
 						id
 						uri
-						image_bucket
+						bucket
 						caption
 						detail
 						featured
@@ -51,6 +52,7 @@ export const SIGN_USER_UP = gql`
 					bio
 					facebook
 					instagram
+					hash
 					twitter
 					youtube
 					poster
@@ -61,7 +63,7 @@ export const SIGN_USER_UP = gql`
 					photos {
 						id
 						uri
-						image_bucket
+						bucket
 						caption
 						detail
 						featured
@@ -104,6 +106,7 @@ export const LOG_USER_IN = gql`
 					stage_name
 					bio
 					facebook
+					hash
 					instagram
 					twitter
 					youtube
@@ -115,7 +118,7 @@ export const LOG_USER_IN = gql`
 					photos {
 						id
 						uri
-						image_bucket
+						bucket
 						caption
 						detail
 						featured
@@ -135,6 +138,7 @@ export const LOG_USER_IN = gql`
 					id
 					stage_name
 					bio
+					hash
 					facebook
 					instagram
 					twitter
@@ -147,7 +151,7 @@ export const LOG_USER_IN = gql`
 					photos {
 						id
 						uri
-						image_bucket
+						bucket
 						caption
 						detail
 						featured
@@ -172,13 +176,13 @@ export const VERIFY_USER_EMAIL = gql`
 	mutation VerifyUserEmail($input: VerifyUserEmailInput!) {
 		verifyUserEmail(input: $input) {
 			exists
-		}
+		} 
 	}
 `
 
 export const UPDATE_USER = gql`
-	mutation UpdateUser($input: UpdateUserInput!) {
-		updateUser(input: $input) {
+	mutation UpdateUser( $input: UpdateUserInput!) {
+		updateUser({input: $input}) {
 			id
 			name
 			email
@@ -209,11 +213,15 @@ export const CHANGE_PASSWORD = gql`
 	}
 `
 
-export const ADD_GENRE_MUTATION = gql`
-	mutation AddGenre($input: GenreInput!) {
-		addGenre(input: $input) {
+export const ADD_PHOTO_MUTATION = gql`
+	mutation AddPhoto($input: PhotoInput!) {
+		addPhoto(input: $input) {
 			id
-			name
+			uri
+			modele {
+				id
+				stage_name
+			}
 		}
 	}
 `

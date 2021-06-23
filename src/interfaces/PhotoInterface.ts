@@ -1,7 +1,8 @@
 export default interface PhotoInterface {
+	type: string;
 	id: string
 	caption: string
-	has: string
+	hash: string
 	uri: string
 	featured: boolean
 	detail: string
