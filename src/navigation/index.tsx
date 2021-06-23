@@ -34,6 +34,11 @@ const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 
 function TabNavigation() {
+	const { currentUser } = useStore((state: AppStateInterface) => ({
+		currentUser: state.authData.user,
+	}))
+	const navigatorScreenOptions = { headerShown: false }
+
 	return (
 		<Tab.Navigator
 			initialRouteName={screenNames.Profile}
@@ -80,22 +85,25 @@ function TabNavigation() {
 					),
 				}}
 			/>
-			<Tab.Screen
-				name={screenNames.Add}
-				component={AddPhotoScreen}
-				options={{
-					tabBarLabel: "Add Photo",
-					tabBarIcon: ({ color, size }) => (
-						<Icon
-							name="add-circle"
-							style={{
-								fontSize: size * 1.9,
-								color,
-							}}
-						/>
-					),
-				}}
-			/>
+			{currentUser?.modele && (
+				<Tab.Screen
+					name={screenNames.Add}
+					component={AddPhotoScreen}
+					options={{
+						tabBarLabel: "Add Photo",
+						tabBarIcon: ({ color, size }) => (
+							<Icon
+								name="add-circle"
+								style={{
+									fontSize: size * 1.9,
+									color,
+								}}
+							/>
+						),
+					}}
+				/>
+			)}
+			
 			<Tab.Screen
 				name={screenNames.Favorites}
 				component={FavoritesScreen}
@@ -182,7 +190,10 @@ function MainNavigation() {
 					</Stack.Navigator>
 				</ApolloProvider>
 			) : (
-				<Stack.Navigator screenOptions={navigatorScreenOptions} initialRouteName={screenNames.LogIn}> 
+				<Stack.Navigator
+					screenOptions={navigatorScreenOptions}
+					initialRouteName={screenNames.LogIn}
+				>
 					<Stack.Screen
 						name={screenNames.LogIn}
 						component={LogInWithEmailScreen}
