@@ -32,6 +32,8 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 	const navigation = useNavigation()
 	const { toggleLike } = useToggleLike()
 
+	console.log(photo)
+
 	const video = React.useRef(null)
 	const [status, setStatus] = React.useState({})
 

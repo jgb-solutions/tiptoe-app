@@ -6,14 +6,13 @@ import { FETCH_FAVORITE_PHOTOS } from "../graphql/queries"
 import { FETCH_FAVORITE_PHOTOS_NUMBER } from "../utils/constants"
 
 
-export default function usePhotos(user_id: any) {
+export default function usePhotos() {
 	const [hasMore, setHasMore] = useState(true)
 	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
 		useQuery(FETCH_FAVORITE_PHOTOS, {
 			variables: {
 				first: FETCH_FAVORITE_PHOTOS_NUMBER,
-				orderBy: [{ column: "created_at", order: "DESC" }],
-				user_id, 
+				orderBy: [{ column: "created_at", order: "DESC" }],	 
 			},
 		})
 

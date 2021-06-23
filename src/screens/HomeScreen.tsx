@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { Text, Spinner } from "native-base"
+import { Text, Spinner, Item } from "native-base"
 import { View, FlatList } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 
@@ -110,10 +110,12 @@ export default function HomeScreen() {
 						</View>
 					)}
 					data={photosData.photos.data}
-					keyExtractor={(card) => `${card.hash}`}
-					renderItem={({ item: photo }: { item: PhotoInterface }) => (
-						<PhotoCard photo={photo} />
-					)}  
+					keyExtractor={(card) => card.hash}
+					renderItem={({ item: photo }: { item: PhotoInterface }) => 
+					<View>
+						{photo.for_my_modele && <PhotoCard photo={photo} /> }
+					</View>
+					}  
 					onRefresh={() => refetchPhotos}
 					refreshing={photosLoading}
 					onEndReached={() => loadMorePhotos()}

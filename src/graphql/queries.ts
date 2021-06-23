@@ -2,11 +2,7 @@ import gql from "graphql-tag"
 
 export const FETCH_HOME_SCREEN = gql`
 	query homescreenData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
-		modeles(
-			page: $page
-			first: $take
-			orderBy: $orderBy
-		) {
+		modeles(page: $page, first: $take, orderBy: $orderBy) {
 			data {
 				id
 				hash
@@ -22,8 +18,9 @@ export const FETCH_HOME_SCREEN = gql`
 				caption
 				uri
 				type
-				likes_count 
+				likes_count
 				liked_by_me
+				for_my_modele
 				created_at
 				modele {
 					stage_name
@@ -47,9 +44,10 @@ export const FETCH_PHOTOS = gql`
 					poster
 					hash
 				}
-				
-				likes_count 
+
+				likes_count
 				liked_by_me
+				for_my_modele
 				category {
 					name
 				}
@@ -64,25 +62,26 @@ export const FETCH_PHOTOS = gql`
 
 export const FETCH_FAVORITE_PHOTOS = gql`
 	query favoritePhotosData(
-		$user_id: Int
 		$page: Int
 		$first: Int
 		$orderBy: [OrderByClause!]
 	) {
-		favoritePhoto(user_id: $user_id, page: $page, first: $first, orderBy: $orderBy) {
-			id
-			uri
-			type
-			hash 
-			caption
-			created_at
-			modele {
-				id 
-				stage_name
-				poster 
+		favoritePhoto(page: $page, first: $first, orderBy: $orderBy) {
+			data {
+				id
+				uri
+				type
+				hash
+				caption
+				created_at
+				modele {
+					id
+					stage_name
+					poster
+				}
+				likes_count
+				liked_by_me
 			}
-			likes_count 
-			liked_by_me
 		}
 	}
 `
@@ -95,8 +94,8 @@ export const FETCH_MODELS = gql`
 				stage_name
 				poster
 				hash
-				followers{
-					id 
+				followers {
+					id
 					name
 				}
 			}
@@ -109,7 +108,7 @@ export const FETCH_MODELS = gql`
 `
 
 export const FETCH_MODEL = gql`
-	query modelDetail($hash: String) { 
+	query modelDetail($hash: String) {
 		modele(hash: $hash) {
 			id
 			stage_name
@@ -121,7 +120,7 @@ export const FETCH_MODEL = gql`
 				id
 				uri
 				type
-				likes_count 
+				likes_count
 				liked_by_me
 			}
 			followers {
