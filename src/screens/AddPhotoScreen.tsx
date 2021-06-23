@@ -8,10 +8,6 @@ import {
 	Left,
 	Right,
 	View,
-	Thumbnail,
-	Card,
-	CardItem,
-	Body,
 } from "native-base"
 import { screenNames } from "../utils/screens"
 
@@ -19,17 +15,17 @@ import {
 	Image,
 	StyleSheet,
 	ScrollView,
-	Platform,
 	Dimensions,
 } from "react-native"
 
 import { colors } from "../utils/colors"
-import useStore, { AppStateInterface } from "../store"
-import { RouteProp, useNavigation } from "@react-navigation/native"
 import { TouchableOpacity } from "react-native-gesture-handler"
 
 import * as Permissions from "expo-permissions"
 import * as MediaLibrary from "expo-media-library"
+
+import { Video, AVPlaybackStatus } from "expo-av"
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 
 const SCREEN_WIDTH = Dimensions.get("window").width
 const SCREEN_HEIGHT = Dimensions.get("window").height
@@ -46,13 +42,32 @@ const isCloseToBottom = ({
 	)
 }
 
+export type UserFormRouteParamsProps = RouteProp<
+	{
+		params: {
+			uri: string
+			type: string
+			caption: string
+			category_id: string
+			details: string
+		}
+	},
+	"params"
+>
+
 export default function AddPhotoScreen() {
 	const navigation = useNavigation()
 	createContext(null)
 
-	const [galleryImageSelected, setGalleryImageSelected] = useState<string>()
+	const route = useRoute<UserFormRouteParamsProps>()
+
+	const [imageSelected, setImageSelected] = useState<any>()
 	const [galleryImages, setGalleryImages] = useState<any>([])
 	const [loarded, setLoarded] = useState<boolean>(false)
+	const [assetInfo, setAssetInfo] = useState<object>({})
+
+	const video = React.useRef(null)
+	const [status, setStatus] = React.useState({})
 
 	useEffect(() => {
 		const askPermission = async () => {
@@ -86,8 +101,25 @@ export default function AddPhotoScreen() {
 			sortBy: ["creationTime"],
 			mediaType: ["photo", "video"],
 		})
-		setGalleryImageSelected(getAllPhotos.assets[0].uri)
+		setImageSelected({asset: getAllPhotos.assets[0]})
 		setGalleryImages(getAllPhotos.assets)
+	}
+
+	useEffect(() => {
+		if (route.params?.caption !== '' || route.params?.details !== "" || route.params?.category_id !== "") {
+			setImageSelected(route.params)
+		}
+
+	}, [route.params])
+
+	const nextStep = () => {
+		if (imageSelected.asset?.mediaType === 'video' && imageSelected.asset?.duration > 300) {
+			alert('The video duration must less than or equal to 5 minutes')
+		} else {
+			navigation.navigate(screenNames.AddPhotoStep2, {
+				photo: imageSelected
+			})
+		}
 	}
 
 	return (
@@ -109,13 +141,7 @@ export default function AddPhotoScreen() {
 					</Text>
 				</Left>
 				<Right style={{ flex: 1 }}>
-					<TouchableOpacity
-						onPress={() =>
-							navigation.navigate(screenNames.AddPhotoStep2, {
-								photo: galleryImageSelected,
-							})
-						}
-					>
+					<TouchableOpacity onPress={nextStep}>
 						<Icon name="arrow-forward" style={{ color: colors.white }} />
 					</TouchableOpacity>
 				</Right>
@@ -130,10 +156,24 @@ export default function AddPhotoScreen() {
 					}}
 				>
 					<View style={styles.imageSelectedBox}>
-						<Image
-							style={styles.imageSelected}
-							source={{ uri: galleryImageSelected }}
-						/>
+						{imageSelected?.asset?.mediaType === "photo" ? (
+							<Image
+								style={styles.imageSelected}
+								source={{ uri: imageSelected.asset?.uri }}
+							/>
+						) : (
+							<Video
+								ref={video}
+								style={styles.imageSelected}
+								source={{
+									uri: imageSelected?.asset?.uri,
+								}}
+								useNativeControls
+								resizeMode="contain"
+								isLooping
+								onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+							/>
+						)}
 					</View>
 				</View>
 				<View>
@@ -150,7 +190,12 @@ export default function AddPhotoScreen() {
 							{galleryImages?.map((image: any) => (
 								<TouchableOpacity
 									key={image.id}
-									onPress={() => setGalleryImageSelected(image.uri)}
+									onPress={() =>
+										setImageSelected({
+											...imageSelected,
+											asset: image
+										})
+									}
 								>
 									<Image
 										style={styles.image}
