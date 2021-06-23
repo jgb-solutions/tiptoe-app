@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/native"
 import { screenNames } from "../utils/screens"
 import { dayjs } from "../utils/dayjs"
 import useToggleLike from "../hooks/useToggleLike"
+import { Video, AVPlaybackStatus } from "expo-av"
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window")
 
@@ -30,6 +31,9 @@ type Props = {
 export default function PhotoCard({ photo, hideHeader }: Props) {
 	const navigation = useNavigation()
 	const { toggleLike } = useToggleLike()
+
+	const video = React.useRef(null)
+	const [status, setStatus] = React.useState({})
 
 	const handleToggleLike = (photo: PhotoInterface) => {
 		const { liked_by_me } = photo
@@ -49,22 +53,22 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 						<TouchableOpacity
 							onPress={() => {
 								navigation.navigate(screenNames.PublicModelProfileScreen, {
-									hash: `${photo.modele.hash}`,
+									hash: `${photo?.modele?.hash}`,
 								})
 							}}
 						>
-							<Thumbnail small source={{ uri: photo.modele.poster }} />
+							<Thumbnail small source={{ uri: photo?.modele?.poster }} />
 						</TouchableOpacity>
 
 						<Body>
 							<TouchableOpacity
 								onPress={() => {
 									navigation.navigate(screenNames.PublicModelProfileScreen, {
-										hash: `${photo.modele.hash}`,
+										hash: `${photo?.modele?.hash}`,
 									})
 								}}
 							>
-								<Text>{photo.modele.stage_name}</Text>
+								<Text>{photo?.modele?.stage_name}</Text>
 							</TouchableOpacity>
 						</Body>
 					</Left>
@@ -72,22 +76,40 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 			)}
 			<DoubleTap onDoubleTap={() => handleToggleLike(photo)}>
 				<CardItem cardBody>
-					<Image
-						source={{ uri: photo.uri }}
-						style={{
-							flex: 1,
-							height: SCREEN_WIDTH,
-							backgroundColor: colors.pink,
-						}}
-						resizeMode="cover"
-					/>
+					{photo?.type === "photo" ? (
+						<Image
+							source={{ uri: photo?.uri }}
+							style={{
+								flex: 1,
+								height: SCREEN_WIDTH,
+								backgroundColor: colors.pink,
+							}}
+							resizeMode="cover"
+						/>
+					) : (
+						<Video
+							ref={video}
+							style={{
+								flex: 1,
+								height: SCREEN_WIDTH,
+								backgroundColor: colors.pink,
+							}}
+							source={{
+								uri: photo?.uri,
+							}}
+							useNativeControls
+							resizeMode="contain"
+							isLooping
+							onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+						/>
+					)}
 				</CardItem>
 			</DoubleTap>
 			<CardItem>
 				<Left>
 					<Button transparent onPress={() => handleToggleLike(photo)}>
 						<Icon
-							name={photo.liked_by_me ? "heart" : "heart-empty"}
+							name={photo?.liked_by_me ? "heart" : "heart-empty"}
 							style={{
 								color: colors.pink,
 								fontSize: 36,
@@ -99,18 +121,18 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 								color: colors.darkGrey,
 							}}
 						>
-							{photo.likes_count + 1} like
-							{photo.likes_count + 1 !== 1 ? "s" : ""}
+							{photo?.likes_count} like
+							{photo?.likes_count !== 1 ? "s" : ""}
 						</Text>
 					</Button>
 				</Left>
 				<Right>
-					<Text>{dayjs(photo.created_at).fromNow()}</Text>
+					<Text>{dayjs(photo?.created_at).fromNow()}</Text>
 				</Right>
 			</CardItem>
 
 			<CardItem>
-				<Text>{photo.caption}</Text>
+				<Text>{photo?.caption}</Text>
 			</CardItem>
 		</Card>
 	)
