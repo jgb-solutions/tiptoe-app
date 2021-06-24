@@ -19,6 +19,7 @@
 		"@react-navigation/native": "^5.8.0",
 		"@react-navigation/stack": "^5.10.0",
 		"@remobile/react-native-camera-roll-picker": "^1.0.2",
+		"@stripe/stripe-react-native": "^0.1.4",
 		"@types/dateformat": "^3.0.1",
 		"@types/lodash": "^4.14.165",
 		"apollo-cache-inmemory": "^1.6.3",
