@@ -94,6 +94,7 @@ export const FETCH_MODELS = gql`
 				stage_name
 				poster
 				hash
+				followed_by_me
 				followers {
 					id
 					name
@@ -111,11 +112,12 @@ export const FETCH_MODEL = gql`
 	query modelDetail($hash: String) {
 		modele(hash: $hash) {
 			id
-			stage_name
+			stage_name 
 			poster
 			facebook
 			hash
 			instagram
+			followed_by_me
 			photos {
 				id
 				uri

@@ -32,15 +32,13 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 	const navigation = useNavigation()
 	const { toggleLike } = useToggleLike()
 
-	console.log(photo)
-
 	const video = React.useRef(null)
 	const [status, setStatus] = React.useState({})
 
 	const handleToggleLike = (photo: PhotoInterface) => {
 		const { liked_by_me } = photo
 
-		toggleLike({ photoId: photo.id })
+		toggleLike({ photo_id: photo?.id })
 
 		photo.liked_by_me = !liked_by_me
 

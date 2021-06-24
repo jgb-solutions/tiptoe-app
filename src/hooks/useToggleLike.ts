@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/react-hooks"
 
 import { TOGGLE_LIKE } from "../graphql/mutations"
 
-type ToggleLikeProps = { photoId: string }
+type ToggleLikeProps = { photo_id: string }
 
 export default function useToggleLike() {
 	const [toggleLikeMutation] = useMutation(TOGGLE_LIKE, {
