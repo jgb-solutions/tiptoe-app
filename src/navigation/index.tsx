@@ -21,6 +21,7 @@ import LogInWithEmailScreen from "../screens/LogInWithEmailScreen."
 import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen"
 import PublicModelProfileScreen from "../screens/PublicModelProfileScreen"
 import TermsConditionScreen from "../screens/TermsConditionScreen"
+import BillingScreen from "../screens/BillingScreen"
 
 // Other stuff
 import { colors } from "../utils/colors"
@@ -174,6 +175,10 @@ function MainNavigation() {
 						<Stack.Screen
 							name={screenNames.Setting}
 							component={SettingsScreen}
+						/>
+						<Stack.Screen
+							name={screenNames.Billing}
+							component={BillingScreen}
 						/>
 						<Stack.Screen
 							name={screenNames.UpdateInfo}

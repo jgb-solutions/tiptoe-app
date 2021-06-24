@@ -14,5 +14,6 @@ export const screenNames = {
   UpdateInfo: "UpdateInfo",
   Setting: "Setting",
   ChangePassword: "ChangePassword",
-  AddPhotoStep2: "AddPhotoStep2"
+  AddPhotoStep2: "AddPhotoStep2",
+  Billing: "Billing", 
 }
