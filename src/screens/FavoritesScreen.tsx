@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react"
-import { Image, FlatList, Dimensions, TouchableOpacity } from "react-native"
+import {
+	Image,
+	FlatList,
+	Dimensions,
+	TouchableOpacity,
+	StyleSheet,
+} from "react-native"
 import {
 	Icon,
 	Left,
@@ -94,6 +100,10 @@ export default function PublicModelProfileScreen() {
 		setCurrentPhoto(photo)
 	}
 
+	const myFavoritePhoto = data?.favoritePhoto.data?.filter((photo: any) => photo.liked_by_me && photo)
+
+	// console.log(myFavoritePhoto) 
+ 
 	return (
 		<Container>
 			<Header
@@ -153,29 +163,19 @@ export default function PublicModelProfileScreen() {
 							<Text>You have no favorite photos yet.</Text>
 						</View>
 					)}
-					data={data.favoritePhoto.data}
+					data={myFavoritePhoto}
 					keyExtractor={(photo) => photo.id}
 					renderItem={({ item: photo }: { item: PhotoInterface }) => (
-						<View>
-							{photo.liked_by_me && (
-								<TouchableOpacity
-									style={{
-										borderWidth: 1,
-										borderColor: colors.pink,
-									}}
-									onPress={() => goToPhoto(photo)}
-								>
-									<Image
-										source={{ uri: photo.uri }}
-										style={{
-											width: thumbWidth / 3,
-											height: thumbWidth / 3,
-										}}
-										resizeMode="cover"
-									/>
-								</TouchableOpacity>
-							)}
-						</View>
+						<TouchableOpacity onPress={() => goToPhoto(photo)}>
+							<Image
+								source={{ uri: photo.uri }}
+								style={{
+									width: thumbWidth / 3,
+									height: thumbWidth / 3,
+								}}
+								resizeMode="cover"
+							/>
+						</TouchableOpacity>
 					)}
 					onRefresh={refetch}
 					refreshing={loading}
@@ -186,3 +186,15 @@ export default function PublicModelProfileScreen() {
 		</Container>
 	)
 }
+
+const styles = StyleSheet.create({
+	displayNone: {
+		opacity: 0,
+		height: 0,
+		flex: 0,
+	},
+	show: {
+		borderWidth: 1,
+		borderColor: colors.pink,
+	},
+})
