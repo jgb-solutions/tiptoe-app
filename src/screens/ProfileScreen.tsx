@@ -347,13 +347,13 @@ export default function ProfileScreen() {
 				</View>
 
 				{!isAmodel && (
-					<Card style={{ marginTop: 30 }}>
+					<Card style={{ marginTop: 30, marginLeft: 0, marginRight: 0 }}>
 						<CardItem
 							header
 							style={{ flexDirection: "row", justifyContent: "space-between" }}
 						>
 							<Text style={{ fontWeight: "bold", fontSize: 18 }}>
-								Your Models
+								My Models
 							</Text>
 						</CardItem>
 						<CardItem>

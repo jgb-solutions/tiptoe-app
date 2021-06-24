@@ -22,7 +22,7 @@ export default interface ModelInterface {
 	instagram: string
 	photos: PhotoInterface
 	followers: FollowerInterface
-	followedByMe: boolean
+	followed_by_me: boolean
 	roomWithMe?: RoomInterface
 	map: any
 }
