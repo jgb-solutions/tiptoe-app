@@ -3,6 +3,7 @@ import { AppLoading } from "expo"
 import * as Font from "expo-font"
 import { Ionicons } from "@expo/vector-icons"
 // import { StripeProvider } from "@stripe/stripe-react-native"
+import { ConfirmProvider } from "react-native-confirm-dialog"
 
 import { MainNavigation } from "./src/navigation"
 // @ts-ignore
@@ -20,9 +21,13 @@ export default function App() {
 
 	return (
 		<Root>
-      {/* <StripeProvider publishableKey="pk_test_51HnTzqAEoJWPUiKcW6O3xeaLujtzRtqg2sZO0VcAX11sQVYrIFlZSxFMHWKKJhYBoNaZesz7vPRTYlD4GszN0REB00HZ5uloE6"> */}
-				<MainNavigation />
-				<GlobalStuff />
+			{/* <StripeProvider publishableKey="pk_test_51HnTzqAEoJWPUiKcW6O3xeaLujtzRtqg2sZO0VcAX11sQVYrIFlZSxFMHWKKJhYBoNaZesz7vPRTYlD4GszN0REB00HZ5uloE6"> */}
+			<ConfirmProvider>
+				<>
+					<MainNavigation />
+					<GlobalStuff />
+				</>
+			</ConfirmProvider>
 			{/* </StripeProvider> */}
 		</Root>
 	)
