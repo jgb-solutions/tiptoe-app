@@ -8,6 +8,7 @@ import {
 	Left,
 	Right,
 	View,
+	Row,
 } from "native-base"
 import Icon from "react-native-vector-icons/FontAwesome"
 import { formatToUnits } from "../utils/formatNumber"
@@ -16,11 +17,9 @@ import { screenNames } from "../utils/screens"
 import {
 	ViewStyle,
 	StyleSheet,
-	Settings,
 	Dimensions,
 	ScrollView,
 	Image,
-	ImageBackground,
 } from "react-native"
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
 
@@ -140,86 +139,224 @@ export default function SettingsScreen() {
 							color: colors.white,
 						}}
 					>
-						Billing
+						Billing Informations
 					</Text>
 				</Left>
 
-                <Right style={{ flex: 1 }}>
+				<Right style={{ flex: 1 }}>
 					<Menu
 						ref={setMenuRef}
 						button={
 							<Icon
 								onPress={showMenu}
 								name="ellipsis-h"
-                                style={{ color: colors.white, fontSize: 20 }}
+								style={{ color: colors.white, fontSize: 20 }}
 							/>
 						}
 					>
-						<MenuItem >Add a Card</MenuItem>
+						<MenuItem>Add a Card</MenuItem>
 						<MenuDivider />
 						{/* <MenuItem onPress={logout}>Logout</MenuItem> */}
 					</Menu>
 				</Right>
 			</Header>
 			<Content>
-				<View style={{ padding: 12 }}>
-					<View
-						style={{
-							flexDirection: "row",
-							justifyContent: "space-between",
-							alignItems: "center",
-							marginBottom: 8,
-						}}
-					>
-						<Text
+				<ScrollView style={styles.imageBox}>
+					<View style={{ padding: 12 }}>
+						<View
 							style={{
-								fontWeight: "bold",
-								fontSize: 18,
-								color: colors.pink,
+								flex: 1,
+								flexDirection: "row",
+								alignItems: "center",
+								marginBottom: 25,
+								marginTop: 20,
+								borderRadius: 5,
 							}}
 						>
-							My cards
-						</Text>
-					</View>
-					<View>
-						<ScrollView style={styles.imageBox}>
-							<View style={styles.imageWrapper}>
-								<TouchableOpacity>
-									<View style={styles.image}>
-										<Text
+							<Icon name="credit-card" size={16} />
+							<Text
+								style={{
+									fontWeight: "bold",
+									fontSize: 18,
+									color: colors.blackOpact,
+									marginLeft: 10,
+								}}
+							>
+								My cards
+							</Text>
+						</View>
+
+						<View style={styles.cardContainer}>
+							<View
+								style={{
+									flex: 1,
+									flexDirection: "row",
+									alignItems: "center",
+									width: "70%",
+								}}
+							>
+								<Icon
+									name="cc-visa"
+									style={{
+										fontSize: 34,
+										color: "#4267b2",
+										marginRight: 10,
+									}}
+								/>
+								<View>
+									<Text
+										style={{
+											color: colors.blackOpact,
+											fontWeight: "bold",
+										}}
+									>
+										{currentUser?.name}
+									</Text>
+									<Text style={{ color: colors.blackOpact }}>
+										<Icon
+											name="circle"
 											style={{
-												fontWeight: "bold",
-												// color: colors.white,
-												marginBottom: 10,
+												marginRight: 10,
+												color: colors.blackOpact,
 											}}
-										>
-											{currentUser?.name}
-										</Text>
-										<View
+										/>{" "}
+										<Icon
+											name="circle"
 											style={{
-												flex: 1,
-												flexDirection: "row",
-												justifyContent: "space-between",
+												marginRight: 10,
+												color: colors.blackOpact,
 											}}
-										>
-											<Text>XXXX XXXX XXXX 4242</Text>
-											<Text
-												style={{
-													fontWeight: "bold",
-													// color: colors.white,
-													marginBottom: 10,
-												}}
-											>
-												Visa
-											</Text>
-										</View>
-                                        <Text>Exp: 04/24</Text>
-									</View>
-								</TouchableOpacity>
+										/>{" "}
+										<Icon
+											name="circle"
+											style={{
+												marginRight: 10,
+												color: colors.blackOpact,
+											}}
+										/>{" "}
+										4242
+									</Text>
+									<Text
+										style={{
+											color: colors.blackOpact,
+										}}
+									>
+										Exp: 04/25
+									</Text>
+								</View>
 							</View>
-						</ScrollView>
+							<View>
+								<Text style={{ fontWeight: "bold", color: colors.pink }}>
+									<Icon name="check" size={18} /> Default
+								</Text>
+							</View>
+						</View>
+
+						<View style={styles.cardContainer}>
+							<View
+								style={{
+									flex: 1,
+									flexDirection: "row",
+									alignItems: "center",
+									width: "70%",
+								}}
+							>
+								<Icon
+									name="cc-mastercard"
+									style={{
+										fontSize: 34,
+										color: colors.red,
+										marginRight: 10,
+									}}
+								/>
+								<View>
+									<Text
+										style={{
+											color: colors.blackOpact,
+											fontWeight: "bold",
+										}}
+									>
+										{currentUser?.name}
+									</Text>
+									<Text style={{ color: colors.blackOpact }}>
+										<Icon
+											name="circle"
+											style={{
+												marginRight: 10,
+												color: colors.blackOpact,
+											}}
+										/>{" "}
+										<Icon
+											name="circle"
+											style={{
+												marginRight: 10,
+												color: colors.blackOpact,
+											}}
+										/>{" "}
+										<Icon
+											name="circle"
+											style={{
+												marginRight: 10,
+												color: colors.blackOpact,
+											}}
+										/>{" "}
+										5432
+									</Text>
+									<Text
+										style={{
+											color: colors.blackOpact,
+										}}
+									>
+										Exp: 05/23
+									</Text>
+								</View>
+							</View>
+							<View>
+								<Text style={{ color: colors.pink }}>Make as default</Text>
+							</View>
+						</View>
+
+						<View
+							style={{
+								flex: 1,
+								flexDirection: "row",
+								alignItems: "center",
+								marginBottom: 10,
+								marginTop: 20,
+								borderRadius: 5,
+							}}
+						>
+							<Icon name="files-o" size={16} />
+							<Text
+								style={{
+									fontWeight: "bold",
+									fontSize: 18,
+									color: colors.blackOpact,
+									marginLeft: 10,
+								}}
+							>
+								My Invoices
+							</Text>
+						</View>
+
+						{["04/23/2021", "03/23/2021", "02/23/2021", "01/23/2021"].map(
+							(date, idx) => (
+								<TouchableOpacity
+									key={idx}
+									style={{
+										padding: 10,
+										borderWidth: 0.5,
+										borderColor: colors.lightGrey,
+										borderRadius: 5,
+										marginBottom: 10,
+									}}
+								>
+									<Text style={{ color: colors.blackOpact }}>{date}</Text>
+								</TouchableOpacity>
+							)
+						)}
 					</View>
-				</View>
+				</ScrollView>
 			</Content>
 		</Container>
 	)
@@ -236,27 +373,15 @@ const styles = StyleSheet.create({
 		height: 0,
 		flex: 0,
 	},
-	imageSelected: {
-		height: "100%",
-		width: "100%",
-	},
 	imageBox: {},
-	imageWrapper: {
+	cardContainer: {
 		flex: 1,
 		flexDirection: "row",
-		flexWrap: "wrap",
-		// justifyContent: "space-between",
-	},
-	image: {
-		height: 100,
-		width: SCREEN_WIDTH / 1.07,
-		borderWidth: 0.5,
-		borderColor: "rgba(0,0,0,.2)",
-		borderRadius: 10,
-		marginBottom: 10,
-		padding: 10,
-		flex: 1,
-		// alignItems: 'center',
-		resizeMode: "cover",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginBottom: 20,
+		paddingBottom: 20,
+		borderBottomColor: colors.lightGrey,
+		borderBottomWidth: 0.2,
 	},
 })
