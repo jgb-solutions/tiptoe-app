@@ -100,10 +100,12 @@ export default function PublicModelProfileScreen() {
 		setCurrentPhoto(photo)
 	}
 
-	const myFavoritePhoto = data?.favoritePhoto.data?.filter((photo: any) => photo.liked_by_me && photo)
+	const myFavoritePhoto = data?.favoritePhoto.data?.filter(
+		(photo: any) => photo.liked_by_me && photo
+	)
 
 	// console.log(myFavoritePhoto) 
- 
+
 	return (
 		<Container>
 			<Header
@@ -147,7 +149,7 @@ export default function PublicModelProfileScreen() {
 										<PhotoCard photo={currentPhoto} />
 									</View>
 								</Modal>
-							)}
+							)} 
 						</>
 					)}
 					numColumns={3}

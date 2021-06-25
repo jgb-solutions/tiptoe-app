@@ -81,7 +81,7 @@ export default function HomeScreen() {
 					ListHeaderComponent={
 						<>
 							<ThumbnailScrollList
-								thumbnails={homeData.modeles.data.map(
+								thumbnails={homeData?.modeles?.data?.map(
 									(model: ModelInterface) => ({
 										title: model.stage_name,
 										hash: model.hash,
@@ -94,6 +94,19 @@ export default function HomeScreen() {
 									})
 								}}
 							/>
+							{photosData.photos.data.filter(
+								(photo: any) => photo.for_my_modele && photo
+							).length === 0 && (
+								<View style={{ 
+									margin: 10, 
+									borderTopColor: colors.blackOpact, 
+									borderTopWidth: .17, paddingTop: 10  }}>
+									<Text style={{ textAlign: 'center' }}>
+										Your timeline is empty! You should start following some
+										models.
+									</Text>
+								</View>
+							)}
 						</>
 					}
 					ListEmptyComponent={() => (
@@ -109,13 +122,11 @@ export default function HomeScreen() {
 							</Text>
 						</View>
 					)}
-					data={photosData.photos.data}
+					data={photosData?.photos?.data}
 					keyExtractor={(card) => card.hash}
-					renderItem={({ item: photo }: { item: PhotoInterface }) => 
-					<View>
-						{photo.for_my_modele && <PhotoCard photo={photo} /> }
-					</View>
-					}  
+					renderItem={({ item: photo }: { item: PhotoInterface }) => (
+						<View>{photo.for_my_modele && <PhotoCard photo={photo} />}</View>
+					)}
 					onRefresh={() => refetchPhotos}
 					refreshing={photosLoading}
 					onEndReached={() => loadMorePhotos()}

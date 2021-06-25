@@ -1,7 +1,7 @@
 export const colors = {
   black: "#010101",
   blackB: "#282523",
-  blackOpact: 'rgba(10, 10, 10, 0.85)',
+  blackOpact: 'rgba(10, 10, 10, 0.6)',
   white: "#ffffff",
   red: "#ab3954",
   pink: "#EC5678",
