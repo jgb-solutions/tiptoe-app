@@ -149,7 +149,6 @@ export default function ProfileScreen() {
 						}
 					>
 						<MenuItem onPress={() => settings()}>Settings</MenuItem>
-						<MenuItem onPress={() => updateProfile()}>Update profile</MenuItem>
 						<MenuDivider />
 						<MenuItem onPress={logout}>Logout</MenuItem>
 					</Menu>
