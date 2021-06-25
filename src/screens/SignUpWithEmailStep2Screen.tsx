@@ -33,7 +33,7 @@ export default function SignUpWithEmailStep2Screen() {
 	const { control, handleSubmit, errors, getValues, reset } =
 		useForm<ModelFormData>({
 			mode: "onBlur",
-			defaultValues: route.params?.userFormData.model,
+			defaultValues: route.params?.userFormData.modele,
 		})
 
 	const userFormData = route.params?.userFormData
@@ -46,14 +46,14 @@ export default function SignUpWithEmailStep2Screen() {
 	const handleSubmitWithModel = (modelFormData: ModelFormData) => {
 		const formDataWithModel: UserFormData = {
 			...userFormData,
-			model: modelFormData,
+			modele: modelFormData,
 		}
 
 		handleSignUp(formDataWithModel)
+		// console.error(JSON.stringify(formDataWithModel))
 	}
 
 	const handleSignUp = async (userFormData: UserFormData) => {
-		console.log(userFormData)
 
 		try {
 			const { register: userData } = await graphqlClient.request(SIGN_USER_UP, {
@@ -61,7 +61,7 @@ export default function SignUpWithEmailStep2Screen() {
 			})
 
 			if (userData) {
-				doLogin(userData)
+				doLogin(userData.tokens)
 			}
 		} catch (error) {
 			setsignUpError(error.response.errors[0].message)
@@ -112,10 +112,10 @@ export default function SignUpWithEmailStep2Screen() {
 									onChangeText={(value) => onChange(value)}
 									value={value}
 									placeholder="Enter Your Stage Name"
-									error={errors.stage_name}
+									error={errors.create?.stage_name}
 								/>
 							)}
-							name="stage_name"
+							name="create.stage_name"
 							rules={{ required: "The stage name is required" }}
 						/>
 
@@ -142,7 +142,7 @@ export default function SignUpWithEmailStep2Screen() {
 										underlineColorAndroid={"transparent"}
 									/>
 								)}
-								name="bio"
+								name="create.bio"
 							/>
 						</View>
 
@@ -155,10 +155,10 @@ export default function SignUpWithEmailStep2Screen() {
 									onChangeText={(value) => onChange(value)}
 									value={value}
 									placeholder="Enter Your Facebook URL"
-									error={errors.facebook}
+									error={errors.create?.facebook}
 								/>
 							)}
-							name="facebook"
+							name="create.facebook"
 						/>
 
 						<Controller
@@ -170,10 +170,10 @@ export default function SignUpWithEmailStep2Screen() {
 									onChangeText={(value) => onChange(value)}
 									value={value}
 									placeholder="Enter Your Instagram URL"
-									error={errors.instagram}
+									error={errors.create?.instagram}
 								/>
 							)}
-							name="instagram"
+							name="create.instagram"
 						/>
 
 						<Controller
@@ -185,10 +185,10 @@ export default function SignUpWithEmailStep2Screen() {
 									onChangeText={(value) => onChange(value)}
 									value={value}
 									placeholder="Enter Your Twitter URL"
-									error={errors.twitter}
+									error={errors.create?.twitter}
 								/>
 							)}
-							name="twitter"
+							name="create.twitter"
 						/>
 
 						<Controller
@@ -200,10 +200,10 @@ export default function SignUpWithEmailStep2Screen() {
 									onChangeText={(value) => onChange(value)}
 									value={value}
 									placeholder="Enter Your Youtube URL"
-									error={errors.youtube}
+									error={errors.create?.youtube}
 								/>
 							)}
-							name="youtube"
+							name="create.youtube"
 						/>
 
 						<FormButton

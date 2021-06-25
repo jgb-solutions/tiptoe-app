@@ -15,6 +15,7 @@ import ChatListScreen from "../screens/ChatListScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
 import AddPhotoScreen from "../screens/AddPhotoScreen"
 import AddPhotoStep2Screen from "../screens/AddPhotoStep2Screen"
+import AddPhotoStep3Screen from "../screens/AddPhotoStep3Screen"
 import SettingsScreen from "../screens/SettingsScreen"
 import ChangePasswordScreen from "../screens/ChangePasswordScreen"
 import LogInWithEmailScreen from "../screens/LogInWithEmailScreen."
@@ -191,6 +192,10 @@ function MainNavigation() {
 						<Stack.Screen
 							name={screenNames.AddPhotoStep2}
 							component={AddPhotoStep2Screen}
+						/>
+						<Stack.Screen
+							name={screenNames.AddPhotoStep3}
+							component={AddPhotoStep3Screen}
 						/>
 					</Stack.Navigator>
 				</ApolloProvider>

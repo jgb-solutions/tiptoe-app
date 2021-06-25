@@ -3,84 +3,86 @@ import gql from "graphql-tag"
 export const SIGN_USER_UP = gql`
 	mutation RegisterUser($input: RegisterInput!) {
 		register(input: $input) {
-			data {
-				id
-				name
-				email
-				first_login
-				avatar
-				telephone
-				created_at
-				user_type
-				gender
-				modele {
+			tokens {
+				user {
 					id
-					stage_name
-					bio
-					hash
-					facebook
-					instagram
-					twitter
-					youtube
-					poster
-					followers {
-						id
-						name
-					}
-					photos {
-						id
-						uri
-						bucket
-						caption
-						detail
-						featured
-						publish
-						category {
-							id
-							name
-						}
-						users {
-							id
-							name
-						}
-					}
+					name
+					email
+					first_login
+					avatar
+					telephone
 					created_at
-				}
-				modeles {
-					id
-					stage_name
-					bio
-					facebook
-					instagram
-					hash
-					twitter
-					youtube
-					poster
-					followers {
+					user_type
+					gender
+					modele {
 						id
-						name
-					}
-					photos {
-						id
-						uri
-						bucket
-						caption
-						detail
-						featured
-						publish
-						category {
+						stage_name
+						bio
+						hash
+						facebook
+						instagram
+						twitter
+						youtube
+						poster
+						followers {
 							id
 							name
 						}
-						users {
+						photos {
+							id
+							uri
+							bucket
+							caption
+							detail
+							featured
+							publish
+							category {
+								id
+								name
+							}
+							users {
+								id
+								name
+							}
+						}
+						created_at
+					}
+					modeles {
+						id
+						stage_name
+						bio
+						facebook
+						instagram
+						hash
+						twitter
+						youtube
+						poster
+						followers {
 							id
 							name
 						}
+						photos {
+							id
+							uri
+							bucket
+							caption
+							detail
+							featured
+							publish
+							category {
+								id
+								name
+							}
+							users {
+								id
+								name
+							}
+						}
+						created_at
 					}
-					created_at
 				}
+				access_token
 			}
-			access_token
 		}
 	}
 `

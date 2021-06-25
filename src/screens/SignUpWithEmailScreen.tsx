@@ -32,22 +32,25 @@ type user_type = "CONSUMER" | "MODEL"
 type Gender = "FEMALE" | "MALE" | "OTHER"
 
 export interface ModelFormData {
-	stage_name: string
-	bio: string
-	facebook: string
-	twitter: string
-	youtube: string
-	instagram: string
+	create: {
+		stage_name: string
+		bio: string
+		facebook: string
+		twitter: string
+		youtube: string
+		instagram: string
+	}
 }
 
 export interface UserFormData {
 	name: string
 	email: string
 	password: string
+	password_confirmation: string
 	user_type: user_type
 	gender: Gender
 	telephone: number
-	model?: ModelFormData
+	modele?: ModelFormData
 }
 
 export const validateEmailUnique = async (email: string) => {
@@ -75,7 +78,7 @@ export const emailFieldRules = {
 	required: emailRequired,
 	validate: {
 		validateEmailAddress,
-		validateEmailUnique,
+		// validateEmailUnique,
 	},
 }
 
@@ -138,7 +141,7 @@ export default function SignUpWithEmailScreen() {
 			})
 
 			if (userData) {
-				doLogin(userData)
+				doLogin(userData.tokens)
 			}
 		} catch (error) {
 			setsignUpError(error.response.errors[0].message)
@@ -169,7 +172,7 @@ export default function SignUpWithEmailScreen() {
 
 		// save existing values. updatiing the user form date will navigate to the next
 		// screen when succeeded.
-		setUserFormData({ model: modelInfo, ...getValues() })
+		setUserFormData({ modele: modelInfo, ...getValues() })
 	}
 
 	useEffect(() => {
@@ -242,6 +245,23 @@ export default function SignUpWithEmailScreen() {
 							)}
 							name="password"
 							rules={{ required: "The password is required" }}
+						/>
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
+									secureTextEntry
+									autoCapitalize="none"
+									onBlur={onBlur}
+									onChangeText={onChange}
+									value={value}
+									placeholder="Confirm your Password"
+									error={errors.password_confirmation}
+								/>
+							)}
+							name="password_confirmation"
+							rules={{ required: "The password is not match" }}
 						/>
 
 						<Controller

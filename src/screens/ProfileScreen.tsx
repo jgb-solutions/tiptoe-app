@@ -109,10 +109,6 @@ export default function ProfileScreen() {
 		hideMenu()
 	}
 
-	const updateProfile = () => {
-		navigation.navigate(screenNames.UpdateInfo)
-		hideMenu()
-	}
 	return (
 		<Container>
 			<Header
@@ -211,7 +207,6 @@ export default function ProfileScreen() {
 									<Text style={{ fontSize: 24, fontWeight: "bold" }}>
 										{currentUser?.name}
 									</Text>
-									<Text style={{ fontSize: 18 }}>{currentUser?.user_type}</Text>
 								</View>
 							</View>
 						)}
