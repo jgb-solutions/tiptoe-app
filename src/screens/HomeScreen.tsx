@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { Text, Spinner, Item } from "native-base"
 import { View, FlatList } from "react-native"
 import { useNavigation } from "@react-navigation/native"
@@ -28,6 +28,14 @@ export default function HomeScreen() {
 		refetchPhotos,
 		subscribeToMorePhotos,
 	} = usePhotos()
+
+	useEffect(() => {
+		photosData && refetchPhotos
+	}, [photosData])
+
+	useEffect(() => {
+		refetchPhotos
+	}, [])
 
 	useEffect(() => {
 		const unsubscribe = subscribeToMorePhotos({

@@ -122,6 +122,14 @@ export default function PublicModelProfileScreen() {
 		console.log(`Searching for ${text}`)
 	}
 
+	useEffect(() => {
+		refetchPhotos
+	}, [])
+
+	useEffect(() => {
+		photosData && refetchPhotos
+	}, [photosData])
+
 	return (
 		<Container>
 			<Header
