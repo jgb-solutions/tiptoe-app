@@ -340,7 +340,7 @@ export default function ProfileScreen() {
 					</View>
 				</View>
 
-				{!isAmodel && (
+				{!isAmodel && currentUser?.modele && (
 					<Card style={{ marginTop: 30, marginLeft: 0, marginRight: 0 }}>
 						<CardItem
 							header
