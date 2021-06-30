@@ -4,15 +4,12 @@ import {
 	Header,
 	Content,
 	Text,
-	Icon,
+	// Icon,
 	Left,
 	Right,
 	View,
-	Thumbnail,
-	Card,
-	CardItem,
-	Body,
 } from "native-base"
+import Icon from "react-native-vector-icons/FontAwesome"
 import { formatToUnits } from "../utils/formatNumber"
 import { screenNames } from "../utils/screens"
 
@@ -23,7 +20,7 @@ import { colors } from "../utils/colors"
 import useStore, { AppStateInterface } from "../store"
 import { RouteProp, useNavigation } from "@react-navigation/native"
 import { TouchableOpacity } from "react-native-gesture-handler"
-var dateFormat = require("dateformat")
+
 
 type StatsProps = {
 	number: number
@@ -86,9 +83,9 @@ export default function SettingsScreen() {
 	const navigation = useNavigation()
 	const { logout, currentUser } = useStore((state: AppStateInterface) => ({
 		logout: state.doLogout,
-		currentUser: state.authData.data,
+		currentUser: state.authData.user,
 	}))
-	const [isAmodel, setIsAmodel] = useState(currentUser?.model ? true : false)
+	const [isAmodel, setIsAmodel] = useState(currentUser?.modele ? true : false)
 	const [showModelInfo, setShowModelInfo] = useState(false)
 
 	let menu: any = null
@@ -119,9 +116,9 @@ export default function SettingsScreen() {
 				<Left style={{ flexDirection: "row", alignItems: "center" }}>
 					<Button
 						transparent
-						onPress={() => navigation.navigate(screenNames.Home)}
+						onPress={() => navigation.navigate(screenNames.Profile)}
 					>
-						<Icon name="arrow-back" style={{ color: colors.white }} />
+						<Icon name="chevron-left" style={{ color: colors.white, fontSize: 20, }} />
 					</Button>
 
 					<Text
@@ -139,11 +136,11 @@ export default function SettingsScreen() {
 						button={
 							<Icon
 								onPress={showMenu}
-								name="more"
-								style={{ color: colors.white }}
+								name="ellipsis-h"
+								style={{ color: colors.white, fontSize: 20, }}
 							/>
 						}
-						style={{ height: 100}}
+						style={{ height: 100 }}
 					>
 						<MenuItem onPress={() => goToProfile()}>Go to profile</MenuItem>
 						<MenuItem onPress={logout}>Logout</MenuItem>
@@ -151,7 +148,6 @@ export default function SettingsScreen() {
 				</Right>
 			</Header>
 			<Content>
-				
 				<View>
 					<View
 						style={{
@@ -162,15 +158,41 @@ export default function SettingsScreen() {
 						}}
 					>
 						<Icon
-							name="person"
+							name="user"
 							style={{
 								fontSize: 20,
 								color: colors.pink,
-								marginRight: 10
+								marginRight: 10,
 							}}
 						/>
-						<TouchableOpacity onPress={() => navigation.navigate(screenNames.UpdateInfo)}>
+						<TouchableOpacity
+							onPress={() => navigation.navigate(screenNames.UpdateInfo)}
+						>
 							<Text>Update account information</Text>
+						</TouchableOpacity>
+					</View>
+
+					<View
+						style={{
+							flexDirection: "row",
+							borderTopColor: "#EFEFEF",
+							borderTopWidth: 1,
+							padding: 12,
+						}}
+					>
+						<Icon
+							name="money"
+							style={{
+								fontSize: 20,
+								color: colors.pink,
+								marginRight: 10,
+							}}
+						/>
+
+						<TouchableOpacity
+							onPress={() => navigation.navigate(screenNames.Billing)}
+						>
+							<Text>Billing information</Text>
 						</TouchableOpacity>
 					</View>
 
@@ -187,10 +209,12 @@ export default function SettingsScreen() {
 							style={{
 								fontSize: 20,
 								color: colors.pink,
-								marginRight: 10
+								marginRight: 10,
 							}}
 						/>
-						<TouchableOpacity onPress={() => navigation.navigate(screenNames.ChangePassword)}>
+						<TouchableOpacity
+							onPress={() => navigation.navigate(screenNames.ChangePassword)}
+						>
 							<Text>Change password</Text>
 						</TouchableOpacity>
 					</View>
@@ -208,7 +232,7 @@ export default function SettingsScreen() {
 							style={{
 								fontSize: 20,
 								color: colors.pink,
-								marginRight: 10
+								marginRight: 10,
 							}}
 						/>
 						<TouchableOpacity>

@@ -2,73 +2,30 @@ import gql from "graphql-tag"
 
 export const FETCH_HOME_SCREEN = gql`
 	query homescreenData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
-		models(take: $take, page: $page, orderBy: $orderBy) {
+		modeles(page: $page, first: $take, orderBy: $orderBy) {
 			data {
+				id
 				hash
-				posterUrl
-				stageName
-				name
+				poster
+				stage_name
 			}
 		}
 
-		photos(take: $take, page: $page, orderBy: $orderBy) {
+		photos(page: $page, first: $take, orderBy: $orderBy) {
 			data {
+				id
 				hash
 				caption
-				url
-				likesCount
-				insertedAt
-				model {
-					stageName
-					hash
-					posterUrl
-				}
-			}
-		}
-	}
-`
-
-export const FETCH_MANAGE_SCREEN = gql`
-	query managePageData($page: Int, $take: Int) {
-		me {
-			latestTracks: tracks(take: $take, page: $page) {
-				data {
-					hash
-					title
-					posterUrl
-					artist {
-						stage_name
-						hash
-					}
-				}
-			}
-
-			latestPlaylists: playlists(take: $take, page: $page) {
-				data {
-					hash
-					title
-					cover_url
-				}
-			}
-
-			latestArtists: artists(take: $take, page: $page) {
-				data {
+				uri
+				type
+				likes_count
+				liked_by_me
+				for_my_modele
+				created_at
+				modele {
 					stage_name
 					hash
-					posterUrl
-				}
-			}
-
-			latestAlbums: albums(take: 10, page: $page) {
-				data {
-					title
-					hash
-					cover_url
-					artist {
-						stage_name
-						hash
-						posterUrl
-					}
+					poster
 				}
 			}
 		}
@@ -76,64 +33,112 @@ export const FETCH_MANAGE_SCREEN = gql`
 `
 
 export const FETCH_PHOTOS = gql`
-	query photosData(
-		$page: Int
-		$take: Int
-		$orderBy: [OrderByClause!]
-		$modelHash: String
-		$random: Boolean
-	) {
-		# Latest 10 photos
-		photos(
-			take: $take
-			page: $page
-			orderBy: $orderBy
-			modelHash: $modelHash
-			random: $random
-		) {
+	query {
+		photos(page: 1, first: 10, orderBy: { column: "created_at", order: DESC }) {
 			data {
 				id
-				hash
-				caption
-				url
-				likesCount
-				likedByMe
-				insertedAt
-				model {
-					stageName
-					posterUrl
+				uri
+				type
+				modele {
+					stage_name
+					poster
 					hash
 				}
+
+				likes_count
+				liked_by_me
+				for_my_modele
+				category {
+					name
+				}
 			}
-			paginationInfo {
-				hasMorePages
+			paginatorInfo {
 				currentPage
+				lastPage
 			}
 		}
 	}
 `
 
 export const FETCH_FAVORITE_PHOTOS = gql`
-	query favoritePhotosData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
-		favoritePhotos(take: $take, page: $page, orderBy: $orderBy) {
+	query favoritePhotosData(
+		$page: Int
+		$first: Int
+		$orderBy: [OrderByClause!]
+	) {
+		favoritePhoto(page: $page, first: $first, orderBy: $orderBy) {
 			data {
 				id
+				uri
+				type
 				hash
 				caption
-				url
-				likesCount
-				likedByMe
-				insertedAt
-				model {
-					stageName
-					posterUrl
-					hash
+				created_at
+				modele {
+					id
+					stage_name
+					poster
+				}
+				likes_count
+				liked_by_me
+			}
+		}
+	}
+`
+
+export const FETCH_MODELS = gql`
+	query modeles($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
+		modeles(page: $page, first: $take, orderBy: $orderBy) {
+			data {
+				id
+				stage_name
+				poster
+				hash
+				followed_by_me
+				followers {
+					id
+					name
 				}
 			}
-			paginationInfo {
-				hasMorePages
+			paginatorInfo {
 				currentPage
+				lastPage
 			}
+		}
+	}
+`
+
+export const FETCH_MODEL = gql`
+	query modelDetail($hash: String) {
+		modele(hash: $hash) {
+			id
+			stage_name 
+			poster
+			facebook
+			hash
+			instagram
+			followed_by_me
+			photos {
+				id
+				uri
+				type
+				likes_count
+				liked_by_me
+			}
+			followers {
+				id
+				name
+			}
+		}
+	}
+`
+
+export const FETCH_CATEGORIES = gql`
+	query categories {
+		categories {
+			id
+			name
+			slug
 		}
 	}
 `
@@ -143,66 +148,19 @@ export const FETCH_ROOMS = gql`
 		me {
 			rooms {
 				id
-				insertedAt
+				created_at
 				messages {
 					text
 				}
 				chatUser {
 					id
 					name
-					avatarUrl
+					avatar
 					type
 					modelHash
 				}
 			}
 		}
-	}
-`
-
-export const FETCH_MODEL = gql`
-	query modelDetail($hash: String!) {
-		model(hash: $hash) {
-			id
-			name
-			stageName
-			posterUrl
-			facebook
-			hash
-			instagram
-			photosCount
-			followersCount
-			followedByMe
-			roomWithMe {
-				id
-			}
-		}
-	}
-`
-
-export const FETCH_MODELS = gql`
-	query modelsData($page: Int, $take: Int, $orderBy: [OrderByClause!]) {
-		# Latest 10 Models
-		models(take: $take, page: $page, orderBy: $orderBy) {
-			data {
-				hash
-				posterUrl
-				stageName
-				name
-			}
-
-			paginationInfo {
-				hasMorePages
-				currentPage
-			}
-		}
-	}
-`
-
-export const FETCH_CATEGORIES = gql`
-	query categories {
-		id
-		name
-		slug
 	}
 `
 
@@ -220,7 +178,7 @@ export const SEARCH_QUERY = gql`
 			tracks {
 				hash
 				title
-				posterUrl
+				poster
 				artist {
 					hash
 					stage_name
@@ -229,7 +187,7 @@ export const SEARCH_QUERY = gql`
 			artists {
 				hash
 				stage_name
-				posterUrl
+				poster
 			}
 			albums {
 				hash
@@ -238,36 +196,6 @@ export const SEARCH_QUERY = gql`
 				artist {
 					hash
 					stage_name
-				}
-			}
-		}
-	}
-`
-
-export const LOG_USER_IN = gql`
-	query logUserIn($input: LoginInput!) {
-		login(input: $input) {
-			token
-			data {
-				id
-				active
-				admin
-				name
-				email
-				firstLogin
-				avatarUrl
-				telephone
-				insertedAt
-				userType
-				gender
-				model {
-					bio
-					facebook
-					insertedAt
-					instagram
-					name
-					twitter
-					youtube
 				}
 			}
 		}

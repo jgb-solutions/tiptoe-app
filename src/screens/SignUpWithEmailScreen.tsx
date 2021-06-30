@@ -27,29 +27,31 @@ import { showToast } from "../utils"
 
 const TipToeLogo = require("../../assets/images/TipToeLogo.png")
 
-type UserType = "CONSUMER" | "MODEL"
+type user_type = "CONSUMER" | "MODEL"
 
 type Gender = "FEMALE" | "MALE" | "OTHER"
 
 export interface ModelFormData {
-	stageName: string
-	bio: string
-	facebook: string
-	twitter: string
-	youtube: string
-	instagram: string
+	create: {
+		stage_name: string
+		bio: string
+		facebook: string
+		twitter: string
+		youtube: string
+		instagram: string
+	}
 }
 
 export interface UserFormData {
 	name: string
 	email: string
 	password: string
-	userType: UserType
+	password_confirmation: string
+	user_type: user_type
 	gender: Gender
 	telephone: number
-	model?: ModelFormData
+	modele?: ModelFormData
 }
-
 
 export const validateEmailUnique = async (email: string) => {
 	try {
@@ -76,15 +78,15 @@ export const emailFieldRules = {
 	required: emailRequired,
 	validate: {
 		validateEmailAddress,
-		validateEmailUnique,
+		// validateEmailUnique,
 	},
 }
 
 export type UserFormRouteParamsProps = RouteProp<
 	{
 		params: {
-			userFormData: UserFormData,
-			modelInfo?: ModelFormData,
+			userFormData: UserFormData
+			modelInfo?: ModelFormData
 		}
 	},
 	"params"
@@ -102,7 +104,7 @@ export default function SignUpWithEmailScreen() {
 	} = useForm<UserFormData>({
 		mode: "onBlur",
 	})
-	const watchUserType = watch("userType") // you can supply default value as second argument
+	const watchuser_type = watch("user_type") // you can supply default value as second argument
 	const watchGender = watch("gender") // you can supply default value as second argument
 	const navigation = useNavigation()
 	const route = useRoute<UserFormRouteParamsProps>()
@@ -120,7 +122,7 @@ export default function SignUpWithEmailScreen() {
 
 	// const { isValid } = formState
 
-	// const formIsValid = isValid && !!watchUserType && !!watchGender
+	// const formIsValid = isValid && !!watchuser_type && !!watchGender
 
 	React.useEffect(() => {
 		if (route.params?.modelInfo) {
@@ -139,7 +141,7 @@ export default function SignUpWithEmailScreen() {
 			})
 
 			if (userData) {
-				doLogin(userData)
+				doLogin(userData.tokens)
 			}
 		} catch (error) {
 			setsignUpError(error.response.errors[0].message)
@@ -156,31 +158,34 @@ export default function SignUpWithEmailScreen() {
 		}
 
 		if (!termsCondition) {
-			showToast(" You need to accept the terms and conditions first in order to go the next step.", {
-				textStyle: {
-					color: colors.warning
+			showToast(
+				" You need to accept the terms and conditions first in order to go the next step.",
+				{
+					textStyle: {
+						color: colors.warning,
+					},
 				}
-			})
+			)
 
 			return
 		}
 
 		// save existing values. updatiing the user form date will navigate to the next
 		// screen when succeeded.
-		setUserFormData({ model: modelInfo, ...getValues() })
+		setUserFormData({ modele: modelInfo, ...getValues() })
 	}
 
 	useEffect(() => {
-		if (!watchUserType) return
+		if (!watchuser_type) return
 
-		if (watchUserType === "MODEL") {
+		if (watchuser_type === "MODEL") {
 			setshowSignUpButton(false)
 			setShowNextButton(true)
 		} else {
 			setshowSignUpButton(true)
 			setShowNextButton(false)
 		}
-	}, [watchUserType])
+	}, [watchuser_type])
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -214,7 +219,7 @@ export default function SignUpWithEmailScreen() {
 								<FormInput
 									onBlur={onBlur}
 									autoCapitalize="none"
-									onChangeText={text => onChange(text.toLowerCase())}
+									onChangeText={(text) => onChange(text.toLowerCase())}
 									value={value}
 									placeholder="Enter Your Email"
 									error={errors.email}
@@ -246,6 +251,23 @@ export default function SignUpWithEmailScreen() {
 							control={control}
 							render={({ onChange, onBlur, value }) => (
 								<FormInput
+									secureTextEntry
+									autoCapitalize="none"
+									onBlur={onBlur}
+									onChangeText={onChange}
+									value={value}
+									placeholder="Confirm your Password"
+									error={errors.password_confirmation}
+								/>
+							)}
+							name="password_confirmation"
+							rules={{ required: "The password is not match" }}
+						/>
+
+						<Controller
+							control={control}
+							render={({ onChange, onBlur, value }) => (
+								<FormInput
 									onBlur={onBlur}
 									autoCapitalize="none"
 									onChangeText={onChange}
@@ -260,23 +282,23 @@ export default function SignUpWithEmailScreen() {
 						<View style={{ marginBottom: 15 }}>
 							<View
 								style={{
-									borderColor: errors.userType ? colors.error : colors.black,
+									borderColor: errors.user_type ? colors.error : colors.black,
 									paddingHorizontal: 10,
 									borderWidth: 0.6,
 									borderRadius: 50,
 								}}
 							>
 								<Controller
-									name="userType"
+									name="user_type"
 									control={control}
 									render={({ onChange, value }) => (
 										<SelectPicker
 											dismissable
 											doneButtonText="OK"
-											onValueChange={(userType: string) => {
-												if (!userType) return
+											onValueChange={(user_type: string) => {
+												if (!user_type) return
 
-												onChange(userType)
+												onChange(user_type)
 											}}
 											selected={value}
 											style={{ flexDirection: "row", justifyContent: "center" }}
@@ -286,21 +308,24 @@ export default function SignUpWithEmailScreen() {
 												fontSize: 18,
 											}}
 										>
-											<SelectPicker.Item label={"Consumer"} value={"CONSUMER"} />
+											<SelectPicker.Item
+												label={"Consumer"}
+												value={"CONSUMER"}
+											/>
 											<SelectPicker.Item label={"Model"} value={"MODEL"} />
 										</SelectPicker>
 									)}
 									rules={{ required: "The type is required" }}
 								/>
 							</View>
-							{!!errors.userType && !watchUserType && (
-								<Text style={styles.errorText}>{errors.userType.message}</Text>
+							{!!errors.user_type && !watchuser_type && (
+								<Text style={styles.errorText}>{errors.user_type.message}</Text>
 							)}
 						</View>
 						<View style={{ marginBottom: 15 }}>
 							<View
 								style={{
-									borderColor: errors.userType ? colors.error : colors.black,
+									borderColor: errors.user_type ? colors.error : colors.black,
 									paddingHorizontal: 10,
 									borderWidth: 0.6,
 									borderRadius: 50,
@@ -369,7 +394,7 @@ export default function SignUpWithEmailScreen() {
 						btnStyle={{ marginBottom: 12 }}
 						label={"Sign up"}
 						onPress={handleSubmit(handleSignUp)}
-					// disabled={!formIsValid && !termsCondition}
+						// disabled={!formIsValid && !termsCondition}
 					/>
 				)}
 

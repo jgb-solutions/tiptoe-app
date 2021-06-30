@@ -1,20 +1,28 @@
 export default interface PhotoInterface {
+	for_my_modele: PhotoInterface;
+	type: string;
 	id: string
 	caption: string
 	hash: string
-	url: string
+	uri: string
 	featured: boolean
 	detail: string
-	likesCount: number
-	likedByMe: boolean
-	insertedAt: Date
+	likes_count: number
+	liked_by_me: boolean
+	created_at: Date
+	length: any
 	category: {
 		name: string
 		slug: string
 	}
-	model: {
-		stageName: string
+	modele: {
+		stage_name: string
 		hash: string
-		posterUrl: string
+		poster: string
+	}
+	users: {
+		id: String
+		name: String
+		length: any
 	}
 }

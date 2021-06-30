@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from "react"
-import {
-	Container,
-	Header,
-	Content,
-	Text,
-	Icon,
-	Left,
-	Right,
-	View,
-	Body,
-	Item,
-	Input,
-} from "native-base"
+import { Container, Header, Content, Text, Icon, Left, Right, View, Body, Item, Input } from "native-base"
 import { screenNames } from "../utils/screens"
 
 import SelectPicker from "react-native-form-select-picker"
@@ -25,50 +13,59 @@ import { useForm, Controller } from "react-hook-form"
 import Textarea from "react-native-textarea"
 
 export interface Credentials {
-	uri: string
+	type: string
 	category_id: number
-	detail: string
+	details: string
 	caption: string
 }
 
 type RouteParamsProps = RouteProp<
 	{
 		params: {
-			photo: string
+			photo: any
 		}
 	},
 	"params"
 >
 
-const CATEGORIES = [
-	{ id: 1, name: "Nature", slug: "nature" },
-	{ id: 2, name: "Sea", slug: "sea" },
-]
 const DEFAULT_IMAGE =
 	"https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-512.png"
 
 export default function AddPhotoStep2Screen() {
 	const navigation = useNavigation()
 
-	// const { categoriesData } = useCategories()
-
-	const [uri, setUri] = useState<string>(DEFAULT_IMAGE)
-
-	const { control, handleSubmit, formState } = useForm<Credentials>({
-		mode: "onBlur",
-	})
+	const { categoriesData } = useCategories()
 
 	const route = useRoute<RouteParamsProps>()
+	const [image, setImage] = useState<any>(DEFAULT_IMAGE)
+
+	const { control, handleSubmit, formState, watch } = useForm<Credentials>({
+		mode: "onBlur",
+		defaultValues: route.params?.photo,
+	})
+
 	useEffect(() => {
-		setUri(route.params?.photo)
+		setImage(route.params?.photo)
 	}, [route])
 
 	const onSubmit = (credentials: Credentials) => {
-		console.log(credentials)
-		navigation.navigate(screenNames.Home)
+		const payload = {
+			...image,
+			...credentials,
+			type: image?.asset?.mediaType
+		}
+
+		navigation.navigate(screenNames.AddPhotoStep3, {
+			photo: payload
+		})
+		
+		// alert(JSON.stringify(payload))
+		// navigation.navigate(screenNames.Home)
 	}
 
 	const { isValid } = formState
+
+	// console.log(image)
 
 	return (
 		<Container>
@@ -85,7 +82,14 @@ export default function AddPhotoStep2Screen() {
 						}}
 					>
 						<TouchableOpacity
-							onPress={() => navigation.navigate(screenNames.Add)}
+							onPress={() =>
+								navigation.navigate(screenNames.Add, {
+									...image,
+									caption: watch("caption"),
+									category_id: watch("category_id"),
+									details: watch("details"),
+								})
+							}
 						>
 							<Icon name="arrow-back" style={{ color: colors.white }} />
 						</TouchableOpacity>
@@ -99,13 +103,8 @@ export default function AddPhotoStep2Screen() {
 					</Text>
 				</Body>
 				<Right style={{ flex: 1 }}>
-					<TouchableOpacity
-						onPress={handleSubmit(onSubmit)}
-					>
-						<Icon
-							name="checkmark"
-							style={{ color: colors.white }}
-						/>
+					<TouchableOpacity  onPress={handleSubmit(onSubmit)}>
+						<Icon name="arrow-forward" style={{ color: colors.white }} />
 					</TouchableOpacity>
 				</Right>
 			</Header>
@@ -116,7 +115,10 @@ export default function AddPhotoStep2Screen() {
 						{ height: 100, flexDirection: "row", paddingHorizontal: 10 },
 					]}
 				>
-					<Image source={{ uri: uri }} style={{ height: 70, width: 70 }} />
+					<Image
+						source={{ uri: image?.asset?.uri }}
+						style={{ height: 70, width: 70 }}
+					/>
 					<View style={styles.inputContainer}>
 						<Controller
 							control={control}
@@ -132,28 +134,13 @@ export default function AddPhotoStep2Screen() {
 							rules={{ required: "The caption is required" }}
 						/>
 					</View>
-
-					<View style={styles.hidden}>
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<Input
-									style={{ paddingLeft: 9 }}
-									placeholder="Add a caption"
-									value={value}
-									onChangeText={(value) => onChange(value)}
-								/>
-							)}
-							defaultValue={uri}
-							name="uri"
-						/>
-					</View>
 				</Item>
 
 				<Item style={[styles.items, { paddingBottom: 10 }]}>
 					<View style={styles.inputContainer}>
 						<Controller
 							name="category_id"
+							rules={{ required: "Please select a category" }}
 							control={control}
 							render={({ onChange, onBlur, value }) => (
 								<SelectPicker
@@ -165,7 +152,7 @@ export default function AddPhotoStep2Screen() {
 										color: "#000",
 									}}
 								>
-									{CATEGORIES.map(({ id, name }) => (
+									{categoriesData?.categories.map(({ id, name }: any) => (
 										<SelectPicker.Item key={id} label={name} value={id} />
 									))}
 								</SelectPicker>
@@ -177,7 +164,8 @@ export default function AddPhotoStep2Screen() {
 				<Item style={[styles.items, { paddingBottom: 10, height: 100 }]}>
 					<View style={styles.inputContainer}>
 						<Controller
-							name="detail"
+							name="details"
+							rules={{ required: "Please add some details" }}
 							control={control}
 							render={({ onChange, onBlur, value }) => (
 								<Textarea
@@ -218,9 +206,9 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		color: "#333",
 	},
-	hidden: { 
+	hidden: {
 		opacity: 0,
 		height: 0,
 		flex: 0,
-	 },
+	},
 })

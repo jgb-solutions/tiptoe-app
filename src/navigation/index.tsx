@@ -15,12 +15,14 @@ import ChatListScreen from "../screens/ChatListScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
 import AddPhotoScreen from "../screens/AddPhotoScreen"
 import AddPhotoStep2Screen from "../screens/AddPhotoStep2Screen"
+import AddPhotoStep3Screen from "../screens/AddPhotoStep3Screen"
 import SettingsScreen from "../screens/SettingsScreen"
 import ChangePasswordScreen from "../screens/ChangePasswordScreen"
 import LogInWithEmailScreen from "../screens/LogInWithEmailScreen."
 import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen"
 import PublicModelProfileScreen from "../screens/PublicModelProfileScreen"
 import TermsConditionScreen from "../screens/TermsConditionScreen"
+import BillingScreen from "../screens/BillingScreen"
 
 // Other stuff
 import { colors } from "../utils/colors"
@@ -34,6 +36,11 @@ const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 
 function TabNavigation() {
+	const { currentUser } = useStore((state: AppStateInterface) => ({
+		currentUser: state.authData.user,
+	}))
+	const navigatorScreenOptions = { headerShown: false }
+
 	return (
 		<Tab.Navigator
 			initialRouteName={screenNames.Profile}
@@ -80,22 +87,25 @@ function TabNavigation() {
 					),
 				}}
 			/>
-			<Tab.Screen
-				name={screenNames.Add}
-				component={AddPhotoScreen}
-				options={{
-					tabBarLabel: "Add Photo",
-					tabBarIcon: ({ color, size }) => (
-						<Icon
-							name="add-circle"
-							style={{
-								fontSize: size * 1.9,
-								color,
-							}}
-						/>
-					),
-				}}
-			/>
+			{currentUser?.modele && (
+				<Tab.Screen
+					name={screenNames.Add}
+					component={AddPhotoScreen}
+					options={{
+						tabBarLabel: "Add Photo",
+						tabBarIcon: ({ color, size }) => (
+							<Icon
+								name="add-circle"
+								style={{
+									fontSize: size * 1.9,
+									color,
+								}}
+							/>
+						),
+					}}
+				/>
+			)}
+			
 			<Tab.Screen
 				name={screenNames.Favorites}
 				component={FavoritesScreen}
@@ -134,11 +144,11 @@ function TabNavigation() {
 }
 
 function MainNavigation() {
-	const { isLoggedIn, phoenixSocket, firstLogin } = useStore(
+	const { isLoggedIn, phoenixSocket, first_login } = useStore(
 		(state: AppStateInterface) => ({
 			isLoggedIn: state.authData.isLoggedIn,
 			phoenixSocket: state.socket,
-			firstLogin: state.authData.data?.firstLogin,
+			first_login: state.authData.user?.first_login,
 		})
 	)
 	const navigatorScreenOptions = { headerShown: false }
@@ -149,7 +159,7 @@ function MainNavigation() {
 				<ApolloProvider client={getClient()}>
 					<Stack.Navigator
 						initialRouteName={
-							isLoggedIn && firstLogin ? screenNames.Profile : screenNames.Home
+							isLoggedIn && first_login ? screenNames.Profile : screenNames.Home
 						}
 						screenOptions={navigatorScreenOptions}
 					>
@@ -168,6 +178,10 @@ function MainNavigation() {
 							component={SettingsScreen}
 						/>
 						<Stack.Screen
+							name={screenNames.Billing}
+							component={BillingScreen}
+						/>
+						<Stack.Screen
 							name={screenNames.UpdateInfo}
 							component={UpdateInfoScreen}
 						/>
@@ -179,10 +193,17 @@ function MainNavigation() {
 							name={screenNames.AddPhotoStep2}
 							component={AddPhotoStep2Screen}
 						/>
+						<Stack.Screen
+							name={screenNames.AddPhotoStep3}
+							component={AddPhotoStep3Screen}
+						/>
 					</Stack.Navigator>
 				</ApolloProvider>
 			) : (
-				<Stack.Navigator screenOptions={navigatorScreenOptions} initialRouteName={screenNames.SignUpWithEmail}>
+				<Stack.Navigator
+					screenOptions={navigatorScreenOptions}
+					initialRouteName={screenNames.LogIn}
+				>
 					<Stack.Screen
 						name={screenNames.LogIn}
 						component={LogInWithEmailScreen}

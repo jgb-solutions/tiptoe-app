@@ -6,30 +6,23 @@ import { FETCH_PHOTOS } from "../graphql/queries"
 import { FETCH_PHOTOS_NUMBER } from "../utils/constants"
 
 interface FilterProps {
-	modelHash?: string
+	hash?: string
 	random?: boolean
 }
 
-export default function usePhotos({ modelHash, random }: FilterProps = {}) {
+export default function usePhotos({ hash, random }: FilterProps = {}) {
 	const [hasMore, setHasMore] = useState(true)
-	const {
-		loading,
-		error,
-		data,
-		fetchMore,
-		refetch,
-		subscribeToMore,
-	} = useQuery(FETCH_PHOTOS, {
-		variables: {
-			take: FETCH_PHOTOS_NUMBER,
-			orderBy: [{ field: "insertAt", order: "DESC" }],
-			modelHash,
-			random,
-		},
-	})
+	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
+		useQuery(FETCH_PHOTOS, {
+			variables: {
+				first: FETCH_PHOTOS_NUMBER,
+				orderBy: [{ column: "created_at", order: "DESC" }],
+				hash: hash,
+			},
+		})
 
 	const loadMorePhotos = () => {
-		const { currentPage } = data.photos.paginationInfo
+		const { currentPage } = data.photos.paginatorInfo
 
 		fetchMore({
 			variables: {
@@ -37,15 +30,15 @@ export default function usePhotos({ modelHash, random }: FilterProps = {}) {
 			},
 			updateQuery: (previousResult, { fetchMoreResult }) => {
 				if (
-					get(previousResult, "paginationInfo.currentPage") ==
-					get(fetchMoreResult, "paginationInfo.currentPage")
+					get(previousResult, "paginatorInfo.currentPage") ==
+					get(fetchMoreResult, "paginatorInfo.currentPage")
 				)
 					return
 
 				const oldPhotos = get(previousResult, "photos.data")
 				const { data: newPhotos, ...newInfo } = get(fetchMoreResult, "photos")
 
-				setHasMore(newInfo.paginationInfo.hasMorePages)
+				setHasMore(newInfo.paginatorInfo.hasMorePages)
 
 				return {
 					photos: {

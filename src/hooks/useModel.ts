@@ -12,7 +12,7 @@ import { FETCH_MODEL } from "../graphql/queries"
 // 	error: ApolloError | undefined
 // 	refetch: () => void
 // }
-
+ 
 export default function useModel(hash: string) {
 	const { loading, error, data, refetch } = useQuery(FETCH_MODEL, {
 		variables: { hash },

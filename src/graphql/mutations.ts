@@ -3,27 +3,173 @@ import gql from "graphql-tag"
 export const SIGN_USER_UP = gql`
 	mutation RegisterUser($input: RegisterInput!) {
 		register(input: $input) {
-			data {
+			tokens {
+				user {
+					id
+					name
+					email
+					first_login
+					avatar
+					telephone
+					created_at
+					user_type
+					gender
+					modele {
+						id
+						stage_name
+						bio
+						hash
+						facebook
+						instagram
+						twitter
+						youtube
+						poster
+						followers {
+							id
+							name
+						}
+						photos {
+							id
+							uri
+							bucket
+							caption
+							detail
+							featured
+							publish
+							category {
+								id
+								name
+							}
+							users {
+								id
+								name
+							}
+						}
+						created_at
+					}
+					modeles {
+						id
+						stage_name
+						bio
+						facebook
+						instagram
+						hash
+						twitter
+						youtube
+						poster
+						followers {
+							id
+							name
+						}
+						photos {
+							id
+							uri
+							bucket
+							caption
+							detail
+							featured
+							publish
+							category {
+								id
+								name
+							}
+							users {
+								id
+								name
+							}
+						}
+						created_at
+					}
+				}
+				access_token
+			}
+		}
+	}
+`
+
+export const LOG_USER_IN = gql`
+	mutation logUserIn($input: LoginInput!) {
+		login(input: $input) {
+			access_token
+			user {
 				id
+				active
+				admin
 				name
 				email
-				firstLogin
-				avatarUrl
+				first_login
+				avatar
 				telephone
-				insertedAt
-				userType
+				created_at
+				user_type
 				gender
-				model {
+				modele {
+					id
+					stage_name
 					bio
 					facebook
-					insertedAt
+					hash
 					instagram
-					name
 					twitter
 					youtube
+					poster
+					followers {
+						id
+						name
+					}
+					photos {
+						id
+						uri
+						bucket
+						caption
+						detail
+						featured
+						publish
+						category {
+							id
+							name
+						}
+						users {
+							id
+							name
+						}
+					}
+					created_at
+				}
+				modeles {
+					id
+					stage_name
+					bio
+					hash
+					facebook
+					instagram
+					twitter
+					youtube
+					poster
+					followers {
+						id
+						name
+					}
+					photos {
+						id
+						uri
+						bucket
+						caption
+						detail
+						featured
+						publish
+						category {
+							id
+							name
+						}
+						users {
+							id
+							name
+						}
+					}
+					created_at
 				}
 			}
-			token
 		}
 	}
 `
@@ -42,17 +188,18 @@ export const UPDATE_USER = gql`
 			id
 			name
 			email
-			firstLogin
-			avatarUrl
+			first_login
+			avatar
 			telephone
-			insertedAt
-			userType
+			created_at
+			user_type
 			gender
-			model {
+			modele {
+				id
 				bio
 				facebook
 				instagram
-				name
+				stage_name
 				twitter
 				youtube
 			}
@@ -68,11 +215,15 @@ export const CHANGE_PASSWORD = gql`
 	}
 `
 
-export const ADD_GENRE_MUTATION = gql`
-	mutation AddGenre($input: GenreInput!) {
-		addGenre(input: $input) {
+export const ADD_PHOTO_MUTATION = gql`
+	mutation AddPhoto($input: PhotoInput!) {
+		addPhoto(input: $input) {
 			id
-			name
+			uri
+			modele {
+				id
+				stage_name
+			}
 		}
 	}
 `
@@ -119,9 +270,9 @@ export const FACEOOK_LOGIN = gql`
 				avatar_url
 				telephone
 				first_login
-				insertAt
+				created_at
 			}
-			token
+			access_token
 		}
 	}
 `

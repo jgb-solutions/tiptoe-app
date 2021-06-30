@@ -1,12 +1,12 @@
 export default interface RoomInterface {
 	id: string
-	insertedAt: Date
+	created_at: Date
 	messages: {
 		text: string
 	}[]
 	chatUser: {
 		id: string
 		name: string
-		avatarUrl: string
+		avatar: string
 	}
 }

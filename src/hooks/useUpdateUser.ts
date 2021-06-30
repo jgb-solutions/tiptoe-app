@@ -4,11 +4,12 @@ import { UPDATE_USER } from "../graphql/mutations"
 import ModelInterface from "../interfaces/ModelInterface"
 
 export type updatedUserProps = {
+	id: string
 	name: string
 	email: string
 	gender: string
 	telephone: string
-	model?: ModelInterface
+	modele?: ModelInterface 
 }
 
 export default function useUpdateUser() {
