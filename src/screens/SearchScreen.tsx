@@ -26,7 +26,7 @@ import useModels from "../hooks/useModels"
 import { screenNames } from "../utils/screens"
 import ModelInterface from "../interfaces/ModelInterface"
 
-const segmentOptions = ["Photos", "Models"]
+const segmentOptions = ["Medias", "Models"]
 
 export default function PublicModelProfileScreen() {
 	const navigation = useNavigation()
