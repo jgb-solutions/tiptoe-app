@@ -1,42 +1,14 @@
 import Constants from 'expo-constants'
 import { Dimensions, Platform } from "react-native"
+import {API_URL_ENV} from '@env'
 
 export const APP_NAME = `TipToe`
 
 // const API_HOST = '192.168.2.205'
 const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 
-
-let API_URL_ = ''
-let SOCKET_URL_ = ''
-
-const expoEnv = Constants.manifest.env
-
-// if (expoEnv && expoEnv.EXPO_APP_ENV) {
-//   switch (Constants.manifest.env.EXPO_APP_ENV) {
-//     case 'lan':
-//       // Air Fiber
-//       // export const API_URL_ = `http://192.168.0.102:4000`
-//       // export const SOCKET_URL_ = `ws://192.168.0.102:4000/socket`
-
-//       // NouKod Media
-//       API_URL_ = `http://10.228.149.147:4000`
-//       SOCKET_URL_ = `ws://10.228.149.147:4000/socket`
-//       break
-//     default:
-//       API_URL_ = `http://${API_HOST || 'localhost'}:4000`
-//       SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
-//       break
-//   }
-// } else {
-//   API_URL_ = `https://api.tiptoe.app`
-//   SOCKET_URL_ = `wss://ws.tiptoe.app/socket`
-// }
-
-
-// API_URL_ = `http://${API_HOST || 'localhost'}:4000`
-API_URL_ = 'http://tiptoe-web-laravel.test' 
-SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
+let API_URL_ = `${API_URL_ENV}`
+let SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
 
 export const API_URL = API_URL_
 export const SOCKET_URL = SOCKET_URL_
