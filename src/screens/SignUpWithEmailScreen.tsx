@@ -46,7 +46,6 @@ export interface UserFormData {
 	name: string
 	email: string
 	password: string
-	password_confirmation: string
 	user_type: user_type
 	gender: Gender
 	telephone: number
@@ -119,6 +118,7 @@ export default function SignUpWithEmailScreen() {
 	}))
 	const [showSignUpButton, setshowSignUpButton] = useState(true)
 	const [showNextButton, setShowNextButton] = useState(false)
+	const [goToTheNextScreen, setGoToTheNextScreen] = useState(false)
 
 	// const { isValid } = formState
 
@@ -131,8 +131,8 @@ export default function SignUpWithEmailScreen() {
 	}, [route.params?.modelInfo])
 
 	useEffect(() => {
-		navigation.navigate(screenNames.SignUpWithEmailStep2, { userFormData })
-	}, [userFormData])
+		userFormData && goToTheNextScreen && navigation.navigate(screenNames.SignUpWithEmailStep2, { userFormData })
+	}, [userFormData, goToTheNextScreen])
 
 	const handleSignUp = async (formData: UserFormData) => {
 		try {
@@ -153,8 +153,6 @@ export default function SignUpWithEmailScreen() {
 		// Make sure the user form is valid first
 		if (!formState.isValid) {
 			trigger()
-
-			return
 		}
 
 		if (!termsCondition) {
@@ -168,11 +166,12 @@ export default function SignUpWithEmailScreen() {
 			)
 
 			return
-		}
+		} 
 
 		// save existing values. updatiing the user form date will navigate to the next
 		// screen when succeeded.
 		setUserFormData({ modele: modelInfo, ...getValues() })
+		setGoToTheNextScreen(true)
 	}
 
 	useEffect(() => {
@@ -245,23 +244,6 @@ export default function SignUpWithEmailScreen() {
 							)}
 							name="password"
 							rules={{ required: "The password is required" }}
-						/>
-
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<FormInput
-									secureTextEntry
-									autoCapitalize="none"
-									onBlur={onBlur}
-									onChangeText={onChange}
-									value={value}
-									placeholder="Confirm your Password"
-									error={errors.password_confirmation}
-								/>
-							)}
-							name="password_confirmation"
-							rules={{ required: "The password is not match" }}
 						/>
 
 						<Controller
