@@ -31,7 +31,7 @@ const segmentOptions = ["Medias", "Models"]
 export default function PublicModelProfileScreen() {
 	const navigation = useNavigation()
 	const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
-	const [segmentNameChosen, setSegmentNameChosen] = useState("Photos")
+	const [segmentNameChosen, setSegmentNameChosen] = useState("Medias")
 	const {
 		photosLoading,
 		photosError,
@@ -49,51 +49,51 @@ export default function PublicModelProfileScreen() {
 	} = useModels({ random: true })
 	const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
-	useEffect(() => {
-		const unsubscribe = subscribeToMorePhotos({
-			document: PHOTO_UPDATES_SUBSCRIPTION,
-			variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
-			updateQuery: (prev, { subscriptionData }) => {
-				if (!subscriptionData.data) return prev
+	// useEffect(() => { 
+	// 	const unsubscribe = subscribeToMorePhotos({
+	// 		document: PHOTO_UPDATES_SUBSCRIPTION,
+	// 		variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
+	// 		updateQuery: (prev, { subscriptionData }) => {
+	// 			if (!subscriptionData.data) return prev
 
-				const {
-					photos: { data, ...otherInfo },
-				} = prev
+	// 			const {
+	// 				photos: { data, ...otherInfo },
+	// 			} = prev
 
-				const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
+	// 			const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
 
-				const filteredData = data.filter(
-					(photo: PhotoInterface) => photo.id !== unlikedPhoto.id
-				)
+	// 			const filteredData = data.filter(
+	// 				(photo: PhotoInterface) => photo.id !== unlikedPhoto.id
+	// 			)
 
-				setCurrentPhoto(null)
+	// 			setCurrentPhoto(null)
 
-				return {
-					photos: {
-						...otherInfo,
-						data: filteredData,
-					},
-				}
-			},
-		})
+	// 			return {
+	// 				photos: {
+	// 					...otherInfo,
+	// 					data: filteredData,
+	// 				},
+	// 			}
+	// 		},
+	// 	})
 
-		return () => unsubscribe()
-	}, [])
+	// 	return () => unsubscribe()
+	// }, [])
 
-	React.useEffect(() => {
-		const unsubscribeFocus = navigation.addListener("focus", () => {
-			refetchPhotos()
-		})
+	// React.useEffect(() => {
+	// 	const unsubscribeFocus = navigation.addListener("focus", () => {
+	// 		refetchPhotos()
+	// 	})
 
-		const unsubscribeBlur = navigation.addListener("blur", () => {
-			setCurrentPhoto(null)
-		})
+	// 	const unsubscribeBlur = navigation.addListener("blur", () => {
+	// 		setCurrentPhoto(null)
+	// 	})
 
-		return () => {
-			unsubscribeFocus()
-			unsubscribeBlur()
-		}
-	}, [navigation])
+	// 	return () => {
+	// 		unsubscribeFocus()
+	// 		unsubscribeBlur()
+	// 	}
+	// }, [navigation])
 
 	const goToPhoto = (photo: PhotoInterface) => {
 		setCurrentPhoto(photo)
@@ -109,7 +109,7 @@ export default function PublicModelProfileScreen() {
 		// fetch new types of data depending on
 		// the segment that was clicked 'on
 		switch (segmentNameChosen) {
-			case "Photos":
+			case "Medias":
 				refetchPhotos()
 				break
 			case "Models":
@@ -222,7 +222,7 @@ export default function PublicModelProfileScreen() {
 				</>
 			) } 
 
-			{segmentNameChosen === "Photos" && (
+			{segmentNameChosen === "Medias" && ( 
 				<>
 					{photosLoading ? (
 						<Spinner color={colors.pink} />

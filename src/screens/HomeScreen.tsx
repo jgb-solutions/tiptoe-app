@@ -37,44 +37,44 @@ export default function HomeScreen() {
 		refetchPhotos
 	}, [])
 
-	useEffect(() => {
-		const unsubscribe = subscribeToMorePhotos({
-			document: PHOTO_UPDATES_SUBSCRIPTION,
-			variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
-			updateQuery: (prev, { subscriptionData }) => {
-				if (!subscriptionData.data) return prev
+	// useEffect(() => {
+	// 	const unsubscribe = subscribeToMorePhotos({
+	// 		document: PHOTO_UPDATES_SUBSCRIPTION,
+	// 		variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
+	// 		updateQuery: (prev, { subscriptionData }) => {
+	// 			if (!subscriptionData.data) return prev
 
-				const {
-					photos: { data, ...otherInfo },
-				}: {
-					photos: {
-						data: PhotoInterface[]
-					}
-				} = prev
+	// 			const {
+	// 				photos: { data, ...otherInfo },
+	// 			}: {
+	// 				photos: {
+	// 					data: PhotoInterface[]
+	// 				}
+	// 			} = prev
 
-				const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
+	// 			const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
 
-				const newData = data.map((photo: PhotoInterface) => {
-					return photo.id === unlikedPhoto.id
-						? {
-								...photo,
-								liked_by_me: false,
-								likes_count: photo.likes_count - 1,
-						  }
-						: photo
-				})
+	// 			const newData = data.map((photo: PhotoInterface) => {
+	// 				return photo.id === unlikedPhoto.id
+	// 					? {
+	// 							...photo,
+	// 							liked_by_me: false,
+	// 							likes_count: photo.likes_count - 1,
+	// 					  }
+	// 					: photo
+	// 			})
 
-				return {
-					photos: {
-						...otherInfo,
-						data: newData,
-					},
-				}
-			},
-		})
+	// 			return {
+	// 				photos: {
+	// 					...otherInfo,
+	// 					data: newData,
+	// 				},
+	// 			}
+	// 		},
+	// 	})
 
-		return () => unsubscribe()
-	}, [])
+	// 	return () => unsubscribe()
+	// }, [])
 
 	return (
 		<Page noLeft rightStyle={{ flex: 0 }} noContent>
