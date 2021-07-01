@@ -84,7 +84,7 @@ export default function HomeScreen() {
 						</View>
 					)}
 					data={photosData?.photos?.data}
-					keyExtractor={(card) => card.hash}
+					keyExtractor={(photo) => photo.id}
 					renderItem={({ item: photo }: { item: PhotoInterface }) => (
 						<View>{(photo.for_my_modele || photo.is_for_me) && <PhotoCard photo={photo} />}</View>
 					)}

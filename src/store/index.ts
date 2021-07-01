@@ -1,7 +1,7 @@
 import { Socket } from "phoenix"
 import createStore from "zustand"
 import { configurePersist } from "zustand-persist"
-import AsyncStorage from "@react-native-community/async-storage"
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import UserInterface from "../interfaces/UserInterface"
 
