@@ -9,6 +9,7 @@ export default interface PhotoInterface {
 	detail: string
 	likes_count: number
 	liked_by_me: boolean
+	is_for_me: boolean
 	created_at: Date
 	length: any
 	category: {

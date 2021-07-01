@@ -47,6 +47,7 @@ export const FETCH_PHOTOS = gql`
 
 				likes_count
 				liked_by_me
+				is_for_me
 				for_my_modele
 				category {
 					name
@@ -81,6 +82,7 @@ export const FETCH_FAVORITE_PHOTOS = gql`
 				}
 				likes_count
 				liked_by_me
+				# is_for_me
 			}
 		}
 	}
@@ -124,6 +126,7 @@ export const FETCH_MODEL = gql`
 				type
 				likes_count
 				liked_by_me
+				# is_for_me
 			}
 			followers {
 				id
