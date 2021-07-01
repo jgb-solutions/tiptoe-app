@@ -43,7 +43,7 @@ function TabNavigation() {
 
 	return (
 		<Tab.Navigator
-			initialRouteName={screenNames.Profile}
+			initialRouteName={currentUser?.first_login ? screenNames.UpdateInfo : screenNames.Home}
 			tabBarOptions={{
 				activeTintColor: colors.pink,
 				inactiveTintColor: colors.black,
