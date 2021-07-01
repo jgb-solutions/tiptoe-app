@@ -43,7 +43,7 @@ function TabNavigation() {
 
 	return (
 		<Tab.Navigator
-			initialRouteName={currentUser?.first_login ? screenNames.UpdateInfo : screenNames.Home}
+			initialRouteName={screenNames.Home}
 			tabBarOptions={{
 				activeTintColor: colors.pink,
 				inactiveTintColor: colors.black,
@@ -159,7 +159,7 @@ function MainNavigation() {
 				<ApolloProvider client={getClient()}>
 					<Stack.Navigator
 						initialRouteName={
-							isLoggedIn && currentUser?.first_login ? screenNames.UpdateInfo : screenNames.Home
+							currentUser?.first_login ? screenNames.UpdateInfo : screenNames.Home
 						}
 						screenOptions={navigatorScreenOptions}
 					>
