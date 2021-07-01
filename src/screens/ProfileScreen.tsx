@@ -133,21 +133,23 @@ export default function ProfileScreen() {
 						Profile
 					</Text>
 				</Left>
-				<Right style={{ flex: 1 }}>
-					<Menu
-						ref={setMenuRef}
-						button={
-							<Icon
-								onPress={showMenu}
-								name="more"
-								style={{ color: colors.white }}
-							/>
-						}
-					>
-						<MenuItem onPress={() => settings()}>Settings</MenuItem>
-						<MenuDivider />
-						<MenuItem onPress={logout}>Logout</MenuItem>
-					</Menu>
+				<Right>
+					<TouchableOpacity onPress={showMenu} style={{ flexDirection: "row-reverse",justifyContent: "center", width: 50 }}>
+						<Menu
+							ref={setMenuRef}
+							button={
+								<Icon
+									onPress={showMenu}
+									name="more"
+									style={{ color: colors.white }}
+								/>
+							}
+						>
+							<MenuItem onPress={() => settings()}>Settings</MenuItem>
+							<MenuDivider />
+							<MenuItem onPress={logout}>Logout</MenuItem>
+						</Menu>
+					</TouchableOpacity>
 				</Right>
 			</Header>
 			<Content>
@@ -359,14 +361,17 @@ export default function ProfileScreen() {
 								}}
 							>
 								{currentUser?.modeles?.map((modele: any) => (
-									<TouchableOpacity 
-									onPress={() => {
-										navigation.navigate(screenNames.PublicModelProfileScreen, {
-											hash: `${modele.hash}`,
-										})
-									}}
-									key={modele.id} 
-									style={styles.modelTouch}
+									<TouchableOpacity
+										onPress={() => {
+											navigation.navigate(
+												screenNames.PublicModelProfileScreen,
+												{
+													hash: `${modele.hash}`,
+												}
+											)
+										}}
+										key={modele.id}
+										style={styles.modelTouch}
 									>
 										<Thumbnail
 											large

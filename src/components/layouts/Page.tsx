@@ -70,7 +70,7 @@ export default function Page({
       <Header
         iosBarStyle="light-content"
         androidStatusBarColor={colors.black}
-        style={{ backgroundColor: colors.pink }}>
+        style={{ backgroundColor: colors.pink, height: 70 }}>
         {!noLeft && (
           <Left style={[{ flex: 1 }, { ...leftStyle }]}>
             <Button transparent onPress={handlePressLeft}>
@@ -78,7 +78,7 @@ export default function Page({
             </Button>
           </Left>
         )}
-        <Body style={[{ flex: 1 }, { ...bodyStyle }]}>
+        <Body style={[{ flex: 0.25 }, { ...bodyStyle }]}>
           <Image
             source={tiptoeLogo} style={{ maxWidth: 100, flex: 1 }}
             resizeMode='contain'
