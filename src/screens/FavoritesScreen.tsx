@@ -43,54 +43,54 @@ export default function PublicModelProfileScreen() {
 	} = useFavoritePhotos()
 	const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
-	useEffect(() => {
-		const unsubscribe = subscribeToMore({
-			document: PHOTO_UPDATES_SUBSCRIPTION,
-			variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
-			updateQuery: (
-				prev: { favoritePhotos: { [x: string]: any; data: any } },
-				{ subscriptionData }: any
-			) => {
-				if (!subscriptionData.data) return prev
+	// useEffect(() => {
+	// 	const unsubscribe = subscribeToMore({
+	// 		document: PHOTO_UPDATES_SUBSCRIPTION,
+	// 		variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
+	// 		updateQuery: (
+	// 			prev: { favoritePhotos: { [x: string]: any; data: any } },
+	// 			{ subscriptionData }: any
+	// 		) => {
+	// 			if (!subscriptionData.data) return prev
 
-				const {
-					favoritePhotos: { data, ...otherInfo },
-				} = prev
+	// 			const {
+	// 				favoritePhotos: { data, ...otherInfo },
+	// 			} = prev
 
-				const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
+	// 			const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
 
-				const filteredData = data.filter(
-					(photo: PhotoInterface) => photo.id !== unlikedPhoto.id
-				)
+	// 			const filteredData = data.filter(
+	// 				(photo: PhotoInterface) => photo.id !== unlikedPhoto.id
+	// 			)
 
-				setCurrentPhoto(null)
+	// 			setCurrentPhoto(null)
 
-				return {
-					favoritePhotos: {
-						...otherInfo,
-						data: filteredData,
-					},
-				}
-			},
-		})
+	// 			return {
+	// 				favoritePhotos: {
+	// 					...otherInfo,
+	// 					data: filteredData,
+	// 				},
+	// 			}
+	// 		},
+	// 	})
 
-		return () => unsubscribe()
-	}, [])
+	// 	return () => unsubscribe()
+	// }, [])
 
-	React.useEffect(() => {
-		const unsubscribeFocus = navigation.addListener("focus", () => {
-			refetch()
-		})
+	// React.useEffect(() => {
+	// 	const unsubscribeFocus = navigation.addListener("focus", () => {
+	// 		refetch()
+	// 	})
 
-		const unsubscribeBlur = navigation.addListener("blur", () => {
-			setCurrentPhoto(null)
-		})
+	// 	const unsubscribeBlur = navigation.addListener("blur", () => {
+	// 		setCurrentPhoto(null)
+	// 	})
 
-		return () => {
-			unsubscribeFocus()
-			unsubscribeBlur()
-		}
-	}, [navigation])
+	// 	return () => {
+	// 		unsubscribeFocus()
+	// 		unsubscribeBlur()
+	// 	}
+	// }, [navigation])
 
 	const goBack = () => {
 		navigation.goBack()

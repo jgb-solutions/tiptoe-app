@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { screenNames } from "../utils/screens"
 import { Text, View, Button, Item, Input, Label } from "native-base"
-import * as Permissions from 'expo-permissions'
+import * as Permissions from "expo-permissions"
 
 import { colors } from "../utils/colors"
 import {
@@ -21,18 +21,19 @@ import Textarea from "react-native-textarea"
 import Page from "../components/layouts/Page"
 import useStore, { AppStateInterface } from "../store"
 import UserInterface from "../interfaces/UserInterface"
-import useUpdateUser from '../hooks/useUpdateUser'
+import useUpdateUser from "../hooks/useUpdateUser"
 
-const GENDERS = ['MALE', 'FEMALE', 'OTHER']
+const GENDERS = ["MALE", "FEMALE", "OTHER"]
 
 export default function UpdateInfoScreen() {
 	const navigation = useNavigation()
-	const currentUser = useStore((state: AppStateInterface) => (state.authData.user))
+	const currentUser = useStore(
+		(state: AppStateInterface) => state.authData.user
+	)
 
-	
 	const { control, handleSubmit, errors } = useForm<UserInterface>({
 		mode: "onBlur",
-		defaultValues: currentUser
+		defaultValues: currentUser,
 	})
 	const [avatar, setAvatar] = useState<any | null>()
 	const { updateUser, data } = useUpdateUser()
@@ -43,20 +44,30 @@ export default function UpdateInfoScreen() {
 		}
 	}, [data])
 
+	useEffect(() => {
+		if (currentUser?.first_login) {
+			const payload: any = {
+				id: currentUser?.id,
+				first_login: false,
+			}
+			updateUser(payload)
+		}
+	}, [])
+
 	const onSubmit = async (credentials: any) => {
 		credentials.id = currentUser?.id
 		const payload = {
-			...credentials, 
+			...credentials,
 			modele: {
 				update: {
 					id: currentUser?.modele?.id,
-					...credentials.modele
-				}
-			}
+					...credentials.modele,
+				},
+			},
 		}
 
 		updateUser(payload)
-	  }
+	}
 
 	const getPermissionForPhotos = async () => {
 		const { status } = await ImagePicker.requestCameraRollPermissionsAsync()
@@ -69,7 +80,7 @@ export default function UpdateInfoScreen() {
 	const pickImage = async () => {
 		const { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL)
 
-		if (status !== 'granted') {
+		if (status !== "granted") {
 			await getPermissionForPhotos()
 		}
 
@@ -77,7 +88,7 @@ export default function UpdateInfoScreen() {
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [1, 1],
-			quality: .75,
+			quality: 0.75,
 		})
 
 		if (!result.cancelled) {
@@ -99,7 +110,7 @@ export default function UpdateInfoScreen() {
 						<Image
 							style={styles.headerPictureStyle}
 							source={{
-								uri: avatar ? avatar : currentUser?.avatar
+								uri: avatar ? avatar : currentUser?.avatar,
 							}}
 						/>
 					</View>
@@ -162,7 +173,11 @@ export default function UpdateInfoScreen() {
 										}}
 									>
 										{GENDERS.map((gender, index) => (
-											<SelectPicker.Item key={index} label={gender.toLowerCase()} value={gender} />
+											<SelectPicker.Item
+												key={index}
+												label={gender.toLowerCase()}
+												value={gender}
+											/>
 										))}
 									</SelectPicker>
 								)}
@@ -207,7 +222,6 @@ export default function UpdateInfoScreen() {
 										rules={{ required: "The model name is required" }}
 									/>
 								</View>
-								
 							</Item>
 
 							<Item style={styles.items}>
@@ -307,7 +321,8 @@ export default function UpdateInfoScreen() {
 					)}
 					<TouchableOpacity
 						style={{ margin: 20 }}
-						onPress={handleSubmit(onSubmit)}>
+						onPress={handleSubmit(onSubmit)}
+					>
 						<Text style={styles.buttonText}>Save</Text>
 					</TouchableOpacity>
 				</View>

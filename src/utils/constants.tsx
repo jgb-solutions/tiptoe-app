@@ -10,7 +10,7 @@ const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 let API_URL_ = `${API_URL_ENV}`
 let SOCKET_URL_ = `ws://${API_HOST || 'localhost'}:4000/socket`
 
-export const API_URL = API_URL_
+export const API_URL = API_URL_ 
 export const SOCKET_URL = SOCKET_URL_
 
 

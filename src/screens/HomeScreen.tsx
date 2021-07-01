@@ -29,53 +29,6 @@ export default function HomeScreen() {
 		subscribeToMorePhotos,
 	} = usePhotos()
 
-	useEffect(() => {
-		photosData && refetchPhotos
-	}, [photosData])
-
-	useEffect(() => {
-		refetchPhotos
-	}, [])
-
-	// useEffect(() => {
-	// 	const unsubscribe = subscribeToMorePhotos({
-	// 		document: PHOTO_UPDATES_SUBSCRIPTION,
-	// 		variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
-	// 		updateQuery: (prev, { subscriptionData }) => {
-	// 			if (!subscriptionData.data) return prev
-
-	// 			const {
-	// 				photos: { data, ...otherInfo },
-	// 			}: {
-	// 				photos: {
-	// 					data: PhotoInterface[]
-	// 				}
-	// 			} = prev
-
-	// 			const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
-
-	// 			const newData = data.map((photo: PhotoInterface) => {
-	// 				return photo.id === unlikedPhoto.id
-	// 					? {
-	// 							...photo,
-	// 							liked_by_me: false,
-	// 							likes_count: photo.likes_count - 1,
-	// 					  }
-	// 					: photo
-	// 			})
-
-	// 			return {
-	// 				photos: {
-	// 					...otherInfo,
-	// 					data: newData,
-	// 				},
-	// 			}
-	// 		},
-	// 	})
-
-	// 	return () => unsubscribe()
-	// }, [])
-
 	return (
 		<Page noLeft rightStyle={{ flex: 0 }} noContent>
 			{homeLoading || photosLoading ? (
@@ -103,7 +56,7 @@ export default function HomeScreen() {
 								}}
 							/>
 							{photosData.photos.data.filter(
-								(photo: any) => photo.for_my_modele && photo
+								(photo: any) => (photo.for_my_modele || photo.is_for_me) && photo
 							).length === 0 && (
 								<View style={{ 
 									margin: 10, 
@@ -133,11 +86,11 @@ export default function HomeScreen() {
 					data={photosData?.photos?.data}
 					keyExtractor={(card) => card.hash}
 					renderItem={({ item: photo }: { item: PhotoInterface }) => (
-						<View>{photo.for_my_modele && <PhotoCard photo={photo} />}</View>
+						<View>{(photo.for_my_modele || photo.is_for_me) && <PhotoCard photo={photo} />}</View>
 					)}
 					onRefresh={() => refetchPhotos}
 					refreshing={photosLoading}
-					onEndReached={() => loadMorePhotos()}
+					// onEndReached={() => loadMorePhotos()}
 					onEndReachedThreshold={0.9}
 				/>
 			)}

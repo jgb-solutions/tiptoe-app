@@ -5,24 +5,23 @@ import get from "lodash/get"
 import { FETCH_PHOTOS } from "../graphql/queries"
 import { FETCH_PHOTOS_NUMBER } from "../utils/constants"
 
-interface FilterProps {
-	hash?: string
-	random?: boolean
-}
+// interface FilterProps {
+// 	hash?: string
+// 	random?: boolean
+// }
 
-export default function usePhotos({ hash, random }: FilterProps = {}) {
+export default function usePhotos() {
 	const [hasMore, setHasMore] = useState(true)
 	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
 		useQuery(FETCH_PHOTOS, {
 			variables: {
 				first: FETCH_PHOTOS_NUMBER,
 				orderBy: [{ column: "created_at", order: "DESC" }],
-				hash: hash,
 			},
 		})
 
 	const loadMorePhotos = () => {
-		const { currentPage } = data.photos.paginatorInfo
+		const { currentPage } = data.photos.paginatorInfo 
 
 		fetchMore({
 			variables: {
