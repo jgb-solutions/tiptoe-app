@@ -1,8 +1,8 @@
 import React from "react"
-import { AppLoading } from "expo"
+import AppLoading from 'expo-app-loading';
 import * as Font from "expo-font"
 import { Ionicons } from "@expo/vector-icons"
-// import { StripeProvider } from "@stripe/stripe-react-native"
+import { StripeProvider } from "@stripe/stripe-react-native"
 import { ConfirmProvider } from "react-native-confirm-dialog"
 
 import { MainNavigation } from "./src/navigation"
@@ -17,17 +17,17 @@ export default function App() {
 		...Ionicons.font,
 	})
 
-	if (!fontsLoaded) return <AppLoading />
-
+	// if (!fontsLoaded) return <AppLoading />
+return null
 	return (
 		<Root>
 			{/* <StripeProvider publishableKey="pk_test_51HnTzqAEoJWPUiKcW6O3xeaLujtzRtqg2sZO0VcAX11sQVYrIFlZSxFMHWKKJhYBoNaZesz7vPRTYlD4GszN0REB00HZ5uloE6"> */}
-			<ConfirmProvider>
+			{/* <ConfirmProvider> */}
 				<>
-					<MainNavigation />
-					<GlobalStuff />
+					{/* <MainNavigation /> */}
+					{/* <GlobalStuff /> */}
 				</>
-			</ConfirmProvider>
+			{/* </ConfirmProvider> */}
 			{/* </StripeProvider> */}
 		</Root>
 	)
