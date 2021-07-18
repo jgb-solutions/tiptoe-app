@@ -1,6 +1,6 @@
 import { Dimensions, Platform } from "react-native"
 // import {API_URL_ENV} from '@env'
-const API_URL_ENV = "http://localhost:3000/"
+const API_URL_ENV = "https://staging-api.tiptoe.app"
 export const APP_NAME = `TipToe`
 
 // const API_HOST = '192.168.2.205'
