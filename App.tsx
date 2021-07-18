@@ -1,7 +1,6 @@
 import React from "react"
 import { Root } from "native-base"
 import AppLoading from 'expo-app-loading'
-import { Ionicons } from "@expo/vector-icons"
 import { StripeProvider } from "@stripe/stripe-react-native"
 import {
   useFonts,
@@ -35,7 +34,6 @@ export default function App() {
     Roboto_700Bold_Italic,
     Roboto_900Black,
     Roboto_900Black_Italic,
-    ...Ionicons
   })
 
 
@@ -43,9 +41,9 @@ export default function App() {
 
   return (
     <Root>
-      {/* <StripeProvider publishableKey="pk_test_51HnTzqAEoJWPUiKcW6O3xeaLujtzRtqg2sZO0VcAX11sQVYrIFlZSxFMHWKKJhYBoNaZesz7vPRTYlD4GszN0REB00HZ5uloE6"> */}
-      <MainNavigation />
-      {/* </StripeProvider> */}
+      <StripeProvider publishableKey="pk_test_51HnTzqAEoJWPUiKcW6O3xeaLujtzRtqg2sZO0VcAX11sQVYrIFlZSxFMHWKKJhYBoNaZesz7vPRTYlD4GszN0REB00HZ5uloE6">
+        <MainNavigation />
+      </StripeProvider>
     </Root>
   )
 }
