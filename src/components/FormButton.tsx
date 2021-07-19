@@ -1,21 +1,28 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
+import { FC } from 'react'
 import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native'
 
 import { colors } from '../utils/colors'
 
 type Props = {
   btnStyle?: ViewStyle,
-  label: string,
+  label: string | JSX.Element,
   labelStyle?: TextStyle,
-  icon?: ReactNode,
+  icon?: JSX.Element,
   onPress: () => void,
   disabled?: boolean
   color?: TextStyle
 }
 
-const FormButton = ({ btnStyle, label, labelStyle, icon, onPress, disabled, color }: Props) => {
+const FormButton: FC<Props> = ({
+  btnStyle, label, labelStyle, icon, onPress, disabled, color }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.btn, btnStyle]} disabled={disabled}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.btn, btnStyle, {
+        opacity: disabled ? .75 : undefined
+      }]}
+      disabled={disabled}>
       {icon}
       <Text style={[styles.label, labelStyle, color]}>{label}</Text>
     </TouchableOpacity>

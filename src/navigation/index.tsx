@@ -105,7 +105,7 @@ function TabNavigation() {
 					}}
 				/>
 			)}
-			
+
 			<Tab.Screen
 				name={screenNames.Favorites}
 				component={FavoritesScreen}
@@ -144,10 +144,9 @@ function TabNavigation() {
 }
 
 function MainNavigation() {
-	const { isLoggedIn, phoenixSocket, currentUser } = useStore(
+	const { isLoggedIn, currentUser } = useStore(
 		(state: AppStateInterface) => ({
 			isLoggedIn: state.authData.isLoggedIn,
-			phoenixSocket: state.socket,
 			currentUser: state.authData.user,
 		})
 	)
@@ -155,7 +154,7 @@ function MainNavigation() {
 
 	return (
 		<NavigationContainer>
-			{isLoggedIn && phoenixSocket ? (
+			{isLoggedIn ? (
 				<ApolloProvider client={getClient()}>
 					<Stack.Navigator
 						initialRouteName={

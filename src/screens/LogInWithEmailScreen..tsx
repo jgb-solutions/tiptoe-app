@@ -21,6 +21,7 @@ import FormButton from '../components/FormButton'
 import useStore, { AppStateInterface } from "../store"
 import { graphqlClient } from "../utils/graphqlClient"
 import { emailRequired, validateEmailAddress } from "./SignUpWithEmailScreen"
+import { Spinner } from "native-base"
 const TipToeLogo = require('../../assets/images/TipToeLogo.png')
 
 export interface Credentials {
@@ -32,20 +33,27 @@ export default function LogInWithEmailScreen() {
   const { control, handleSubmit, errors, formState } = useForm<Credentials>({ mode: 'onBlur' })
   const navigation = useNavigation()
   const [loginError, setLoginError] = useState("")
+  const [fetching, setFetching] = useState(false)
   const { doLogin } = useStore((state: AppStateInterface) =>
     ({ doLogin: state.doLogin }))
 
   const handleLogin = async (credentials: Credentials) => {
     try {
+      setFetching(true)
+
       const { login: userData } = await graphqlClient.request(
         LOG_USER_IN,
         { input: credentials },
       )
 
+      setFetching(false)
+
       if (userData) {
         doLogin(userData)
       }
+
     } catch (error) {
+      console.log(error)
       console.log(JSON.stringify(error.response.errors[0].message))
       setLoginError(error.response.errors[0].message)
     }
@@ -110,7 +118,8 @@ export default function LogInWithEmailScreen() {
 
         <FormButton
           btnStyle={{ marginBottom: 12 }}
-          label="Log in"
+          label={<Text>{fetching ? "logging you in" : "Log in"}</Text>}
+          disabled={fetching}
           onPress={handleSubmit(handleLogin)}
         />
 

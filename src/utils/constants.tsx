@@ -1,18 +1,14 @@
-import { Dimensions, Platform } from "react-native"
-// import {API_URL_ENV} from '@env'
-const API_URL_ENV = "https://staging-api.tiptoe.app"
+import { Dimensions } from "react-native"
+
 export const APP_NAME = `TipToe`
 
-// const API_HOST = '192.168.2.205'
-const API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
+// const LOCAL_API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 
-let API_URL_ = `${API_URL_ENV}`
-
-export const API_URL = API_URL_
-
-
+export const API_URL = process.env.API_URL
+console.log('api url', API_URL)
 // GraphQL URL
 export const GRAPHQL_API_URL = `${API_URL}/graphql`
+console.log(GRAPHQL_API_URL)
 
 export const SOCKET_EVENTS = {
   SHOW_TOAST: "show_toast",
