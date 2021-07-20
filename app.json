@@ -1,22 +1,20 @@
 {
-  "expo": {
-    "name": "TipToe",
-    "slug": "tiptoe-",
-    "version": "0.1",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#010101"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    	"description": "",
+	"expo": {
+		"name": "TipToe",
+		"slug": "tiptoe-",
+		"version": "0.1",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"splash": {
+			"image": "./assets/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#010101"
+		},
+		"updates": {
+			"fallbackToCacheTimeout": 0
+		},
+		"assetBundlePatterns": ["**/*"],
+		"description": "",
 		"ios": {
 			"bundleIdentifier": "jgb.solutions.tiptoep.app",
 			"buildNumber": "1",
@@ -26,8 +24,17 @@
 			"package": "jgb.solutions.tiptoe.app",
 			"versionCode": 1
 		},
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
-  }
+		"web": {
+			"favicon": "./assets/favicon.png"
+		},
+		"plugins": [
+			[
+				"@stripe/stripe-react-native",
+				{
+					"merchantIdentifier": "string | string",
+					"enableGooglePay": false
+				}
+			]
+		]
+	}
 }
