@@ -118,7 +118,7 @@ export default function SettingsScreen() {
 						transparent
 						onPress={() => navigation.navigate(screenNames.Profile)}
 					>
-						<Icon name="chevron-left" style={{ color: colors.white, fontSize: 20, }} />
+						<Icon name="chevron-left" style={{ color: colors.white, fontSize: 17, }} />
 					</Button>
 
 					<Text
@@ -137,7 +137,7 @@ export default function SettingsScreen() {
 							<Icon
 								onPress={showMenu}
 								name="ellipsis-h"
-								style={{ color: colors.white, fontSize: 20, }}
+								style={{ color: colors.white, fontSize: 17, }}
 							/>
 						}
 						style={{ height: 100 }}
@@ -160,7 +160,7 @@ export default function SettingsScreen() {
 						<Icon
 							name="user"
 							style={{
-								fontSize: 20,
+								fontSize: 17,
 								color: colors.pink,
 								marginRight: 10,
 							}}
@@ -183,7 +183,7 @@ export default function SettingsScreen() {
 						<Icon
 							name="money"
 							style={{
-								fontSize: 20,
+								fontSize: 17,
 								color: colors.pink,
 								marginRight: 10,
 							}}
@@ -207,7 +207,7 @@ export default function SettingsScreen() {
 						<Icon
 							name="lock"
 							style={{
-								fontSize: 20,
+								fontSize: 17,
 								color: colors.pink,
 								marginRight: 10,
 							}}
@@ -230,7 +230,7 @@ export default function SettingsScreen() {
 						<Icon
 							name="trash"
 							style={{
-								fontSize: 20,
+								fontSize: 17,
 								color: colors.pink,
 								marginRight: 10,
 							}}

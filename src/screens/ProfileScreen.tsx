@@ -4,7 +4,6 @@ import {
 	Header,
 	Content,
 	Text,
-	Icon,
 	Left,
 	Right,
 	View,
@@ -13,7 +12,9 @@ import {
 	CardItem,
 	Body,
 } from "native-base"
-import dateFormat from "dateformat"
+
+import Icon  from "react-native-vector-icons/FontAwesome"
+
 import { useNavigation } from "@react-navigation/native"
 import { ViewStyle, StyleSheet, TouchableOpacity } from "react-native"
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
@@ -121,7 +122,7 @@ export default function ProfileScreen() {
 						transparent
 						onPress={() => navigation.navigate(screenNames.Home)}
 					>
-						<Icon name="arrow-back" style={{ color: colors.white }} />
+						<Icon name="chevron-left" style={{ color: colors.white,  fontSize: 17, }} />
 					</Button>
 
 					<Text
@@ -140,8 +141,8 @@ export default function ProfileScreen() {
 							button={
 								<Icon
 									onPress={showMenu}
-									name="more"
-									style={{ color: colors.white }}
+									name="ellipsis-v"
+									style={{ color: colors.white,  fontSize: 17, }}
 								/>
 							}
 						>
@@ -219,7 +220,7 @@ export default function ProfileScreen() {
 					>
 						<View style={{ flexDirection: "row", marginBottom: 10 }}>
 							<Icon
-								name="call"
+								name="phone"
 								style={{
 									fontSize: 20,
 									marginRight: 15,
@@ -230,7 +231,7 @@ export default function ProfileScreen() {
 						</View>
 						<View style={{ flexDirection: "row" }}>
 							<Icon
-								name="mail"
+								name="envelope"
 								style={{
 									fontSize: 20,
 									marginRight: 15,

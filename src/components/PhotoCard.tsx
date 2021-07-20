@@ -6,11 +6,12 @@ import {
 	Thumbnail,
 	Text,
 	Button,
-	Icon,
 	Left,
 	Body,
 	Right,
 } from "native-base"
+
+import Icon  from "react-native-vector-icons/Entypo"
 
 import DoubleTap from "./DoubleTap"
 import { colors } from "../utils/colors"
@@ -109,7 +110,7 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 				<Left>
 					<Button transparent onPress={() => handleToggleLike(photo)}>
 						<Icon
-							name={photo?.liked_by_me ? "heart" : "heart-empty"}
+							name={photo?.liked_by_me ? "heart" : "heart-outlined"}
 							style={{
 								color: colors.pink,
 								fontSize: 36,

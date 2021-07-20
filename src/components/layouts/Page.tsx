@@ -72,26 +72,26 @@ export default function Page({
         androidStatusBarColor={colors.black}
         style={{ backgroundColor: colors.pink, height: 70 }}>
         {!noLeft && (
-          <Left style={[{ flex: 1 }, { ...leftStyle }]}>
+          <Left style={[{ flex: 0 }, { ...leftStyle }]}>
             <Button transparent onPress={handlePressLeft}>
               <Icon name='arrow-back' style={{ color: colors.white }} />
             </Button>
           </Left>
         )}
-        <Body style={[{ flex: 0.25 }, { ...bodyStyle }]}>
+        <Body style={[{ flex: 1.5 }, { ...bodyStyle }]}>
           <Image
             source={tiptoeLogo} style={{ maxWidth: 100, flex: 1 }}
             resizeMode='contain'
           />
           {title}
         </Body>
-        {/* {!noRight && (
-          <Right style={[{ flex: 1 }, { ...rightStyle }]}>
-            <Button transparent onPress={handlePressRight}>
+        {!noRight && (
+          <Right style={[{ flex: 0.2 }, { ...rightStyle }]}>
+            {/* <Button transparent onPress={handlePressRight}>
               <Icon name='chatbubbles' style={{ color: colors.white }} />
-            </Button>
+            </Button> */}
           </Right>
-        )} */}
+        )}
       </Header>
       {noContent ? (
         <View style={{ flex: 1 }}>{children}</View>
