@@ -1,10 +1,11 @@
 import { Dimensions } from "react-native"
 
+import { API_URL } from "@env"
+
 export const APP_NAME = `TipToe`
 
 // const LOCAL_API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined
 
-export const API_URL = process.env.API_URL
 console.log('api url', API_URL)
 // GraphQL URL
 export const GRAPHQL_API_URL = `${API_URL}/graphql`
