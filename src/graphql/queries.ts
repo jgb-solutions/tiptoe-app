@@ -17,6 +17,7 @@ export const FETCH_HOME_SCREEN = gql`
 				hash
 				caption
 				uri
+				bucket
 				type
 				likes_count
 				liked_by_me
@@ -38,6 +39,7 @@ export const FETCH_PHOTOS = gql`
 			data {
 				id
 				uri
+				bucket
 				type
 				modele {
 					stage_name
@@ -71,6 +73,7 @@ export const FETCH_FAVORITE_PHOTOS = gql`
 			data {
 				id
 				uri
+				bucket
 				type
 				hash
 				caption
@@ -123,6 +126,7 @@ export const FETCH_MODEL = gql`
 			photos {
 				id
 				uri
+				bucket
 				type
 				likes_count
 				liked_by_me
