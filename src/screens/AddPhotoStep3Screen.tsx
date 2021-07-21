@@ -19,6 +19,11 @@ import {
 	WASABI_URL
 } from '@env'
 
+import * as FileSystem from 'expo-file-system';
+
+
+import path from "react-native-path"
+
 var AWS = require('aws-sdk');
 
 var wasabiEndpoint = new AWS.Endpoint('s3.wasabisys.com');
@@ -27,7 +32,6 @@ var s3 = new AWS.S3({
     accessKeyId: WASABI_ACCESS_KEY_ID,
     secretAccessKey: WASABI_SECRET_ACCESS_KEY
 });
-
 
 type RouteParamsProps = RouteProp<
 	{
@@ -48,17 +52,15 @@ export default function AddPhotoStep2Screen() {
 
 	const route = useRoute<RouteParamsProps>()
 	const [data, setData] = useState<any>()
-	const [photo, setPhoto] = useState<any>()
-
-	const [dataToUpload, setDataToUpload] = useState<any>()
+	const [photoSelected, setPhotoSelected] = useState<any>()
 
 	useEffect(() => {
-		dataToUpload && setDataToUpload(dataToUpload)
-	}, [dataToUpload])
+		photoSelected && setPhotoSelected(photoSelected)
+	}, [photoSelected])
 
 	useEffect(() => {
 		setData(route.params?.photo)
-		setPhoto({
+		setPhotoSelected({
 			id: 1,
 			type: route.params?.photo.asset.mediaType,
 			uri: route.params?.photo.asset.uri,
@@ -82,26 +84,30 @@ export default function AddPhotoStep2Screen() {
 			uri: null
 		}
 
+
 		var params = {
-			Bucket: "file.tiptoe.app",
-			Key: route.params?.photo.asset.uri,
-			Body: route.params?.photo.asset.uri
+			Bucket: "file.tiptoe.app", 
+			Key: path.basename(route.params?.photo.asset.filename),
+			Body: route.params?.photo.asset.uri,
+			Metadata: { 'type': route.params?.photo.asset.mediaType},
+			ACL: 'public-read',
 		};
 
 		var options = {
 			partSize: 10 * 1024 * 1024, // 10 MB
-			queueSize: 10
+			queueSize: 10,
 		};
+
 
 		s3.upload(params, options, async function (err: any, data:any) {
 			if (!err) {
 				// successful response
-				console.log(data)
+				console.log(data.Location)
 				payload = {
 					...payload,
 					bucket: data.Bucket,
 					uri: data.Location
-				}
+				} 
 
 				try {
 					const { addPhoto } = await  graphqlClient.request(
@@ -121,8 +127,7 @@ export default function AddPhotoStep2Screen() {
 			}
 		});
 	}
-
-
+ 
 	return (
 		<Container>
 			<Header
@@ -166,7 +171,7 @@ export default function AddPhotoStep2Screen() {
 				</Right>
 			</Header>
 			<Content>
-				<PhotoCard photo={photo} />
+				<PhotoCard photo={photoSelected} />
 			</Content>
 		</Container>
 	)
