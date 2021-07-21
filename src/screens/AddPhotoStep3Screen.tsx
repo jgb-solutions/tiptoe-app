@@ -29,10 +29,6 @@ var s3 = new AWS.S3({
 });
 
 
-import {RNS3} from 'react-native-aws3';
-
-
-
 type RouteParamsProps = RouteProp<
 	{
 		params: {
@@ -84,12 +80,11 @@ export default function AddPhotoStep2Screen() {
 			publish: true,
 			bucket: null,
 			uri: null
-
 		}
 
 		var params = {
-			Bucket: WASABI_BUCKET,
-			Key: "photo1",
+			Bucket: "file.tiptoe.app",
+			Key: route.params?.photo.asset.uri,
 			Body: route.params?.photo.asset.uri
 		};
 
@@ -101,6 +96,7 @@ export default function AddPhotoStep2Screen() {
 		s3.upload(params, options, async function (err: any, data:any) {
 			if (!err) {
 				// successful response
+				console.log(data)
 				payload = {
 					...payload,
 					bucket: data.Bucket,
