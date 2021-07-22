@@ -1,5 +1,6 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
+	Alert,
 	Image,
 	FlatList,
 	Dimensions,
@@ -8,7 +9,7 @@ import {
 	TouchableOpacity,
 } from "react-native"
 import {
-	Icon,
+	// Icon,
 	Left,
 	Text,
 	View,
@@ -19,6 +20,12 @@ import {
 	Thumbnail,
 	Input,
 } from "native-base"
+
+import { CardField, useConfirmPayment } from '@stripe/stripe-react-native';
+
+
+import Icon  from "react-native-vector-icons/Feather"
+
 import { useRoute } from "@react-navigation/native"
 import { RouteProp, useNavigation } from "@react-navigation/native"
 import Modal from "react-native-modal"
@@ -28,12 +35,15 @@ import useModel from "../hooks/useModel"
 import { formatToUnits } from "../utils/formatNumber"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import ModelInterface from "../interfaces/ModelInterface"
+import CardInterface from "../interfaces/CardInterface"
 import PhotoCard from "../components/PhotoCard"
 import useToggleFollow from "../hooks/useToggleFollow"
 import NegativeResponse from "../components/NegativeResponse"
 import SelectPicker from "react-native-form-select-picker"
 import { useForm, Controller } from "react-hook-form"
-import { useConfirm } from "react-native-confirm-dialog"
+import usePayment from "../hooks/usePayment"
+import useBillingData from "../hooks/useBillingData"
+
 
 type StatsProps = {
 	number: number
@@ -109,12 +119,19 @@ export default function PublicModelProfileScreen() {
 	const hash = route.params.hash
 	const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
 	const [viewPaymentMethod, setViewPaymentMethod] = useState<boolean>(false)
-	const [selectedCard, setSelectedCard] = useState<any>()
+	const [selectedCard, setSelectedCard] = useState<string>()
+	const [card, setCard] = useState<any>(null);
+
+
+	const { confirmPayment, loading } = useConfirmPayment();
+
 	const {
 		toggleFollow,
 		data: toggleFollowData,
 		loading: toggleFollowLoading,
 	} = useToggleFollow()
+
+	const { intent, cards } = useBillingData();
 
 	const { control, handleSubmit, errors, getValues, reset } = useForm<any>({
 		mode: "onBlur",
@@ -125,13 +142,19 @@ export default function PublicModelProfileScreen() {
 	const [model, setModel] = useState<ModelInterface | undefined>()
 	const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
-	const onSubmit = (card: any) => {
-		toggleFollow({ modele_id: modelData.modele.id })
-		setViewPaymentMethod(false)
-		if (modelData) {
+	const onSubmit = () => {
+		toggleFollow({ 
+			payment_method: selectedCard ,
+			modele_id: modelData.modele.id, 
+			stripe_price: modelData?.getModelPrice.price
+		})
+		// setViewPaymentMethod(false)
+		if (toggleFollowData?.toggleFollow.success) {
+			setViewPaymentMethod(false)
 			alert(
 				"Congratulation!!! Now you can see picture and video of this model."
 			)
+			setViewPaymentMethod(false)
 		}
 	}
 
@@ -146,19 +169,31 @@ export default function PublicModelProfileScreen() {
 			refetchModel()
 		}
 	}, [toggleFollowData])
-	const confirm = useConfirm()
 
 	const handleToggleFollow = () => {
 		// TO DO FOR PAYMENT CHECK
 		if (!modelData.modele.followed_by_me) {
 			setViewPaymentMethod(true)
 		} else {
-			confirm({
-				confirmButtonStyle: { backgroundColor: colors.pink },
-				cancelButtonStyle: { borderWidth: 1, borderColor: colors.pink },
-				onConfirm: () => toggleFollow({ modele_id: modelData.modele.id }),
-				body: "If you unfollow this model, you will not be able to see her picture and video anymore",
-			})
+			// 	confirmButtonStyle: { backgroundColor: colors.pink },
+			// 	cancelButtonStyle: { borderWidth: 1, borderColor: colors.pink },
+			Alert.alert(
+				'Unfollow this model',
+				'If you unfollow this model, you will not be able to see her picture and video anymore',
+				[
+				  	{
+						text: 'Cancel',
+						onPress: () => console.log('Cancel Pressed'),
+						style: 'cancel'
+				  	},
+				  	{ 
+					  text: 'OK', onPress: () => toggleFollow({ modele_id: modelData.modele.id })
+					}
+				],
+				{ cancelable: false }
+			  );
+
+
 		}
 	}
 
@@ -177,7 +212,7 @@ export default function PublicModelProfileScreen() {
 			>
 				<Left style={{ flexDirection: "row", alignItems: "center" }}>
 					<Button transparent onPress={goBack}>
-						<Icon name="arrow-back" style={{ color: colors.white }} />
+						<Icon name="arrow-left" style={{ color: colors.white, fontSize: 24, }} />
 					</Button>
 
 					<Text
@@ -191,7 +226,7 @@ export default function PublicModelProfileScreen() {
 				</Left>
 				<Right style={{ flex: 1 }}>
 					<Button transparent onPress={() => alert("pressed more")}>
-						<Icon name="more" style={{ color: colors.white }} />
+						<Icon name="more-vertical" style={{ color: colors.white, fontSize: 24 }} />
 					</Button>
 				</Right>
 			</Header>
@@ -280,12 +315,9 @@ export default function PublicModelProfileScreen() {
 													? colors.pink
 													: colors.white,
 												borderWidth: 1,
+												height: 40
 											}}
-											onPress={() =>
-												!viewPaymentMethod
-													? handleToggleFollow()
-													: setViewPaymentMethod(false)
-											}
+											onPress={() => !viewPaymentMethod ? handleToggleFollow() : setViewPaymentMethod(false) }
 											disable={toggleFollowLoading}
 										>
 											<Text style={{ color: colors.white }}>
@@ -304,7 +336,7 @@ export default function PublicModelProfileScreen() {
 												borderWidth: 1,
 											}}
 										>
-											<Icon name="arrow-down" />
+											<Icon name="arrow-down" style={{ fontSize: 24 }} />
 										</Button>
 									</View>
 								</View>
@@ -333,6 +365,7 @@ export default function PublicModelProfileScreen() {
 											borderWidth: 1,
 											borderColor: "#fce3e9",
 											borderRadius: 5,
+											height: 45,
 										}}
 										placeholder="Pay with an existant card"
 										placeholderStyle={{
@@ -340,144 +373,85 @@ export default function PublicModelProfileScreen() {
 											fontSize: 18,
 										}}
 									>
+										{
+											cards?.map((card: CardInterface, idx: number) =>
+												<SelectPicker.Item
+													key={idx}
+													label={`xxxx xxxx xxxx ${card.last4}`}
+													value={card.id}
+												/>
+											)
+										}
 										<SelectPicker.Item
-											label={"xxxx xxxx xxxx 4242"}
-											value={1}
-										/>
-										<SelectPicker.Item
-											label={"xxxx xxxx xxxx 5432"}
-											value={2}
-										/>
+													label={`Pay with a new card`}
+													value={`new`}
+												/>
 									</SelectPicker>
 
-									{!selectedCard && (
+									{(selectedCard && selectedCard === "new"   ) && (
 										<>
-											<Text
-												style={{
-													marginBottom: 10,
-													marginTop: 30,
-													fontWeight: "bold",
-													color: colors.darkGrey,
-												}}
-											>
-												Or add a new card
-											</Text>
+										<Text
+											style={{
+												marginTop: 30,
+												marginBottom: -20,
+												color: colors.darkGrey,
+											}}
+										>
+											Pay with a new card
+										</Text>
+										<CardField
+											postalCodeEnabled={true}
+											placeholder={{
+												number: '4242 4242 4242 4242',
+											}}
+											cardStyle={{
+												backgroundColor: '#FFFFFF',
+												textColor: '#000000',
+												borderWidth: 1,
+												borderColor: "#fce3e9",
+												borderRadius: 5,
+											}}
+											style={{
+												width: '100%',
+												height: 45,
+												marginVertical: 30,
+											}}
+											onCardChange={(cardDetails) => {
+												setCard(cardDetails); 
+											  }
+											}
 
-											<View style={styles.inputContainer}>
-												<Text style={styles.inputLeft}>Holder Name</Text>
-												<Controller
-													control={control}
-													render={({ onChange, onBlur, value }) => (
-														<Input
-															style={styles.inputRight}
-															placeholder="Ex: Pierre Wilner"
-															autoCapitalize="none"
-															onChangeText={(value) => onChange(value)}
-															value={value}
-														/>
-													)}
-													name="name"
-													rules={{ required: true }}
-												/>
-											</View>
-											{errors.name && (
-												<Text style={{ color: colors.red }}>
-													The name field is required
-												</Text>
-											)}
-
-											<View style={styles.inputContainer}>
-												<Text style={styles.inputLeft}>Number</Text>
-												<Controller
-													control={control}
-													render={({ onChange, onBlur, value }) => (
-														<Input
-															style={styles.inputRight}
-															placeholder="Card number here"
-															maxLength={16}
-															autoCapitalize="none"
-															onChangeText={(value) => onChange(value)}
-															value={value}
-														/>
-													)}
-													name="cardNumber"
-													rules={{ required: true, maxLength: 16 }}
-												/>
-											</View>
-											{errors.cardNumber && (
-												<Text style={{ color: colors.red }}>
-													The card number field is required
-												</Text>
-											)}
-
-											<View style={styles.inputContainer}>
-												<Text style={styles.inputLeft}>Expiry date</Text>
-												<Controller
-													control={control}
-													render={({ onChange, onBlur, value }) => (
-														<Input
-															style={styles.inputRight}
-															placeholder="Ex: 04/24"
-															autoCapitalize="none"
-															onChangeText={(value) => onChange(value)}
-															value={value}
-														/>
-													)}
-													name="expiryDate"
-													rules={{ required: true }}
-												/>
-											</View>
-											{errors.expiryDate && (
-												<Text style={{ color: colors.red }}>
-													The expiry date field is required
-												</Text>
-											)}
-
-											<View style={styles.inputContainer}>
-												<Text style={styles.inputLeft}>CVV</Text>
-												<Controller
-													control={control}
-													render={({ onChange, onBlur, value }) => (
-														<Input
-															style={styles.inputRight}
-															placeholder="Ex: 755"
-															autoCapitalize="none"
-															onChangeText={(value) => onChange(value)}
-															value={value}
-														/>
-													)}
-													name="cvv"
-													rules={{ required: true }}
-												/>
-											</View>
-											{errors.cvv && (
-												<Text style={{ color: colors.red }}>
-													The cvv field is required
-												</Text>
-											)}
+											onFocus={(cardDetails) => {
+											console.log('focusField', cardDetails);
+											}}
+										/>
+											
 										</>
 									)}
-									<Button
-										style={{
-											flex: 1,
-											backgroundColor: colors.pink,
-											width: "30%",
-											marginTop: 20,
-											paddingTop: 7,
-											paddingBottom: 7,
-										}}
-										onPress={handleSubmit(onSubmit)}
-										disable={toggleFollowLoading}
-									>
-										<Text style={{ color: colors.white }}>Follow Now</Text>
-									</Button>
+
+									{selectedCard && 
+										<Button
+											style={{
+												flex: 1,
+												backgroundColor: colors.pink,
+												width: "30%",
+												marginTop: 20,
+												paddingTop: 7,
+												paddingBottom: 7,
+											}}
+											onPress={()=> onSubmit()}
+											disable={toggleFollowLoading} 
+										>
+											<Text style={{ color: colors.white }}>Follow Now</Text>
+										</Button>
+									}
 								</View>
 							) : (
 								!modelData.modele.followed_by_me && (
 									<View style={{ paddingLeft: 15, paddingRight: 15 }}>
 										<View
 											style={{
-												backgroundColor: "#fce3e9",
+												// backgroundColor: "#fce3e9",
 												padding: 10,
 												borderRadius: 10,
 											}}
