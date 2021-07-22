@@ -137,6 +137,10 @@ export const FETCH_MODEL = gql`
 				name
 			}
 		}
+
+		getModelPrice(hash: $hash){
+			price
+		}
 	}
 `
 
@@ -214,5 +218,37 @@ export const FACEBOOK_LOGIN_URL = gql`
 		facebookLoginUrl {
 			url
 		}
+	}
+`
+
+export const GETPUBLISHABLEKEY = gql`
+	query getPublishableKey{
+		getPublishableKey{
+			key
+		}
+  }
+`
+
+export const CREATEPAYMENTINTENT = gql`
+	query createPaymentIntent{
+		createPaymentIntent{
+			client_secret
+		}
+  }
+`
+
+export const BILLING = gql`
+	query billingInformation {
+		createPaymentIntent{
+			client_secret
+		}
+
+		myCards{
+			id
+			last4
+			exp_month
+			exp_year
+		}
+
 	}
 `
