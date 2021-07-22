@@ -2,7 +2,12 @@ import { useMutation } from "@apollo/react-hooks"
 
 import { TOGGLE_FOLLOW } from "../graphql/mutations"
 
-type ToggleFollowProps = { modele_id: string }
+type ToggleFollowProps = { 
+	payment_method?: any
+	modele_id: string 
+	stripe_price?: string
+    subscription_id?: string
+}
 
 export default function useToggleFollow() {
 	const [toggleFollowMutation, { data, error, loading }] = useMutation(
