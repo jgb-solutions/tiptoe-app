@@ -13,7 +13,7 @@ import {
 	Body,
 } from "native-base"
 
-import Icon  from "react-native-vector-icons/FontAwesome"
+import Icon  from "react-native-vector-icons/Feather"
 
 import { useNavigation } from "@react-navigation/native"
 import { ViewStyle, StyleSheet, TouchableOpacity } from "react-native"
@@ -122,7 +122,7 @@ export default function ProfileScreen() {
 						transparent
 						onPress={() => navigation.navigate(screenNames.Home)}
 					>
-						<Icon name="chevron-left" style={{ color: colors.white,  fontSize: 17, }} />
+						<Icon name="arrow-left" style={{ color: colors.white,  fontSize: 24, }} />
 					</Button>
 
 					<Text
@@ -141,8 +141,8 @@ export default function ProfileScreen() {
 							button={
 								<Icon
 									onPress={showMenu}
-									name="ellipsis-v"
-									style={{ color: colors.white,  fontSize: 17, }}
+									name="more-vertical"
+									style={{ color: colors.white,  fontSize: 24, }}
 								/>
 							}
 						>
@@ -227,11 +227,11 @@ export default function ProfileScreen() {
 									color: colors.pink,
 								}}
 							/>
-							<Text>{currentUser?.telephone}</Text>
+							<Text>{currentUser?.telephone}</Text> 
 						</View>
 						<View style={{ flexDirection: "row" }}>
 							<Icon
-								name="envelope"
+								name="mail"
 								style={{
 									fontSize: 20,
 									marginRight: 15,
