@@ -20,9 +20,9 @@ import {
 	Input,
 } from "native-base"
 
-import { CardField, useConfirmPayment } from '@stripe/stripe-react-native';
+import { CardField, CardFieldProps, useConfirmPayment } from '@stripe/stripe-react-native'
 
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons'
 
 import { useRoute } from "@react-navigation/native"
 import { RouteProp, useNavigation } from "@react-navigation/native"
@@ -112,7 +112,7 @@ const Button = ({
 type RouteParamsProps = RouteProp<
 	{
 		params: {
-			hash: string 
+			hash: string
 		}
 	},
 	"params"
@@ -127,10 +127,10 @@ export default function PublicModelProfileScreen() {
 	const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
 	const [viewPaymentMethod, setViewPaymentMethod] = useState<boolean>(false)
 	const [selectedCard, setSelectedCard] = useState<string>()
-	const [card, setCard] = useState<CardDtails>();
+	const [cardDetails, setCardDetails] = useState<CardFieldProps>()
 
 
-	const { confirmPayment, loading } = useConfirmPayment();
+	const { confirmPayment, loading } = useConfirmPayment()
 
 	const {
 		toggleFollow,
@@ -138,7 +138,7 @@ export default function PublicModelProfileScreen() {
 		loading: toggleFollowLoading,
 	} = useToggleFollow()
 
-	const { intent, cards } = useBillingData();
+	const { intent, cards } = useBillingData()
 
 	const { control, handleSubmit, errors, getValues, reset } = useForm<any>({
 		mode: "onBlur",
@@ -150,9 +150,9 @@ export default function PublicModelProfileScreen() {
 	const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
 	const onSubmit = () => {
-		toggleFollow({ 
-			payment_method: selectedCard ,
-			modele_id: modelData.modele.id, 
+		toggleFollow({
+			payment_method: selectedCard,
+			modele_id: modelData.modele.id,
 			stripe_price: modelData?.getModelPriceStripeId.price_id
 		})
 		if (toggleFollowData?.toggleFollow.success) {
@@ -185,17 +185,17 @@ export default function PublicModelProfileScreen() {
 				'Unfollow this model',
 				'If you unfollow this model, you will not be able to see her picture and video anymore',
 				[
-				  	{
+					{
 						text: 'Cancel',
 						onPress: () => console.log('Cancel Pressed'),
 						style: 'cancel'
-				  	},
-				  	{ 
-					  text: 'OK', onPress: () => toggleFollow({ modele_id: modelData.modele.id })
+					},
+					{
+						text: 'OK', onPress: () => toggleFollow({ modele_id: modelData.modele.id })
 					}
 				],
 				{ cancelable: false }
-			  );
+			)
 
 
 		}
@@ -204,7 +204,7 @@ export default function PublicModelProfileScreen() {
 	const goBack = () => navigation.goBack()
 
 	const goToPhoto = (photo: PhotoInterface) => {
-		setCurrentPhoto(photo) 
+		setCurrentPhoto(photo)
 	}
 
 	return (
@@ -287,16 +287,14 @@ export default function PublicModelProfileScreen() {
 											}}
 										>
 											<Stats
-												title={`Post${
-													modelData.modele.photos.length !== 1 ? "s" : ""
-												}`}
+												title={`Post${modelData.modele.photos.length !== 1 ? "s" : ""
+													}`}
 												number={modelData.modele.photos.length}
 											/>
 											<Stats
 												style={{ marginLeft: 12 }}
-												title={`Follower${
-													modelData.modele.followers.length !== 1 ? "s" : ""
-												}`}
+												title={`Follower${modelData.modele.followers.length !== 1 ? "s" : ""
+													}`}
 												number={modelData.modele.followers.length}
 											/>
 										</View>
@@ -318,15 +316,15 @@ export default function PublicModelProfileScreen() {
 												borderWidth: 1,
 												height: 40
 											}}
-											onPress={() => !viewPaymentMethod ? handleToggleFollow() : setViewPaymentMethod(false) }
+											onPress={() => !viewPaymentMethod ? handleToggleFollow() : setViewPaymentMethod(false)}
 											disable={toggleFollowLoading}
 										>
 											<Text style={{ color: colors.white }}>
 												{modelData.modele.followed_by_me
 													? "Unfollow"
 													: !viewPaymentMethod
-													? "Follow"
-													: "Cancel"}
+														? "Follow"
+														: "Cancel"}
 											</Text>
 										</Button>
 
@@ -384,55 +382,57 @@ export default function PublicModelProfileScreen() {
 											)
 										}
 										<SelectPicker.Item
-													label={`Pay with a new card`}
-													value={`new`}
-												/>
+											label={`Pay with a new card`}
+											value={`new`}
+										/>
 									</SelectPicker>
 
-									{(selectedCard && selectedCard === "new"   ) && (
+									{(selectedCard && selectedCard === "new") && (
 										<>
-										<Text
-											style={{
-												marginTop: 30,
-												marginBottom: -20,
-												color: colors.darkGrey,
-											}}
-										>
-											Pay with a new card
-										</Text>
-										
-										<CardField
-											postalCodeEnabled={true}
-											placeholder={{
-												number: '4242 4242 4242 4242',
-											}}
-											cardStyle={{
-												backgroundColor: '#FFFFFF',
-												textColor: '#000000',
-												borderWidth: 1,
-												borderColor: "#fce3e9",
-												borderRadius: 5,
-											}}
-											style={{
-												width: '100%',
-												height: 45,
-												marginVertical: 30,
-											}}
-											onCardChange={(cardDetails) => {
-												// console.log('cardDetails', cardDetails);
-												setCard(cardDetails);
-											}}
+											<Text
+												style={{
+													marginTop: 30,
+													marginBottom: -20,
+													color: colors.darkGrey,
+												}}
+											>
+												Pay with a new card
+											</Text>
+
+											<CardField
+												// postalCodeEnabled={true}
+												placeholder={{
+													number: '4242 4242 4242 4242',
+												}}
+												cardStyle={{
+													backgroundColor: '#FFFFFF',
+													textColor: '#000000',
+													borderWidth: 1,
+													borderColor: "#fce3e9",
+													borderRadius: 5,
+												}}
+												style={{
+													width: '100%',
+													height: 45,
+													marginVertical: 30,
+												}}
+												onCardChange={data => {
+
+													console.log(data)
+													Object.keys(data).map(key =>
+														setCardDetails(previous => ({ ...previous, ...data[key] })))
+												}}
 											// onFocus={(focusedField) => {
 											// 	console.log('focusField', focusedField);
 											// }}
 
-											
-										/>
-											
+
+											/>
+
 										</>
 									)}
 
-									{selectedCard && 
+									{selectedCard &&
 										<Button
 											style={{
 												flex: 1,
@@ -442,8 +442,8 @@ export default function PublicModelProfileScreen() {
 												paddingTop: 7,
 												paddingBottom: 7,
 											}}
-											onPress={()=> onSubmit()}
-											disable={toggleFollowLoading} 
+											onPress={() => onSubmit()}
+											disable={toggleFollowLoading}
 										>
 											<Text style={{ color: colors.white }}>Follow Now</Text>
 										</Button>
