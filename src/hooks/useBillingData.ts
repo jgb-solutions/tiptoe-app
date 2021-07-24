@@ -8,7 +8,6 @@ export default function useBillingData() {
 	} = useQuery(BILLING)
 
 	return { 
-		intent: data?.createPaymentIntent?.client_secret,
 		cards: data?.myCards
 	}
 }
