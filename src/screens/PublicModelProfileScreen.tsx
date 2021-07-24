@@ -17,10 +17,10 @@ import {
 	Spinner,
 	Container,
 	Thumbnail,
-	Input,
 } from "native-base"
 
-import { CardField, useConfirmPayment } from '@stripe/stripe-react-native';
+
+import { CardField, useConfirmSetupIntent } from '@stripe/stripe-react-native';
 
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -38,24 +38,15 @@ import PhotoCard from "../components/PhotoCard"
 import useToggleFollow from "../hooks/useToggleFollow"
 import NegativeResponse from "../components/NegativeResponse"
 import SelectPicker from "react-native-form-select-picker"
-import { useForm, Controller } from "react-hook-form"
-import usePayment from "../hooks/usePayment"
+import { useForm } from "react-hook-form"
+import usePaymentIntent from "../hooks/usePaymentIntent"
 import useBillingData from "../hooks/useBillingData"
-
+import useStore, { AppStateInterface } from "../store"
 
 type StatsProps = {
 	number: number
 	title: string
 	style?: ViewStyle
-}
-
-type CardDtails = {
-	brand: string,
-	complete: boolean,
-	expiryMonth: number,
-	expiryYear: number,
-	last4: string,
-	// postalCode: string
 }
 
 const Stats = ({ number, title, style }: StatsProps) => (
@@ -127,10 +118,25 @@ export default function PublicModelProfileScreen() {
 	const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
 	const [viewPaymentMethod, setViewPaymentMethod] = useState<boolean>(false)
 	const [selectedCard, setSelectedCard] = useState<string>()
-	const [card, setCard] = useState<CardDtails>();
+
+	const { currentUser } = useStore((state: AppStateInterface) => ({
+		currentUser: state.authData.user,
+	}))
 
 
-	const { confirmPayment, loading } = useConfirmPayment();
+	const { cards } = useBillingData();
+	const { client_secret } =  usePaymentIntent();
+
+	const [secret, setSecret] = useState<string>(client_secret);
+
+
+	useEffect(() => {
+		setSecret(client_secret)
+	}, [])
+
+	useEffect(() => {
+		client_secret && setSecret(client_secret)
+	}, [client_secret])
 
 	const {
 		toggleFollow,
@@ -138,9 +144,8 @@ export default function PublicModelProfileScreen() {
 		loading: toggleFollowLoading,
 	} = useToggleFollow()
 
-	const { intent, cards } = useBillingData();
 
-	const { control, handleSubmit, errors, getValues, reset } = useForm<any>({
+	const { control, handleSubmit, errors,  watch, getValues, reset } = useForm<any>({
 		mode: "onBlur",
 	})
 
@@ -149,19 +154,42 @@ export default function PublicModelProfileScreen() {
 	const [model, setModel] = useState<ModelInterface | undefined>()
 	const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
 
-	const onSubmit = () => {
-		toggleFollow({ 
-			payment_method: selectedCard ,
-			modele_id: modelData.modele.id, 
-			stripe_price: modelData?.getModelPriceStripeId.price_id
-		})
+
+	const { confirmSetupIntent, loading } = useConfirmSetupIntent();
+
+	const  onSubmit = async () => {
+		// Gather the customer's billing information (e.g., email)
+		const billingDetails = {
+			email: currentUser?.email,
+		};
+		// Create a setup intent on the backend
+		
+		const { setupIntent, error } = await confirmSetupIntent(secret, {
+			type: 'Card',
+			billingDetails,
+		});
+	
+		if (error) {
+			console.log(error)
+		}
+				
+		if(setupIntent ||  selectedCard)
+		{
+			toggleFollow({ 
+				payment_method: selectedCard !== "new" ? selectedCard : setupIntent?.paymentMethodId ,
+				modele_id: modelData.modele.id, 
+				stripe_price: modelData?.getModelPrice?.price_id
+			})
+		}
+
+
 		if (toggleFollowData?.toggleFollow.success) {
 			alert(
 				"Congratulation!!! Now you can see picture and video of this model."
 			)
 			setViewPaymentMethod(false)
 		}
-		setViewPaymentMethod(false)
+		// setViewPaymentMethod(false)
 	}
 
 	React.useEffect(() => {
@@ -345,108 +373,106 @@ export default function PublicModelProfileScreen() {
 
 							{viewPaymentMethod ? (
 								<View style={{ padding: 15 }}>
-									<Text
-										style={{
-											marginBottom: 10,
-											fontWeight: "bold",
-											color: colors.darkGrey,
-										}}
-									>
-										Please, select your payment method
-									</Text>
-
-									<SelectPicker
-										dismissable
-										doneButtonText="Done"
-										onValueChange={(e) => setSelectedCard(e)}
-										selected={selectedCard}
-										style={{
-											flexDirection: "row",
-											justifyContent: "flex-start",
-											borderWidth: 1,
-											borderColor: "#fce3e9",
-											borderRadius: 5,
-											height: 45,
-										}}
-										placeholder="Pay with an existant card"
-										placeholderStyle={{
-											textAlign: "left",
-											fontSize: 18,
-										}}
-									>
-										{
-											cards?.map((card: CardInterface, idx: number) =>
+									{ !modelData?.getModelPrice?.price_id ? 
+										<Text style={{ color: colors.darkGrey }}>
+											This model don't have any price yet and connot be folllow at this time.
+										</Text>
+										:
+										<>
+											<Text
+												style={{
+													marginBottom: 10,
+													fontWeight: "bold",
+													color: colors.darkGrey,
+												}}
+											>
+												Please, select your payment method
+											</Text>
+		
+											<SelectPicker
+												dismissable
+												doneButtonText="Done"
+												onValueChange={(e) => setSelectedCard(e)}
+												selected={selectedCard}
+												style={{
+													flexDirection: "row",
+													justifyContent: "flex-start",
+													borderWidth: 1,
+													borderColor: "#fce3e9",
+													borderRadius: 5,
+													height: 45,
+												}}
+												placeholder="Pay with an existant card"
+												placeholderStyle={{
+													textAlign: "left",
+													fontSize: 18,
+												}}
+											>
+												{cards && cards.map((card: CardInterface, idx: number) =>
+														<SelectPicker.Item
+															key={idx}
+															label={`xxxx xxxx xxxx ${card.last4}`}
+															value={card.id}
+														/>
+													)
+												}
 												<SelectPicker.Item
-													key={idx}
-													label={`xxxx xxxx xxxx ${card.last4}`}
-													value={card.id}
-												/>
-											)
-										}
-										<SelectPicker.Item
 													label={`Pay with a new card`}
 													value={`new`}
 												/>
-									</SelectPicker>
-
-									{(selectedCard && selectedCard === "new"   ) && (
-										<>
-										<Text
-											style={{
-												marginTop: 30,
-												marginBottom: -20,
-												color: colors.darkGrey,
-											}}
-										>
-											Pay with a new card
-										</Text>
-										
-										<CardField
-											postalCodeEnabled={true}
-											placeholder={{
-												number: '4242 4242 4242 4242',
-											}}
-											cardStyle={{
-												backgroundColor: '#FFFFFF',
-												textColor: '#000000',
-												borderWidth: 1,
-												borderColor: "#fce3e9",
-												borderRadius: 5,
-											}}
-											style={{
-												width: '100%',
-												height: 45,
-												marginVertical: 30,
-											}}
-											onCardChange={(cardDetails) => {
-												// console.log('cardDetails', cardDetails);
-												setCard(cardDetails);
-											}}
-											// onFocus={(focusedField) => {
-											// 	console.log('focusField', focusedField);
-											// }}
-
-											
-										/>
-											
-										</>
-									)}
-
-									{selectedCard && 
-										<Button
-											style={{
-												flex: 1,
-												backgroundColor: colors.pink,
-												width: "30%",
-												marginTop: 20,
-												paddingTop: 7,
-												paddingBottom: 7,
-											}}
-											onPress={()=> onSubmit()}
-											disable={toggleFollowLoading} 
-										>
-											<Text style={{ color: colors.white }}>Follow Now</Text>
-										</Button>
+											</SelectPicker>
+		
+											{(selectedCard && selectedCard === "new"   ) && (
+												<>
+													<Text
+														style={{
+															marginTop: 30,
+															// marginBottom: ,
+															color: colors.darkGrey,
+														}}
+													>
+														Pay with a new card
+													</Text>
+												
+													<CardField
+														postalCodeEnabled={true}
+														placeholder={{
+															number: '4242 4242 4242 4242',
+														}}
+														cardStyle={{
+															backgroundColor: '#FFFFFF',
+															textColor: '#000000',
+															borderWidth: 1,
+															borderColor: "#fce3e9",
+															borderRadius: 5,
+														}}
+														style={{
+															width: '100%',
+															height: 45,
+															marginVertical: 30,
+														}}
+													/>
+													
+												</>
+											)}
+		
+											{selectedCard && 
+												<Button
+													style={{
+														flex: 1,
+														backgroundColor: colors.pink,
+														width: "30%",
+														marginTop: 20,
+														paddingTop: 7,
+														paddingBottom: 7,
+													}}
+													onPress={handleSubmit(onSubmit)}
+													disable={toggleFollowLoading} 
+												>
+													<Text style={{ color: colors.white }}>Follow Now</Text>
+												</Button>
+											}
+										</> 
 									}
 								</View>
 							) : (
