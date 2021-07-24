@@ -4,12 +4,11 @@ import {
 	Header,
 	Content,
 	Text,
-	// Icon,
 	Left,
 	Right,
 	View,
 } from "native-base"
-import Icon from "react-native-vector-icons/FontAwesome"
+import { FontAwesome } from '@expo/vector-icons';
 import { formatToUnits } from "../utils/formatNumber"
 import { screenNames } from "../utils/screens"
 
@@ -118,7 +117,7 @@ export default function SettingsScreen() {
 						transparent
 						onPress={() => navigation.navigate(screenNames.Profile)}
 					>
-						<Icon name="chevron-left" style={{ color: colors.white, fontSize: 17, }} />
+						<FontAwesome name="chevron-left" style={{ color: colors.white, fontSize: 17, }} />
 					</Button>
 
 					<Text
@@ -134,7 +133,7 @@ export default function SettingsScreen() {
 					<Menu
 						ref={setMenuRef}
 						button={
-							<Icon
+							<FontAwesome
 								onPress={showMenu}
 								name="ellipsis-h"
 								style={{ color: colors.white, fontSize: 17, }}
@@ -157,7 +156,7 @@ export default function SettingsScreen() {
 							padding: 12,
 						}}
 					>
-						<Icon
+						<FontAwesome
 							name="user"
 							style={{
 								fontSize: 17,
@@ -180,7 +179,7 @@ export default function SettingsScreen() {
 							padding: 12,
 						}}
 					>
-						<Icon
+						<FontAwesome
 							name="money"
 							style={{
 								fontSize: 17,
@@ -204,7 +203,7 @@ export default function SettingsScreen() {
 							padding: 12,
 						}}
 					>
-						<Icon
+						<FontAwesome
 							name="lock"
 							style={{
 								fontSize: 17,
@@ -227,7 +226,7 @@ export default function SettingsScreen() {
 							padding: 12,
 						}}
 					>
-						<Icon
+						<FontAwesome
 							name="trash"
 							style={{
 								fontSize: 17,

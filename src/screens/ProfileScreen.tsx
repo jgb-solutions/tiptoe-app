@@ -13,7 +13,7 @@ import {
 	Body,
 } from "native-base"
 
-import Icon  from "react-native-vector-icons/Feather"
+import { Feather } from '@expo/vector-icons';
 
 import { useNavigation } from "@react-navigation/native"
 import { ViewStyle, StyleSheet, TouchableOpacity } from "react-native"
@@ -122,7 +122,7 @@ export default function ProfileScreen() {
 						transparent
 						onPress={() => navigation.navigate(screenNames.Home)}
 					>
-						<Icon name="arrow-left" style={{ color: colors.white,  fontSize: 24, }} />
+						<Feather name="arrow-left" style={{ color: colors.white,  fontSize: 24, }} />
 					</Button>
 
 					<Text
@@ -139,7 +139,7 @@ export default function ProfileScreen() {
 						<Menu
 							ref={setMenuRef}
 							button={
-								<Icon
+								<Feather
 									onPress={showMenu}
 									name="more-vertical"
 									style={{ color: colors.white,  fontSize: 24, }}
@@ -219,7 +219,7 @@ export default function ProfileScreen() {
 						style={{ flexDirection: "column", marginBottom: 24, marginTop: 20 }}
 					>
 						<View style={{ flexDirection: "row", marginBottom: 10 }}>
-							<Icon
+							<Feather
 								name="phone"
 								style={{
 									fontSize: 20,
@@ -230,7 +230,7 @@ export default function ProfileScreen() {
 							<Text>{currentUser?.telephone}</Text> 
 						</View>
 						<View style={{ flexDirection: "row" }}>
-							<Icon
+							<Feather
 								name="mail"
 								style={{
 									fontSize: 20,

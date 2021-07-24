@@ -11,7 +11,8 @@ import {
 	Right,
 } from "native-base"
 
-import Icon  from "react-native-vector-icons/Entypo"
+import { FontAwesome } from '@expo/vector-icons';
+
 
 import DoubleTap from "./DoubleTap"
 import { colors } from "../utils/colors"
@@ -109,8 +110,8 @@ export default function PhotoCard({ photo, hideHeader }: Props) {
 			<CardItem>
 				<Left>
 					<Button transparent onPress={() => handleToggleLike(photo)}>
-						<Icon
-							name={photo?.liked_by_me ? "heart" : "heart-outlined"}
+						<FontAwesome
+							name={photo?.liked_by_me ? "heart" : "heart-o"}
 							style={{
 								color: colors.pink,
 								fontSize: 36,

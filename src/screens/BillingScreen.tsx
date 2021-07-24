@@ -10,7 +10,8 @@ import {
 	View,
 	Row,
 } from "native-base"
-import Icon from "react-native-vector-icons/FontAwesome"
+import { FontAwesome } from '@expo/vector-icons';
+
 import { formatToUnits } from "../utils/formatNumber"
 import { screenNames } from "../utils/screens"
 
@@ -21,6 +22,7 @@ import {
 	ScrollView,
 	Image,
 } from "react-native"
+
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
 
 import { colors } from "../utils/colors"
@@ -127,7 +129,7 @@ export default function SettingsScreen() {
 						transparent
 						onPress={() => navigation.navigate(screenNames.Profile)}
 					>
-						<Icon
+						<FontAwesome
 							name="chevron-left"
 							style={{ color: colors.white, fontSize: 20 }}
 						/>
@@ -147,7 +149,7 @@ export default function SettingsScreen() {
 					<Menu
 						ref={setMenuRef}
 						button={
-							<Icon
+							<FontAwesome
 								onPress={showMenu}
 								name="ellipsis-h"
 								style={{ color: colors.white, fontSize: 20 }}
@@ -173,7 +175,7 @@ export default function SettingsScreen() {
 								borderRadius: 5,
 							}}
 						>
-							<Icon name="credit-card" size={16} />
+							<FontAwesome name="credit-card" size={16} />
 							<Text
 								style={{
 									fontWeight: "bold",
@@ -195,7 +197,7 @@ export default function SettingsScreen() {
 									width: "70%",
 								}}
 							>
-								<Icon
+								<FontAwesome
 									name="cc-visa"
 									style={{
 										fontSize: 34,
@@ -213,21 +215,21 @@ export default function SettingsScreen() {
 										{currentUser?.name}
 									</Text>
 									<Text style={{ color: colors.blackOpact }}>
-										<Icon
+										<FontAwesome
 											name="circle"
 											style={{
 												marginRight: 10,
 												color: colors.blackOpact,
 											}}
 										/>{" "}
-										<Icon
+										<FontAwesome
 											name="circle"
 											style={{
 												marginRight: 10,
 												color: colors.blackOpact,
 											}}
 										/>{" "}
-										<Icon
+										<FontAwesome
 											name="circle"
 											style={{
 												marginRight: 10,
@@ -247,7 +249,7 @@ export default function SettingsScreen() {
 							</View>
 							<View>
 								<Text style={{ fontWeight: "bold", color: colors.pink }}>
-									<Icon name="check" size={18} /> Default
+									<FontAwesome name="check" size={18} /> Default
 								</Text>
 							</View>
 						</View>
@@ -261,7 +263,7 @@ export default function SettingsScreen() {
 									width: "70%",
 								}}
 							>
-								<Icon
+								<FontAwesome
 									name="cc-mastercard"
 									style={{
 										fontSize: 34,
@@ -279,21 +281,21 @@ export default function SettingsScreen() {
 										{currentUser?.name}
 									</Text>
 									<Text style={{ color: colors.blackOpact }}>
-										<Icon
+										<FontAwesome
 											name="circle"
 											style={{
 												marginRight: 10,
 												color: colors.blackOpact,
 											}}
 										/>{" "}
-										<Icon
+										<FontAwesome
 											name="circle"
 											style={{
 												marginRight: 10,
 												color: colors.blackOpact,
 											}}
 										/>{" "}
-										<Icon
+										<FontAwesome
 											name="circle"
 											style={{
 												marginRight: 10,
@@ -326,7 +328,7 @@ export default function SettingsScreen() {
 								borderRadius: 5,
 							}}
 						>
-							<Icon name="files-o" size={16} />
+							<FontAwesome name="files-o" size={16} />
 							<Text
 								style={{
 									fontWeight: "bold",
