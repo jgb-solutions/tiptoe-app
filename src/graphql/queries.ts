@@ -138,8 +138,9 @@ export const FETCH_MODEL = gql`
 			}
 		}
 
-		getModelPriceStripeId(hash: $hash){
+		getModelPrice(hash: $hash){
 			price_id
+			cost
 		}
 	}
 `
@@ -239,10 +240,6 @@ export const CREATEPAYMENTINTENT = gql`
 
 export const BILLING = gql`
 	query billingInformation {
-		createPaymentIntent{
-			client_secret
-		}
-
 		myCards{
 			id
 			last4
