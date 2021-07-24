@@ -138,8 +138,8 @@ export const FETCH_MODEL = gql`
 			}
 		}
 
-		getModelPrice(hash: $hash){
-			price
+		getModelPriceStripeId(hash: $hash){
+			price_id
 		}
 	}
 `
