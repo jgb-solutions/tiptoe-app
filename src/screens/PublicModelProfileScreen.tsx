@@ -9,7 +9,6 @@ import {
 	TouchableOpacity,
 } from "react-native"
 import {
-	// Icon,
 	Left,
 	Text,
 	View,
@@ -23,8 +22,7 @@ import {
 
 import { CardField, useConfirmPayment } from '@stripe/stripe-react-native';
 
-
-import Icon  from "react-native-vector-icons/Feather"
+import { FontAwesome } from '@expo/vector-icons';
 
 import { useRoute } from "@react-navigation/native"
 import { RouteProp, useNavigation } from "@react-navigation/native"
@@ -49,6 +47,15 @@ type StatsProps = {
 	number: number
 	title: string
 	style?: ViewStyle
+}
+
+type CardDtails = {
+	brand: string,
+	complete: boolean,
+	expiryMonth: number,
+	expiryYear: number,
+	last4: string,
+	// postalCode: string
 }
 
 const Stats = ({ number, title, style }: StatsProps) => (
@@ -105,7 +112,7 @@ const Button = ({
 type RouteParamsProps = RouteProp<
 	{
 		params: {
-			hash: string
+			hash: string 
 		}
 	},
 	"params"
@@ -120,7 +127,7 @@ export default function PublicModelProfileScreen() {
 	const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
 	const [viewPaymentMethod, setViewPaymentMethod] = useState<boolean>(false)
 	const [selectedCard, setSelectedCard] = useState<string>()
-	const [card, setCard] = useState<any>(null);
+	const [card, setCard] = useState<CardDtails>();
 
 
 	const { confirmPayment, loading } = useConfirmPayment();
@@ -146,16 +153,15 @@ export default function PublicModelProfileScreen() {
 		toggleFollow({ 
 			payment_method: selectedCard ,
 			modele_id: modelData.modele.id, 
-			stripe_price: modelData?.getModelPrice.price
+			stripe_price: modelData?.getModelPriceStripeId.price_id
 		})
-		// setViewPaymentMethod(false)
 		if (toggleFollowData?.toggleFollow.success) {
-			setViewPaymentMethod(false)
 			alert(
 				"Congratulation!!! Now you can see picture and video of this model."
 			)
 			setViewPaymentMethod(false)
 		}
+		setViewPaymentMethod(false)
 	}
 
 	React.useEffect(() => {
@@ -175,8 +181,6 @@ export default function PublicModelProfileScreen() {
 		if (!modelData.modele.followed_by_me) {
 			setViewPaymentMethod(true)
 		} else {
-			// 	confirmButtonStyle: { backgroundColor: colors.pink },
-			// 	cancelButtonStyle: { borderWidth: 1, borderColor: colors.pink },
 			Alert.alert(
 				'Unfollow this model',
 				'If you unfollow this model, you will not be able to see her picture and video anymore',
@@ -200,7 +204,7 @@ export default function PublicModelProfileScreen() {
 	const goBack = () => navigation.goBack()
 
 	const goToPhoto = (photo: PhotoInterface) => {
-		setCurrentPhoto(photo)
+		setCurrentPhoto(photo) 
 	}
 
 	return (
@@ -212,7 +216,7 @@ export default function PublicModelProfileScreen() {
 			>
 				<Left style={{ flexDirection: "row", alignItems: "center" }}>
 					<Button transparent onPress={goBack}>
-						<Icon name="arrow-left" style={{ color: colors.white, fontSize: 24, }} />
+						<FontAwesome name="arrow-left" size={24} color={colors.white} />
 					</Button>
 
 					<Text
@@ -226,7 +230,7 @@ export default function PublicModelProfileScreen() {
 				</Left>
 				<Right style={{ flex: 1 }}>
 					<Button transparent onPress={() => alert("pressed more")}>
-						<Icon name="more-vertical" style={{ color: colors.white, fontSize: 24 }} />
+						<FontAwesome name="ellipsis-v" size={24} color={colors.white} />
 					</Button>
 				</Right>
 			</Header>
@@ -301,9 +305,6 @@ export default function PublicModelProfileScreen() {
 									<View style={{ marginBottom: 24, marginLeft: 20 }}>
 										<Text>{modelData.modele.stage_name}</Text>
 										<Text>{modelData.modele.bio}</Text>
-										{/* <Text>Followed by <Text>joerckman</Text>, {' '}
-											<Text>mc_chris_haiti509</Text> {' '} and <Text>2 others</Text>
-										</Text> */}
 									</View>
 
 									<View style={{ flexDirection: "row", marginBottom: 24 }}>
@@ -336,7 +337,7 @@ export default function PublicModelProfileScreen() {
 												borderWidth: 1,
 											}}
 										>
-											<Icon name="arrow-down" style={{ fontSize: 24 }} />
+											<FontAwesome name="arrow-down" size={24} />
 										</Button>
 									</View>
 								</View>
@@ -399,6 +400,7 @@ export default function PublicModelProfileScreen() {
 										>
 											Pay with a new card
 										</Text>
+										
 										<CardField
 											postalCodeEnabled={true}
 											placeholder={{
@@ -417,13 +419,14 @@ export default function PublicModelProfileScreen() {
 												marginVertical: 30,
 											}}
 											onCardChange={(cardDetails) => {
-												setCard(cardDetails); 
-											  }
-											}
-
-											onFocus={(cardDetails) => {
-											console.log('focusField', cardDetails);
+												// console.log('cardDetails', cardDetails);
+												setCard(cardDetails);
 											}}
+											// onFocus={(focusedField) => {
+											// 	console.log('focusField', focusedField);
+											// }}
+
+											
 										/>
 											
 										</>
@@ -451,7 +454,6 @@ export default function PublicModelProfileScreen() {
 									<View style={{ paddingLeft: 15, paddingRight: 15 }}>
 										<View
 											style={{
-												// backgroundColor: "#fce3e9",
 												padding: 10,
 												borderRadius: 10,
 											}}
@@ -527,7 +529,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-around",
-		// marginBottom: 10,
 	},
 	inputLeft: {
 		width: "30%",
