@@ -2,6 +2,7 @@ import React from "react"
 import { Root } from "native-base"
 import AppLoading from 'expo-app-loading'
 import { StripeProvider } from "@stripe/stripe-react-native"
+
 import {
   useFonts,
   Roboto_100Thin,
@@ -41,7 +42,9 @@ export default function App() {
 
   return (
     <Root>
-      <StripeProvider publishableKey="pk_test_51HnTzqAEoJWPUiKcW6O3xeaLujtzRtqg2sZO0VcAX11sQVYrIFlZSxFMHWKKJhYBoNaZesz7vPRTYlD4GszN0REB00HZ5uloE6">
+      <StripeProvider 
+        publishableKey="pk_test_51IljqbEERboeLMjcnCmNOaFBA7buzIpWXz8ifCdpdzCrtgMkggYfXYWMz6tBXnRMsFIAy8k4bMU8R8qYkxFjkCGF00lYjHyvLT"
+      >
         <MainNavigation />
       </StripeProvider>
     </Root>

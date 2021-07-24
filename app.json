@@ -26,15 +26,6 @@
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
-		},
-		"plugins": [
-			[
-			  "@stripe/stripe-react-native",
-			  {
-				"merchantIdentifier": "",
-				"enableGooglePay": false
-			  }
-			]
-		]
+		}
 	}
 }
