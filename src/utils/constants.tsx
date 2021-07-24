@@ -2,6 +2,7 @@ import { Dimensions } from "react-native"
 
 import { API_URL } from "@env"
 
+console.log(API_URL)
 export const APP_NAME = `TipToe`
 
 // const LOCAL_API_HOST = Platform.OS == 'android' ? '10.0.2.2' : undefined

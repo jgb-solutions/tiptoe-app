@@ -54,8 +54,8 @@ export default function LogInWithEmailScreen() {
 
     } catch (error) {
       console.log(error)
-      console.log(JSON.stringify(error.response.errors[0].message))
-      setLoginError(error.response.errors[0].message)
+      // console.log(JSON.stringify(error.response.errors[0].message))
+      // setLoginError(error.response.errors[0].message)
     }
   }
 

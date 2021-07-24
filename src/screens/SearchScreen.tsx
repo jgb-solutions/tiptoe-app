@@ -39,7 +39,7 @@ export default function PublicModelProfileScreen() {
 		loadMorePhotos,
 		refetchPhotos,
 		subscribeToMorePhotos,
-	} = usePhotos({ random: true })
+	} = usePhotos()
 	const {
 		modelsLoading,
 		modelsError,

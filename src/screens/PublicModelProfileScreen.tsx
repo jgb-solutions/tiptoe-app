@@ -22,7 +22,7 @@ import {
 
 import { CardField, useConfirmSetupIntent } from '@stripe/stripe-react-native';
 
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons'
 
 import { useRoute } from "@react-navigation/native"
 import { RouteProp, useNavigation } from "@react-navigation/native"
@@ -103,7 +103,7 @@ const Button = ({
 type RouteParamsProps = RouteProp<
 	{
 		params: {
-			hash: string 
+			hash: string
 		}
 	},
 	"params"
@@ -213,17 +213,17 @@ export default function PublicModelProfileScreen() {
 				'Unfollow this model',
 				'If you unfollow this model, you will not be able to see her picture and video anymore',
 				[
-				  	{
+					{
 						text: 'Cancel',
 						onPress: () => console.log('Cancel Pressed'),
 						style: 'cancel'
-				  	},
-				  	{ 
-					  text: 'OK', onPress: () => toggleFollow({ modele_id: modelData.modele.id })
+					},
+					{
+						text: 'OK', onPress: () => toggleFollow({ modele_id: modelData.modele.id })
 					}
 				],
 				{ cancelable: false }
-			  );
+			)
 
 
 		}
@@ -232,7 +232,7 @@ export default function PublicModelProfileScreen() {
 	const goBack = () => navigation.goBack()
 
 	const goToPhoto = (photo: PhotoInterface) => {
-		setCurrentPhoto(photo) 
+		setCurrentPhoto(photo)
 	}
 
 	return (
@@ -315,16 +315,14 @@ export default function PublicModelProfileScreen() {
 											}}
 										>
 											<Stats
-												title={`Post${
-													modelData.modele.photos.length !== 1 ? "s" : ""
-												}`}
+												title={`Post${modelData.modele.photos.length !== 1 ? "s" : ""
+													}`}
 												number={modelData.modele.photos.length}
 											/>
 											<Stats
 												style={{ marginLeft: 12 }}
-												title={`Follower${
-													modelData.modele.followers.length !== 1 ? "s" : ""
-												}`}
+												title={`Follower${modelData.modele.followers.length !== 1 ? "s" : ""
+													}`}
 												number={modelData.modele.followers.length}
 											/>
 										</View>
@@ -346,15 +344,15 @@ export default function PublicModelProfileScreen() {
 												borderWidth: 1,
 												height: 40
 											}}
-											onPress={() => !viewPaymentMethod ? handleToggleFollow() : setViewPaymentMethod(false) }
+											onPress={() => !viewPaymentMethod ? handleToggleFollow() : setViewPaymentMethod(false)}
 											disable={toggleFollowLoading}
 										>
 											<Text style={{ color: colors.white }}>
 												{modelData.modele.followed_by_me
 													? "Unfollow"
 													: !viewPaymentMethod
-													? "Follow"
-													: "Cancel"}
+														? "Follow"
+														: "Cancel"}
 											</Text>
 										</Button>
 
