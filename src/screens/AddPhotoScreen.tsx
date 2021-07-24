@@ -21,7 +21,6 @@ import {
 import { colors } from "../utils/colors"
 import { TouchableOpacity } from "react-native-gesture-handler"
 
-// import * as Permissions from "expo-permissions"
 import * as MediaLibrary from "expo-media-library"
 import { Camera } from 'expo-camera';
 
@@ -72,26 +71,6 @@ export default function AddPhotoScreen() {
 	const [status, setStatus] = React.useState({})
 
 	useEffect(() => {
-		// const askPermission = async () => {
-		// 	const isCameraRolleEnable = await Permissions.getAsync(
-		// 		Permissions.CAMERA_ROLL
-		// 	)
-		// 	if (isCameraRolleEnable.granted) {
-		// 		setLoarded(true)
-		// 		return
-		// 	}
-
-		// 	const { granted } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
-		// 	if (granted) {
-		// 		const CamerarollRes = await Permissions.getAsync(
-		// 			Permissions.CAMERA_ROLL
-		// 		)
-		// 		console.error(2, CamerarollRes)
-		// 		setLoarded(true)
-		// 	}
-		// }
-		// askPermission()
-
 		(async () => {
 			const { status } = await Camera.requestPermissionsAsync();
 			setLoarded(status === 'granted');
