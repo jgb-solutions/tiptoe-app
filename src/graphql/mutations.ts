@@ -260,6 +260,14 @@ export const TOGGLE_FOLLOW = gql`
 	}
 `
 
+export const SETUP_PRICE = gql`
+	mutation ToggleFollow($input: AddPriceInput!) {
+		addPrice(input: $input) {
+			success
+		}
+	}
+`
+
 export const FACEOOK_LOGIN = gql`
 	mutation facebookLogin($code: String!) {
 		handleFacebookConnect(code: $code) {
