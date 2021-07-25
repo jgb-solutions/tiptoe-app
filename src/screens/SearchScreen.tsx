@@ -17,11 +17,11 @@ import Modal from "react-native-modal"
 
 import { colors } from "../utils/colors"
 import usePhotos from "../hooks/usePhotos"
+import useHomeData from "../hooks/useHomeData"
 import PhotoCard from "../components/PhotoCard"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import NegativeResponse from "../components/NegativeResponse"
-import { PHOTO_UPDATES_SUBSCRIPTION } from "../graphql/subscriptions"
-import { SCREEN_WIDTH, SUBSCRIPTION_TOPICS } from "../utils/constants"
+import { SCREEN_WIDTH } from "../utils/constants"
 import useModels from "../hooks/useModels"
 import { screenNames } from "../utils/screens"
 import ModelInterface from "../interfaces/ModelInterface"
@@ -32,14 +32,16 @@ export default function PublicModelProfileScreen() {
 	const navigation = useNavigation()
 	const [thumbWidth, setThumbWidth] = useState(SCREEN_WIDTH - 24)
 	const [segmentNameChosen, setSegmentNameChosen] = useState("Medias")
+
 	const {
-		photosLoading,
-		photosError,
-		photosData,
+		photosLoading: loading,
+		photosError: error,
+		photosData: data,
 		loadMorePhotos,
-		refetchPhotos,
-		subscribeToMorePhotos,
+		refetchPhotos: refetch,
+		subscribeToMorePhotos: subscribeToMore
 	} = usePhotos()
+
 	const {
 		modelsLoading,
 		modelsError,
@@ -48,52 +50,6 @@ export default function PublicModelProfileScreen() {
 		refetchModels,
 	} = useModels({ random: true })
 	const [currentPhoto, setCurrentPhoto] = useState<PhotoInterface | null>()
-
-	// useEffect(() => { 
-	// 	const unsubscribe = subscribeToMorePhotos({
-	// 		document: PHOTO_UPDATES_SUBSCRIPTION,
-	// 		variables: { topic: SUBSCRIPTION_TOPICS.PHOTO_UNLIKED },
-	// 		updateQuery: (prev, { subscriptionData }) => {
-	// 			if (!subscriptionData.data) return prev
-
-	// 			const {
-	// 				photos: { data, ...otherInfo },
-	// 			} = prev
-
-	// 			const unlikedPhoto: PhotoInterface = subscriptionData.data.photoUpdates
-
-	// 			const filteredData = data.filter(
-	// 				(photo: PhotoInterface) => photo.id !== unlikedPhoto.id
-	// 			)
-
-	// 			setCurrentPhoto(null)
-
-	// 			return {
-	// 				photos: {
-	// 					...otherInfo,
-	// 					data: filteredData,
-	// 				},
-	// 			}
-	// 		},
-	// 	})
-
-	// 	return () => unsubscribe()
-	// }, [])
-
-	// React.useEffect(() => {
-	// 	const unsubscribeFocus = navigation.addListener("focus", () => {
-	// 		refetchPhotos()
-	// 	})
-
-	// 	const unsubscribeBlur = navigation.addListener("blur", () => {
-	// 		setCurrentPhoto(null)
-	// 	})
-
-	// 	return () => {
-	// 		unsubscribeFocus()
-	// 		unsubscribeBlur()
-	// 	}
-	// }, [navigation])
 
 	const goToPhoto = (photo: PhotoInterface) => {
 		setCurrentPhoto(photo)
@@ -106,11 +62,15 @@ export default function PublicModelProfileScreen() {
 	}
 
 	useEffect(() => {
+		refetch()
+	}, [])
+
+	useEffect(() => {
 		// fetch new types of data depending on
 		// the segment that was clicked 'on
 		switch (segmentNameChosen) {
 			case "Medias":
-				refetchPhotos()
+				refetch()
 				break
 			case "Models":
 				refetchModels()
@@ -121,14 +81,6 @@ export default function PublicModelProfileScreen() {
 	const handleSearch = (text: string) => {
 		console.log(`Searching for ${text}`)
 	}
-
-	useEffect(() => {
-		refetchPhotos
-	}, [])
-
-	useEffect(() => {
-		photosData && refetchPhotos
-	}, [photosData])
 
 	return (
 		<Container>
@@ -224,9 +176,9 @@ export default function PublicModelProfileScreen() {
 
 			{segmentNameChosen === "Medias" && ( 
 				<>
-					{photosLoading ? (
+					{loading ? (
 						<Spinner color={colors.pink} />
-					) : photosError ? (
+					) : error ? (
 						<NegativeResponse>
 							<Text>An error occurred</Text>
 						</NegativeResponse>
@@ -263,8 +215,8 @@ export default function PublicModelProfileScreen() {
 								>
 									<Text>You have no favorite photos yet.</Text>
 								</View>
-							)}
-							data={photosData.photos.data}
+							)} 
+							data={data.photos.data.filter((photo: any)=> photo.for_my_modele && photo)}
 							keyExtractor={(item, index) => item.id}
 							renderItem={({ item: photo }: { item: PhotoInterface }) => (
 								<TouchableOpacity
@@ -285,8 +237,8 @@ export default function PublicModelProfileScreen() {
 									/>
 								</TouchableOpacity>
 							)}
-							onRefresh={() => refetchPhotos()}
-							refreshing={photosLoading}
+							onRefresh={() => refetch()}
+							refreshing={loading}
 							onEndReached={() => loadMorePhotos()}
 							onEndReachedThreshold={0.9}
 						/>
