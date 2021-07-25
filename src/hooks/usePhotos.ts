@@ -5,16 +5,12 @@ import get from "lodash/get"
 import { FETCH_PHOTOS } from "../graphql/queries"
 import { FETCH_PHOTOS_NUMBER } from "../utils/constants"
 
-// interface FilterProps {
-// 	hash?: string
-// 	random?: boolean
-// }
-
 export default function usePhotos() {
 	const [hasMore, setHasMore] = useState(true)
 	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
 		useQuery(FETCH_PHOTOS, {
-			variables: {
+			variables: { 
+				page: 1,
 				first: FETCH_PHOTOS_NUMBER,
 				orderBy: [{ column: "created_at", order: "DESC" }],
 			},
