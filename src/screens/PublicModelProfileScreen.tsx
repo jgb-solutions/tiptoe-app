@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import {
 	Alert,
 	Image,
@@ -18,8 +18,7 @@ import {
 	Thumbnail,
 } from "native-base"
 
-import {Picker} from '@react-native-picker/picker';
-
+import RNPickerSelect from 'react-native-picker-select';
 
 import { CardField, useConfirmSetupIntent } from '@stripe/stripe-react-native';
 
@@ -38,7 +37,6 @@ import CardInterface from "../interfaces/CardInterface"
 import PhotoCard from "../components/PhotoCard"
 import useToggleFollow from "../hooks/useToggleFollow"
 import NegativeResponse from "../components/NegativeResponse"
-import SelectPicker from "react-native-form-select-picker"
 import { useForm } from "react-hook-form"
 import usePaymentIntent from "../hooks/usePaymentIntent"
 import useBillingData from "../hooks/useBillingData"
@@ -240,6 +238,14 @@ export default function PublicModelProfileScreen() {
 		setCurrentPhoto(photo)
 	}
 
+	let cardList: any = [{ label: `Pay with a new card`, value: `new` }];
+
+	cards?.map((card: CardInterface) => {
+		cardList.unshift({
+			label: `xxxx xxxx xxxx ${card.last4}`,
+			value: `${card.id}`
+		})
+	})
 
 	return (
 		<React.Fragment>
@@ -387,35 +393,30 @@ export default function PublicModelProfileScreen() {
 												<Text
 													style={{
 														fontWeight: "bold",
-														textAlign: 'center',
+														marginBottom: 10,
 														color: colors.darkGrey,
 													}}
 												>
 													Please, select your payment method
 												</Text>
 
-												<Picker
-													selectedValue={selectedCard}
-													numberOfLines={3}
-													onValueChange={(itemValue, itemIndex) =>
-														setSelectedCard(itemValue)
-													}
-												>
-													{cards?.map((card: CardInterface) => (
-														<Picker.Item label={`xxxx xxxx xxxx ${card.last4}`} value={card.id} key={card.id} />
-													))}
-													<Picker.Item
-														label={`Pay with a new card`}
-														value={`new`}
-													/>
-												</Picker>
+												<RNPickerSelect
+													onValueChange={(e) => setSelectedCard(e)}
+													items={cardList}
+													style={pickerSelectStyles}
+													placeholder={{ 
+														label: 'Select a card or pay with a new card',
+														value: null,
+														// color: 'red',
+													 }}
+												/>
 			
 												{(selectedCard && selectedCard === "new"   ) && (
 													<>
 														<Text
 															style={{
-																textAlign: 'center',
 																marginBottom: -15,
+																marginTop: 20,
 																color: colors.darkGrey,
 															}}
 														>
@@ -444,29 +445,22 @@ export default function PublicModelProfileScreen() {
 													</>
 												)}
 			
-													<View 
-														style={{ 
+													
+													<Button
+														style={{
 															flex: 1,
-															flexDirection: "row",
-															justifyContent: "space-around"
+															backgroundColor: colors.pink,
+															maxWidth: "30%",
+															marginTop: 20,
+															paddingTop: 7,
+															paddingBottom: 7,
+															borderRadius:5,
 														}}
+														onPress={handleSubmit(onSubmit)}
+														disable={toggleFollowLoading} 
 													>
-														<Button
-															style={{
-																flex: 1,
-																backgroundColor: colors.pink,
-																maxWidth: "30%",
-																marginTop: 20,
-																paddingTop: 7,
-																paddingBottom: 7,
-																borderRadius:5,
-															}}
-															onPress={handleSubmit(onSubmit)}
-															disable={toggleFollowLoading} 
-														>
-															<Text style={{ color: colors.white }}>Follow Now</Text>
-														</Button>
-													</View>
+														<Text style={{ color: colors.white }}>Follow Now</Text>
+													</Button>
 												
 											</> 
 										}
@@ -564,3 +558,29 @@ const styles = StyleSheet.create({
 		textAlign: "right"
 	},
 })
+
+const pickerSelectStyles = StyleSheet.create({
+	inputIOS: {
+		fontSize: 16,
+		paddingVertical: 12,
+		paddingHorizontal: 10,
+		borderWidth: 1,
+		borderColor: "#fce3e9",
+		borderRadius: 5,
+		height: 45,
+		color: 'black',
+		paddingRight: 30, // to ensure the text is never behind the icon
+	},
+	inputAndroid: {
+		fontSize: 16,
+		paddingHorizontal: 10,
+		paddingVertical: 8,
+		borderWidth: 0.5,
+		borderColor: '#fce3e9',
+		borderRadius: 8,
+		color: 'black',
+		paddingRight: 30, // to ensure the text is never behind the icon
+	},
+  });
+
+
