@@ -17,4 +17,5 @@ export const screenNames = {
   AddPhotoStep2: "AddPhotoStep2",
   AddPhotoStep3: "AddPhotoStep3",
   Billing: "Billing", 
+  ModelPrice: "ModelPrice", 
 }

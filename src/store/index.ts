@@ -22,6 +22,7 @@ export interface AuthDataInterface extends UserDataInterface {
 
 export type AppStateInterface = {
 	authData: AuthDataInterface
+	updateAuthData: (userData?: any) => void
 	doLogin: (userData: UserDataInterface) => void
 	doLogout: () => void
 }
@@ -38,6 +39,14 @@ const useStore = createStore<AppStateInterface>(
 		},
 		(set) => ({
 			authData: INITIAL_USER_STATE,
+			updateAuthData: async (userData) => {
+				set((_) => ({
+					authData: {
+						...userData,
+						isLoggedIn: true,
+					},
+				}))
+			},
 			doLogin: async (userData) => {
 				set((_) => ({
 					authData: {
