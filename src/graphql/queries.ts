@@ -34,8 +34,8 @@ export const FETCH_HOME_SCREEN = gql`
 `
 
 export const FETCH_PHOTOS = gql`
-	query {
-		photos(page: 1, first: 10, orderBy: { column: "created_at", order: DESC }) {
+	query photoData($page: Int, $first: Int, $orderBy: [OrderByClause!]) {
+		photos(page: $page, first: $first, orderBy: $orderBy) {
 			data {
 				id
 				uri
@@ -80,6 +80,7 @@ export const FETCH_FAVORITE_PHOTOS = gql`
 				created_at
 				modele {
 					id
+					hash
 					stage_name
 					poster
 				}
@@ -130,7 +131,6 @@ export const FETCH_MODEL = gql`
 				type
 				likes_count
 				liked_by_me
-				# is_for_me
 			}
 			followers {
 				id
@@ -246,6 +246,13 @@ export const BILLING = gql`
 			exp_month
 			exp_year
 		}
-
+	}
+`
+export const GETMODELPRICE = gql`
+	query modelInformation($hash: String) {
+		getModelPrice(hash: $hash){
+			price_id
+			cost
+		}
 	}
 `
