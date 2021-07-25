@@ -12,7 +12,7 @@ import {
 } from "native-base"
 import { useForm, Controller } from "react-hook-form"
 
-import { Feather } from '@expo/vector-icons';
+import { Feather, Entypo, FontAwesome } from '@expo/vector-icons';
 
 import { ViewStyle, StyleSheet, TouchableOpacity } from "react-native"
 
@@ -25,6 +25,7 @@ import useSetupPrice from "../hooks/useSetupPrice"
 import useGetModelPrice from "../hooks/useGetModelPrice"
 import { useNavigation } from "@react-navigation/native"
 import NegativeResponse from "../components/NegativeResponse"
+import Modal from "react-native-modal"
 
 type StatsProps = {
 	number: number
@@ -103,6 +104,7 @@ export default function ModelPriceScreen() {
 	let { price } = useGetModelPrice(currentUser?.modele?.hash)
 
     const [cost, setCost] =useState(price)
+	const [showDetails, setShowDetais] = useState<boolean>(false)
 
     console.log(price?.cost)
 
@@ -255,17 +257,13 @@ export default function ModelPriceScreen() {
                 
                 <View 
                     style={{ 
-                        padding: 12,
+                        paddingHorizontal: 15,
+						paddingTop: 20,
                         borderTopColor: colors.pink,
                         borderTopWidth: 1,
                     }}
                 >
-                    <Text style={{ 
-                        color: colors.pink,
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        marginTop: 20,
-                    }}>
+                    <Text style={styles.title}>
                         Setup you price
                     </Text>
 
@@ -279,17 +277,17 @@ export default function ModelPriceScreen() {
                                 color: colors.blackB,
                             }}
                         >
-                            Fixe a price that you want to receive from your followers every month.
+                            Put the price that you want to receive from your followers every month.
                         </Text>
 
                         <Text
                             style={{ 
                                 color: colors.blackB,
-                                marginTop: 20,
+                                marginTop: 10,
                                 marginBottom: 50
                             }}
                         >
-                            The price choosen with decrease by 18% + 0.30 cent 
+                            The price choosen with decrease by 17.7% + $0.30 
                         </Text>
 
                         <View style={[{marginBottom: 30}, styles.inputContainer]}>
@@ -321,26 +319,66 @@ export default function ModelPriceScreen() {
 
                         <View>
                             <View style={styles.inputContainer}>
-                                <Text style={styles.inputLeft}></Text>
-                                <Text>${cost?.cost}</Text>
+                                <Text style={styles.inputLeftDetails}></Text>
+									<Text  style={styles.inputRightDetails}>
+										Decrease by 17.7% | - ${cost?.cost && (parseInt(cost?.cost) * 17.7) / 100 }
+									</Text>
                             </View>
 
                             <View style={styles.inputContainer}>
-                                <Text style={styles.inputLeft}></Text>
-                                <Text style={styles.inputRightDetails} >
-                                    Decrease by %18 - ${cost?.cost && (parseInt(cost?.cost) * 18) / 100 }
-                                </Text>
+                                <Text style={styles.inputLeftDetails}></Text>
+									<Text style={styles.inputRightDetails}>
+										- $0.30
+									</Text>
                             </View>
 
                             <View style={styles.inputContainer}>
-                                <Text style={styles.inputLeft}></Text>
-                                <Text style={styles.inputRightDetails}>- 0.30</Text>
+                                <Text style={styles.inputLeftDetails}></Text>
+
+								<TouchableOpacity onPress={()=> setShowDetais(true)}>
+									<Text style={[styles.inputRightDetails]}>
+										Total receive: ${cost?.cost && parseInt(cost?.cost) - (((parseInt(cost?.cost)) * 17.7 / 100) + 0.30) } <Entypo 
+												name="info-with-circle" 
+												size={17} color={colors.pink} 
+											/>  
+									</Text>
+								</TouchableOpacity>
                             </View>
 
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.inputLeft}>Total receive</Text>
-                                <Text style={styles.inputRightDetails}>${cost?.cost && parseInt(cost?.cost) - (((parseInt(cost?.cost)) * 18 / 100) + 0.30) }</Text>
-                            </View>
+							<Modal
+								isVisible={showDetails}
+								useNativeDriver
+								onBackButtonPress={() => setShowDetais(false)}
+								onBackdropPress={() => setShowDetais(false)}
+							>
+								<View style={styles.modale}>
+									<Text style={[{ marginBottom: 10},styles.title]}>
+										Here are the details about the payment
+									</Text>
+									<View
+										style={{ 
+											flexDirection: 'row',
+											marginBottom: 5,
+										 }}
+									>
+										<FontAwesome name="hand-o-right" size={17} color={colors.pink} />
+										<Text style={{ marginLeft: 10 }}>
+											We charrge you 15% for the the service
+										</Text>
+									</View>
+									<View
+										style={{ 
+											flexDirection: 'row',
+											marginBottom: 5,
+										 }}
+									>
+										<FontAwesome name="hand-o-right" size={17} color={colors.pink} />
+										<Text style={{ marginLeft: 10 }}>
+											We use Stripe and they charge 2.7% + $0.30 per payment
+										</Text>
+									</View>
+								</View>
+							</Modal>
 
                             <View style={{ 
                                 flex: 1,
@@ -349,15 +387,7 @@ export default function ModelPriceScreen() {
                                 marginTop: 50
                              }}>
 							<Button
-								style={{
-									backgroundColor: colors.pink ,
-									justifyContent: "center",
-									borderColor: colors.pink,
-									borderWidth: 1,
-									paddingVertical: 10,
-									width: 180,
-									borderRadius: 5,
-								}}
+								style={styles.buttonStyle}
 								onPress={handleSubmit(onSubmit)}
                                 disable={disabled}
 							>
@@ -381,6 +411,11 @@ export default function ModelPriceScreen() {
 }
 
 const styles = StyleSheet.create({
+	title: { 
+		color: colors.pink,
+		fontSize: 18,
+		fontWeight: "bold",
+	},
 	infos: {
 		flexDirection: "row",
 		borderTopColor: "#EFEFEF",
@@ -410,6 +445,8 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
+		width: "100%",
+		marginBottom: 10
 	},
 	inputLeft: {
 		width: "50%",
@@ -421,8 +458,28 @@ const styles = StyleSheet.create({
         marginTop: -35,
         borderBottomWidth: 1
 	},
-	inputRightDetails: {
-		textAlign: "right",
-		width: "50%",
+	inputLeftDetails: {
+		color: colors.pink,
+		fontWeight: "bold",
 	},
+	inputRightDetails: {
+		flex: 1,
+		flexDirection: "row",
+		textAlign: "right",
+	},
+	buttonStyle: {
+		backgroundColor: colors.pink ,
+		justifyContent: "center",
+		borderColor: colors.pink,
+		borderWidth: 1,
+		paddingVertical: 10,
+		width: 180,
+		borderRadius: 5,
+	},
+	modale: { 
+		borderRadius: 5, 
+		overflow: "hidden", 
+		backgroundColor: colors.white,
+		padding: 10
+	}
 })
