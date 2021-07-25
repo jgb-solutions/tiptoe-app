@@ -25,6 +25,8 @@ import { formatToUnits } from "../utils/formatNumber"
 import useStore, { AppStateInterface } from "../store"
 import moment from "moment"
 
+import useGetModelPrice from "../hooks/useGetModelPrice"
+
 type StatsProps = {
 	number: number
 	title: string
@@ -71,7 +73,7 @@ const Button = ({
 					paddingVertical: 2,
 					borderRadius: 6,
 					opacity: disable ? 0.7 : 1,
-					backgroundColor: transparent ? "transparent" : undefined,
+					backgroundColor: transparent ? "transparent" : '',
 				},
 				style,
 			]}
@@ -110,6 +112,8 @@ export default function ProfileScreen() {
 		hideMenu()
 	}
 
+	const { price } = useGetModelPrice(currentUser?.modele?.hash)
+	
 	return (
 		<Container>
 			<Header
@@ -122,7 +126,7 @@ export default function ProfileScreen() {
 						transparent
 						onPress={() => navigation.navigate(screenNames.Home)}
 					>
-						<Feather name="arrow-left" style={{ color: colors.white,  fontSize: 24, }} />
+						<Feather name="arrow-left" color={colors.white}  size={24} />
 					</Button>
 
 					<Text
@@ -135,14 +139,14 @@ export default function ProfileScreen() {
 					</Text>
 				</Left>
 				<Right>
-					<TouchableOpacity onPress={showMenu} style={{ flexDirection: "row-reverse",justifyContent: "center", width: 50 }}>
+					<TouchableOpacity onPress={showMenu} >
 						<Menu
 							ref={setMenuRef}
 							button={
 								<Feather
 									onPress={showMenu}
 									name="more-vertical"
-									style={{ color: colors.white,  fontSize: 24, }}
+									color={colors.white}  size={24}
 								/>
 							}
 						>
@@ -221,10 +225,10 @@ export default function ProfileScreen() {
 						<View style={{ flexDirection: "row", marginBottom: 10 }}>
 							<Feather
 								name="phone"
+								size={20}
+								color={colors.pink}
 								style={{
-									fontSize: 20,
 									marginRight: 15,
-									color: colors.pink,
 								}}
 							/>
 							<Text>{currentUser?.telephone}</Text> 
@@ -232,10 +236,10 @@ export default function ProfileScreen() {
 						<View style={{ flexDirection: "row" }}>
 							<Feather
 								name="mail"
+								size={20}
+								color={colors.pink}
 								style={{
-									fontSize: 20,
 									marginRight: 15,
-									color: colors.pink,
 								}}
 							/>
 							<Text>{currentUser?.email}</Text>
@@ -294,54 +298,99 @@ export default function ProfileScreen() {
 						</View>
 					)}
 				</View>
-				<View style={showModelInfo && styles.displayNone}>
-					<View style={styles.infos}>
-						<Text style={styles.mediaText}>Name</Text>
-						<Text>{currentUser?.name}</Text>
+				{!showModelInfo ? 
+					<View>
+						<View style={styles.infos}>
+							<Text style={styles.mediaText}>Name</Text>
+							<Text>{currentUser?.name}</Text>
+						</View>
+
+						<View style={styles.infos}>
+							<Text style={styles.mediaText}>Gender</Text>
+							<Text>{currentUser?.gender}</Text>
+						</View>
+
+						<View style={styles.infos}>
+							<Text style={styles.mediaText}>Joined on</Text>
+							<Text>
+								{moment(currentUser?.created_at).format("MMMM Do, YYYY")}
+							</Text>
+						</View>
 					</View>
+					:
+					<View >
+						<View style={styles.infos}>
+							<Text style={styles.mediaText}>Stage Name</Text>
+							<Text>{currentUser?.modele?.stage_name}</Text>
+						</View>
 
-					<View style={styles.infos}>
-						<Text style={styles.mediaText}>Gender</Text>
-						<Text>{currentUser?.gender}</Text>
+						<View style={styles.infos}>
+							<Text style={styles.mediaText}>Facebook</Text>
+
+							<Text>{currentUser?.modele?.facebook}</Text>
+						</View>
+
+						<View style={styles.infos}>
+							<Text style={styles.mediaText}>instagram</Text>
+
+							<Text>{currentUser?.modele?.instagram}</Text>
+						</View>
+
+						<View style={styles.infos}>
+							<Text style={styles.mediaText}>twitter</Text>
+
+							<Text>{currentUser?.modele?.twitter}</Text>
+						</View>
+
+						<View style={styles.infos}>
+							<Text style={styles.mediaText}>youtube</Text>
+
+							<Text>{currentUser?.modele?.youtube}</Text>
+						</View>
+					{ price.cost ?
+						<View style={styles.infos}>
+							<Text style={styles.mediaText}>Price</Text>
+							<TouchableOpacity
+								onPress={() => {
+									navigation.navigate( screenNames.ModelPrice)
+								}}
+							>
+								<Text style={{ 
+									color: colors.pink, 
+									fontWeight: "bold" 
+									}}
+								>
+									${price.cost}/month <Feather name="edit" size={17} color={colors.blackOpact} style={{ marginLeft: 10 }} />
+								</Text>
+							</TouchableOpacity>
+						</View>
+						:
+						<View style={styles.infos}>
+							<Button
+								style={{
+									backgroundColor: colors.pink ,
+									justifyContent: "center",
+									borderColor: colors.pink,
+									borderWidth: 1,
+									paddingVertical: 10,
+									width: 180,
+									borderRadius: 0,
+								}}
+								onPress={() => {
+									navigation.navigate( screenNames.ModelPrice)
+								}}
+							>
+								<Text
+									style={{ color: colors.white }}
+								>
+									Setup your price
+								</Text>
+							</Button>
+
+						</View>
+					}
 					</View>
-
-					<View style={styles.infos}>
-						<Text style={styles.mediaText}>Joined on</Text>
-						<Text>
-							{moment(currentUser?.created_at).format("MMMM Do, YYYY")}
-						</Text>
-					</View>
-				</View>
-				<View style={!showModelInfo && styles.displayNone}>
-					<View style={styles.infos}>
-						<Text style={styles.mediaText}>Stage Name</Text>
-						<Text>{currentUser?.modele?.stage_name}</Text>
-					</View>
-
-					<View style={styles.infos}>
-						<Text style={styles.mediaText}>Facebook</Text>
-
-						<Text>{currentUser?.modele?.facebook}</Text>
-					</View>
-
-					<View style={styles.infos}>
-						<Text style={styles.mediaText}>instagram</Text>
-
-						<Text>{currentUser?.modele?.instagram}</Text>
-					</View>
-
-					<View style={styles.infos}>
-						<Text style={styles.mediaText}>twitter</Text>
-
-						<Text>{currentUser?.modele?.twitter}</Text>
-					</View>
-
-					<View style={styles.infos}>
-						<Text style={styles.mediaText}>youtube</Text>
-
-						<Text>{currentUser?.modele?.youtube}</Text>
-					</View>
-				</View>
+				}
 
 				{!isAmodel && currentUser?.modele && (
 					<Card style={{ marginTop: 30, marginLeft: 0, marginRight: 0 }}>
@@ -393,11 +442,6 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-	displayNone: {
-		opacity: 0,
-		height: 0,
-		flex: 0,
-	},
 	infos: {
 		flexDirection: "row",
 		borderTopColor: "#EFEFEF",
