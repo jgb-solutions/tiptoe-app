@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import {
 	Alert,
 	Image,
@@ -15,9 +15,10 @@ import {
 	Right,
 	Header,
 	Spinner,
-	Container,
 	Thumbnail,
 } from "native-base"
+
+import {Picker} from '@react-native-picker/picker';
 
 
 import { CardField, useConfirmSetupIntent } from '@stripe/stripe-react-native';
@@ -119,8 +120,9 @@ export default function PublicModelProfileScreen() {
 	const [viewPaymentMethod, setViewPaymentMethod] = useState<boolean>(false)
 	const [selectedCard, setSelectedCard] = useState<string>()
 
-	const { currentUser } = useStore((state: AppStateInterface) => ({
+	const { currentUser, updateAuthData } = useStore((state: AppStateInterface) => ({
 		currentUser: state.authData.user,
+		updateAuthData: state.updateAuthData,
 	}))
 
 
@@ -178,18 +180,21 @@ export default function PublicModelProfileScreen() {
 			toggleFollow({ 
 				payment_method: selectedCard !== "new" ? selectedCard : setupIntent?.paymentMethodId ,
 				modele_id: modelData.modele.id, 
-				stripe_price: modelData?.getModelPrice?.price_id
 			})
 		}
 
-
-		if (toggleFollowData?.toggleFollow.success) {
+		if (toggleFollowData?.toggleFollow.success && toggleFollowLoading) {
 			alert(
 				"Congratulation!!! Now you can see picture and video of this model."
 			)
-			setViewPaymentMethod(false)
+			const data = currentUser
+
+			data?.modeles?.push(modelData)
+
+			console.log(data)
+			updateAuthData(data)
 		}
-		// setViewPaymentMethod(false)
+		setViewPaymentMethod(false)
 	}
 
 	React.useEffect(() => {
@@ -235,8 +240,9 @@ export default function PublicModelProfileScreen() {
 		setCurrentPhoto(photo)
 	}
 
+
 	return (
-		<Container>
+		<React.Fragment>
 			<Header
 				iosBarStyle="light-content"
 				androidStatusBarColor={colors.black}
@@ -281,247 +287,244 @@ export default function PublicModelProfileScreen() {
 					</Button>
 				</NegativeResponse>
 			) : (
-				<FlatList
-					showsVerticalScrollIndicator={false}
-					ListHeaderComponent={() => (
-						<>
-							{modelLoading ? (
-								<Spinner color={colors.pink} />
-							) : modelError ? (
-								<Text>An error occurred</Text>
-							) : (
-								<View style={{ padding: 12 }}>
-									<View
-										style={{
-											flexDirection: "row",
-											justifyContent: "space-between",
-											alignItems: "center",
-											marginBottom: 8,
-										}}
-									>
-										<Thumbnail
-											large
-											source={{ uri: modelData.modele.poster }}
-											style={{}}
-										/>
 
+					<FlatList
+						showsVerticalScrollIndicator={false}
+						ListHeaderComponent={() => (
+							<>
+								{modelLoading ? (
+									<Spinner color={colors.pink} />
+								) : modelError ? (
+									<Text>An error occurred</Text>
+								) : (
+									<View style={{ padding: 12 }}>
 										<View
 											style={{
-												flex: 1,
-												marginLeft: 48,
 												flexDirection: "row",
-												justifyContent: "flex-end",
+												justifyContent: "space-between",
 												alignItems: "center",
+												marginBottom: 8,
 											}}
 										>
-											<Stats
-												title={`Post${modelData.modele.photos.length !== 1 ? "s" : ""
-													}`}
-												number={modelData.modele.photos.length}
+											<Thumbnail
+												large
+												source={{ uri: modelData.modele.poster }}
+												style={{}}
 											/>
-											<Stats
-												style={{ marginLeft: 12 }}
-												title={`Follower${modelData.modele.followers.length !== 1 ? "s" : ""
-													}`}
-												number={modelData.modele.followers.length}
-											/>
+	
+											<View
+												style={{
+													flex: 1,
+													marginLeft: 48,
+													flexDirection: "row",
+													justifyContent: "flex-end",
+													alignItems: "center",
+												}}
+											>
+												<Stats
+													title={`Post${modelData.modele.photos.length !== 1 ? "s" : ""
+														}`}
+													number={modelData.modele.photos.length}
+												/>
+												<Stats
+													style={{ marginLeft: 12 }}
+													title={`Follower${modelData.modele.followers.length !== 1 ? "s" : ""
+														}`}
+													number={modelData.modele.followers.length}
+												/>
+											</View>
+										</View>
+	
+										<View style={{ marginBottom: 24, marginLeft: 20 }}>
+											<Text>{modelData.modele.stage_name}</Text>
+											<Text>{modelData.modele.bio}</Text>
+										</View>
+	
+										<View style={{ flexDirection: "row", marginBottom: 24 }}>
+											<Button
+												style={{
+													flex: 1,
+													backgroundColor: colors.pink,
+													borderColor: modelData.modele.followed_by_me
+														? colors.pink
+														: colors.white,
+													borderWidth: 1,
+													height: 40
+												}}
+												onPress={() => !viewPaymentMethod ? handleToggleFollow() : setViewPaymentMethod(false)}
+												disable={toggleFollowLoading}
+											>
+												<Text style={{ color: colors.white }}>
+													{modelData.modele.followed_by_me
+														? "Unfollow"
+														: !viewPaymentMethod
+															? "Follow"
+															: "Cancel"}
+												</Text>
+											</Button>
+	
+											<Button
+												style={{
+													marginLeft: 4,
+													borderColor: colors.pink,
+													borderWidth: 1,
+												}}
+											>
+												<FontAwesome name="arrow-down" size={24} color={colors.pink} />
+											</Button>
 										</View>
 									</View>
-
-									<View style={{ marginBottom: 24, marginLeft: 20 }}>
-										<Text>{modelData.modele.stage_name}</Text>
-										<Text>{modelData.modele.bio}</Text>
-									</View>
-
-									<View style={{ flexDirection: "row", marginBottom: 24 }}>
-										<Button
-											style={{
-												flex: 1,
-												backgroundColor: colors.pink,
-												borderColor: modelData.modele.followed_by_me
-													? colors.pink
-													: colors.white,
-												borderWidth: 1,
-												height: 40
-											}}
-											onPress={() => !viewPaymentMethod ? handleToggleFollow() : setViewPaymentMethod(false)}
-											disable={toggleFollowLoading}
-										>
-											<Text style={{ color: colors.white }}>
-												{modelData.modele.followed_by_me
-													? "Unfollow"
-													: !viewPaymentMethod
-														? "Follow"
-														: "Cancel"}
+								)}
+	
+								{viewPaymentMethod ? (
+									<View style={{ padding: 15 }}>
+										{ !modelData?.getModelPrice?.price_id ? 
+											<Text style={{ color: colors.darkGrey }}>
+												This model don't have any price yet and connot be folllow at this time.
 											</Text>
-										</Button>
+											:
+											<>
+												<Text
+													style={{
+														fontWeight: "bold",
+														textAlign: 'center',
+														color: colors.darkGrey,
+													}}
+												>
+													Please, select your payment method
+												</Text>
 
-										<Button
-											style={{
-												marginLeft: 4,
-												borderColor: colors.pink,
-												borderWidth: 1,
-											}}
-										>
-											<FontAwesome name="arrow-down" size={24} />
-										</Button>
-									</View>
-								</View>
-							)}
-
-							{viewPaymentMethod ? (
-								<View style={{ padding: 15 }}>
-									{ !modelData?.getModelPrice?.price_id ? 
-										<Text style={{ color: colors.darkGrey }}>
-											This model don't have any price yet and connot be folllow at this time.
-										</Text>
-										:
-										<>
-											<Text
-												style={{
-													marginBottom: 10,
-													fontWeight: "bold",
-													color: colors.darkGrey,
-												}}
-											>
-												Please, select your payment method
-											</Text>
-		
-											<SelectPicker
-												dismissable
-												doneButtonText="Done"
-												onValueChange={(e) => setSelectedCard(e)}
-												selected={selectedCard}
-												style={{
-													flexDirection: "row",
-													justifyContent: "flex-start",
-													borderWidth: 1,
-													borderColor: "#fce3e9",
-													borderRadius: 5,
-													height: 45,
-												}}
-												placeholder="Pay with an existant card"
-												placeholderStyle={{
-													textAlign: "left",
-													fontSize: 18,
-												}}
-											>
-												{cards && cards.map((card: CardInterface, idx: number) =>
-														<SelectPicker.Item
-															key={idx}
-															label={`xxxx xxxx xxxx ${card.last4}`}
-															value={card.id}
+												<Picker
+													selectedValue={selectedCard}
+													numberOfLines={3}
+													onValueChange={(itemValue, itemIndex) =>
+														setSelectedCard(itemValue)
+													}
+												>
+													{cards?.map((card: CardInterface) => (
+														<Picker.Item label={`xxxx xxxx xxxx ${card.last4}`} value={card.id} key={card.id} />
+													))}
+													<Picker.Item
+														label={`Pay with a new card`}
+														value={`new`}
+													/>
+												</Picker>
+			
+												{(selectedCard && selectedCard === "new"   ) && (
+													<>
+														<Text
+															style={{
+																textAlign: 'center',
+																marginBottom: -15,
+																color: colors.darkGrey,
+															}}
+														>
+															Enter the card information
+														</Text>
+													
+														<CardField
+															postalCodeEnabled={true}
+															placeholder={{
+																number: '4242 4242 4242 4242',
+															}}
+															cardStyle={{
+																backgroundColor: '#FFFFFF',
+																textColor: '#000000',
+																borderWidth: 1,
+																borderColor: "#fce3e9",
+																borderRadius: 5,
+															}}
+															style={{
+																width: '100%',
+																height: 45,
+																marginVertical: 30,
+															}}
 														/>
-													)
-												}
-												<SelectPicker.Item
-													label={`Pay with a new card`}
-													value={`new`}
-												/>
-											</SelectPicker>
-		
-											{(selectedCard && selectedCard === "new"   ) && (
-												<>
-													<Text
-														style={{
-															marginTop: 30,
-															// marginBottom: ,
-															color: colors.darkGrey,
+														
+													</>
+												)}
+			
+													<View 
+														style={{ 
+															flex: 1,
+															flexDirection: "row",
+															justifyContent: "space-around"
 														}}
 													>
-														Pay with a new card
-													</Text>
+														<Button
+															style={{
+																flex: 1,
+																backgroundColor: colors.pink,
+																maxWidth: "30%",
+																marginTop: 20,
+																paddingTop: 7,
+																paddingBottom: 7,
+																borderRadius:5,
+															}}
+															onPress={handleSubmit(onSubmit)}
+															disable={toggleFollowLoading} 
+														>
+															<Text style={{ color: colors.white }}>Follow Now</Text>
+														</Button>
+													</View>
 												
-													<CardField
-														postalCodeEnabled={true}
-														placeholder={{
-															number: '4242 4242 4242 4242',
-														}}
-														cardStyle={{
-															backgroundColor: '#FFFFFF',
-															textColor: '#000000',
-															borderWidth: 1,
-															borderColor: "#fce3e9",
-															borderRadius: 5,
-														}}
-														style={{
-															width: '100%',
-															height: 45,
-															marginVertical: 30,
-														}}
-													/>
-													
+											</> 
+										}
+									</View>
+								) : (
+									!modelData.modele.followed_by_me && (
+										<View style={{ paddingLeft: 15, paddingRight: 15 }}>
+											<View
+												style={{
+													padding: 10,
+													borderRadius: 10,
+												}}
+											>
+												{toggleFollowLoading ? 
+													<Spinner color={colors.pink} />
+												:
+												<>
+													<Text style={{ color: colors.darkGrey }}>
+														To be able to view the photos and video of this model,
+														you have to be a follower first.
+													</Text>
+	
+													<Text style={{ marginTop: 10, color: colors.darkGrey }}>
+														To follow this model, please click on the follow button
+														and pay $15 every month that you can cancel anytime.
+													</Text>
 												</>
-											)}
-		
-											{selectedCard && 
-												<Button
-													style={{
-														flex: 1,
-														backgroundColor: colors.pink,
-														width: "30%",
-														marginTop: 20,
-														paddingTop: 7,
-														paddingBottom: 7,
-													}}
-													onPress={handleSubmit(onSubmit)}
-													disable={toggleFollowLoading} 
-												>
-													<Text style={{ color: colors.white }}>Follow Now</Text>
-												</Button>
-											}
-										</> 
-									}
-								</View>
-							) : (
-								!modelData.modele.followed_by_me && (
-									<View style={{ paddingLeft: 15, paddingRight: 15 }}>
-										<View
-											style={{
-												padding: 10,
-												borderRadius: 10,
-											}}
-										>
-											<Text style={{ color: colors.darkGrey }}>
-												To be able to view the photos and video of this model,
-												you have to be a follower first.
-											</Text>
-
-											<Text style={{ marginTop: 10, color: colors.darkGrey }}>
-												To follow this model, please click on the follow button
-												and pay $15 every month that you can cancel anytime.
-											</Text>
+												}
+											</View>
 										</View>
-									</View>
-								)
-							)}
-
-							{currentPhoto && (
-								<Modal
-									isVisible
-									useNativeDriver
-									onBackButtonPress={() => setCurrentPhoto(null)}
-									onBackdropPress={() => setCurrentPhoto(null)}
-								>
-									<View style={{ borderRadius: 15, overflow: "hidden" }}>
-										<PhotoCard hideHeader photo={currentPhoto} />
-									</View>
-								</Modal>
-							)}
-						</>
-					)}
-					numColumns={3}
-					onLayout={(event) => setThumbWidth(event.nativeEvent.layout.width)}
-					ListEmptyComponent={() => (
-						<NegativeResponse>
-							<Text>That model has no photos yet.</Text>
-						</NegativeResponse>
-					)}
-					data={modelData.modele.photos}
-					keyExtractor={(photo) => photo.id}
-					renderItem={({ item: photo }: { item: PhotoInterface }) => (
-						<View>
-							{modelData.modele.followed_by_me && (
+									)
+								)}
+	
+								{currentPhoto && (
+									<Modal
+										isVisible
+										useNativeDriver
+										onBackButtonPress={() => setCurrentPhoto(null)}
+										onBackdropPress={() => setCurrentPhoto(null)}
+									>
+										<View style={{ borderRadius: 15, overflow: "hidden" }}>
+											<PhotoCard hideHeader photo={currentPhoto} />
+										</View>
+									</Modal>
+								)}
+							</>
+						)}
+						numColumns={3}
+						onLayout={(event) => setThumbWidth(event.nativeEvent.layout.width)}
+						ListEmptyComponent={() => (
+							<NegativeResponse>
+								<Text>That model has no photos yet.</Text>
+							</NegativeResponse>
+						)}
+						data={modelData.modele.photos}
+						keyExtractor={(photo) => photo.id}
+						renderItem={({ item: photo }: { item: PhotoInterface }) => 
+							modelData.modele.followed_by_me && ( 
 								<TouchableOpacity
 									style={{
 										borderWidth: 1,
@@ -538,12 +541,10 @@ export default function PublicModelProfileScreen() {
 										resizeMode="cover"
 									/>
 								</TouchableOpacity>
-							)}
-						</View>
-					)}
-				/>
+						)}
+					/>
 			)}
-		</Container>
+		</React.Fragment>
 	)
 }
 
