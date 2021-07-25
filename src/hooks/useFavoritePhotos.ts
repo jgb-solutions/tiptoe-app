@@ -6,7 +6,7 @@ import { FETCH_FAVORITE_PHOTOS } from "../graphql/queries"
 import { FETCH_FAVORITE_PHOTOS_NUMBER } from "../utils/constants"
 
 
-export default function usePhotos() {
+export default function useFavoritePhotos() {
 	const [hasMore, setHasMore] = useState(true)
 	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
 		useQuery(FETCH_FAVORITE_PHOTOS, {
@@ -16,9 +16,9 @@ export default function usePhotos() {
 			},
 		})
 
-	const loadMorePhotos = () => {
+	const loadMorePhotos = () => { 
 		// const { currentPage } = data.favoritePhoto.paginatorInfo
-		const  currentPage  = 0
+		const  currentPage  = 1
 
 		fetchMore({
 			variables: {
