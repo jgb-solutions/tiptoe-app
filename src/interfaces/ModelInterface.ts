@@ -25,4 +25,5 @@ export default interface ModelInterface {
 	followed_by_me: boolean
 	roomWithMe?: RoomInterface
 	map: any
+	push: any
 }
