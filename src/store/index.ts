@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 
 import UserInterface from "../interfaces/UserInterface"
 
-// Sonfigure storage
+// Configure offline storage
 export const { persist, purge } = configurePersist({
 	storage: AsyncStorage,
 	rootKey: "tiptoeCacheRoot", // optional, default value is `root`
@@ -13,7 +13,6 @@ export const { persist, purge } = configurePersist({
 export interface UserDataInterface {
 	user?: UserInterface
 	access_token?: string
-	publishableKey?: string
 }
 
 export interface AuthDataInterface extends UserDataInterface {
@@ -22,9 +21,10 @@ export interface AuthDataInterface extends UserDataInterface {
 
 export type AppStateInterface = {
 	authData: AuthDataInterface
-	updateAuthData: (userData?: any) => void
+	updateAuthData: (userData: UserDataInterface) => void
 	doLogin: (userData: UserDataInterface) => void
-	doLogout: () => void
+	doLogout: () => void,
+	updateCardData: (params: { last4: string}) => void
 }
 
 export const INITIAL_USER_STATE = {
@@ -46,6 +46,25 @@ const useStore = createStore<AppStateInterface>(
 						isLoggedIn: true,
 					},
 				}))
+			},
+			updateCardData: async ({ last4 }) => {
+				set(({ authData }) => {
+					const { user, ...rest } = authData
+
+					if (user) {
+						return {
+							authData: {
+							...rest,
+								user: {
+									...user,
+									pm_last_four: last4
+								}
+							}
+						}
+					} else {
+						return { authData }
+					}
+				})
 			},
 			doLogin: async (userData) => {
 				set((_) => ({
