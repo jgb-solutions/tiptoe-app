@@ -103,6 +103,7 @@ export const LOG_USER_IN = gql`
 				created_at
 				user_type
 				gender
+				pm_last_four
 				modele {
 					id
 					stage_name
@@ -261,9 +262,19 @@ export const TOGGLE_FOLLOW = gql`
 `
 
 export const SETUP_PRICE = gql`
-	mutation ToggleFollow($input: AddPriceInput!) {
+	mutation SetupPrice($input: AddPriceInput!) {
 		addPrice(input: $input) {
 			success
+		}
+	}
+`
+
+export const SET_DEFAULT_CARD = gql`
+	mutation SetDefaultCard($input: CardInput!) {
+		setDefaultCard(input: $input) {
+			success
+			id
+			last4
 		}
 	}
 `
