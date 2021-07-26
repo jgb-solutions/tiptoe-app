@@ -118,13 +118,12 @@ export default function PublicModelProfileScreen() {
 	const [viewPaymentMethod, setViewPaymentMethod] = useState<boolean>(false)
 	const [selectedCard, setSelectedCard] = useState<string>()
 
-	const { currentUser, updateAuthData } = useStore((state: AppStateInterface) => ({
+	const { currentUser } = useStore((state: AppStateInterface) => ({
 		currentUser: state.authData.user,
-		updateAuthData: state.updateAuthData,
 	}))
 
 
-	const { cards } = useBillingData();
+	const { data } = useBillingData();
 	const { client_secret } =  usePaymentIntent();
 
 	const [secret, setSecret] = useState<string>(client_secret);
@@ -170,7 +169,7 @@ export default function PublicModelProfileScreen() {
 		});
 	
 		if (error) {
-			console.log(error)
+			// console.log(error)
 		}
 				
 		if(setupIntent ||  selectedCard)
@@ -185,12 +184,6 @@ export default function PublicModelProfileScreen() {
 			alert(
 				"Congratulation!!! Now you can see picture and video of this model."
 			)
-			const data = currentUser
-
-			data?.modeles?.push(modelData)
-
-			console.log(data)
-			updateAuthData(data)
 		}
 		setViewPaymentMethod(false)
 	}
@@ -227,8 +220,6 @@ export default function PublicModelProfileScreen() {
 				],
 				{ cancelable: false }
 			)
-
-
 		}
 	}
 
@@ -240,7 +231,7 @@ export default function PublicModelProfileScreen() {
 
 	let cardList: any = [{ label: `Pay with a new card`, value: `new` }];
 
-	cards?.map((card: CardInterface) => {
+	data?.myCards.map((card: CardInterface) => {
 		cardList.unshift({
 			label: `xxxx xxxx xxxx ${card.last4}`,
 			value: `${card.id}`
