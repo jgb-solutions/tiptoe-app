@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import Constants from 'expo-constants'
+import Constants from "expo-constants"
 import {
   Text,
   View,
@@ -9,20 +9,20 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
-} from 'react-native'
+} from "react-native"
 import { useForm, Controller } from "react-hook-form"
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation } from "@react-navigation/native"
 import { screenNames } from "../utils/screens"
 
 import { colors } from "../utils/colors"
-import FormInput from '../components/FormInput'
+import FormInput from "../components/FormInput"
 import { LOG_USER_IN } from "../graphql/mutations"
-import FormButton from '../components/FormButton'
+import FormButton from "../components/FormButton"
 import useStore, { AppStateInterface } from "../store"
 import { graphqlClient } from "../utils/graphqlClient"
 import { emailRequired, validateEmailAddress } from "./SignUpWithEmailScreen"
 import { Spinner } from "native-base"
-const TipToeLogo = require('../../assets/images/TipToeLogo.png')
+const TipToeLogo = require("../../assets/images/TipToeLogo.png")
 
 export interface Credentials {
   username: string
@@ -30,28 +30,29 @@ export interface Credentials {
 }
 
 export default function LogInWithEmailScreen() {
-  const { control, handleSubmit, errors, formState } = useForm<Credentials>({ mode: 'onBlur' })
+  const { control, handleSubmit, errors, formState } = useForm<Credentials>({
+    mode: "onBlur",
+  })
   const navigation = useNavigation()
   const [loginError, setLoginError] = useState("")
   const [fetching, setFetching] = useState(false)
-  const { doLogin } = useStore((state: AppStateInterface) =>
-    ({ doLogin: state.doLogin }))
+  const { doLogin } = useStore((state: AppStateInterface) => ({
+    doLogin: state.doLogin,
+  }))
 
   const handleLogin = async (credentials: Credentials) => {
     try {
       setFetching(true)
 
-      const { login: userData } = await graphqlClient.request(
-        LOG_USER_IN,
-        { input: credentials },
-      )
+      const { login: userData } = await graphqlClient.request(LOG_USER_IN, {
+        input: credentials,
+      })
 
       setFetching(false)
 
       if (userData) {
         doLogin(userData)
       }
-
     } catch (error) {
       console.log(error)
       // console.log(JSON.stringify(error.response.errors[0].message))
@@ -74,7 +75,7 @@ export default function LogInWithEmailScreen() {
               <FormInput
                 onBlur={onBlur}
                 autoCapitalize="none"
-                onChangeText={value => onChange(value)}
+                onChangeText={(value) => onChange(value)}
                 value={value}
                 placeholder="Enter Your Email"
                 error={errors.username}
@@ -86,7 +87,7 @@ export default function LogInWithEmailScreen() {
               required: emailRequired,
               validate: {
                 validateEmailAddress,
-              }
+              },
             }}
             defaultValue=""
           />
@@ -98,10 +99,11 @@ export default function LogInWithEmailScreen() {
                 secureTextEntry
                 autoCapitalize="none"
                 onBlur={onBlur}
-                onChangeText={value => onChange(value)}
+                onChangeText={(value) => onChange(value)}
                 value={value}
                 placeholder="Enter Your Password"
-                error={errors.password} />
+                error={errors.password}
+              />
             )}
             name="password"
             rules={{ required: "The password is required" }}
@@ -109,10 +111,12 @@ export default function LogInWithEmailScreen() {
           />
         </View>
 
-        <View style={{ flexDirection: 'row', marginBottom: 24 }}>
-          <Text style={styles.smallText}>FORGOT YOUR PASSWORD? {' '}</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Reset')}>
-            <Text style={[styles.smallText, { fontWeight: 'bold' }]}>Reset it</Text>
+        <View style={{ flexDirection: "row", marginBottom: 24 }}>
+          <Text style={styles.smallText}>FORGOT YOUR PASSWORD? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Reset")}>
+            <Text style={[styles.smallText, { fontWeight: "bold" }]}>
+              Reset it
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -126,13 +130,16 @@ export default function LogInWithEmailScreen() {
         <Text style={styles.smallText}>DON'T HAVE AN ACCOUNT?</Text>
         <TouchableOpacity
           style={{ marginBottom: 80 }}
-          onPress={() => navigation.navigate(screenNames.SignUpWithEmail)}>
-          <Text style={[styles.smallText, { fontWeight: 'bold' }]}>SIGN UP</Text>
+          onPress={() => navigation.navigate(screenNames.SignUpWithEmail)}
+        >
+          <Text style={[styles.smallText, { fontWeight: "bold" }]}>
+            SIGN UP
+          </Text>
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView >
+    </SafeAreaView>
   )
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -140,12 +147,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   contentContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   image: {
     width: 200,
     height: 78,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     ...Platform.select({
       ios: {
         marginTop: 54,
@@ -156,23 +163,23 @@ const styles = StyleSheet.create({
     }),
   },
   login: {
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     // color: colors.lightGrey,
     fontSize: 24,
     marginVertical: 20,
   },
   loginError: {
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     color: colors.red,
     fontSize: 18,
     marginVertical: 20,
   },
   inputsContainer: {
     marginHorizontal: 30,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   smallText: {
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     // color: colors.white,
     fontSize: 12,
   },
