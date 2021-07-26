@@ -243,8 +243,16 @@ export const BILLING = gql`
 		myCards{
 			id
 			last4
+			brand
 			exp_month
 			exp_year
+		}
+
+		myInvoices{
+			id
+			amount_paid
+			created
+			hosted_invoice_url
 		}
 	}
 `
