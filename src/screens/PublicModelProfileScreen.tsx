@@ -5,7 +5,6 @@ import {
   FlatList,
   Dimensions,
   StyleSheet,
-  ViewStyle,
   TouchableOpacity,
 } from "react-native"
 import {
@@ -30,7 +29,6 @@ import Modal from "react-native-modal"
 
 import { colors } from "../utils/colors"
 import useModel from "../hooks/useModel"
-import { formatToUnits } from "../utils/formatNumber"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import ModelInterface from "../interfaces/ModelInterface"
 import CardInterface from "../interfaces/CardInterface"
@@ -41,63 +39,8 @@ import { useForm } from "react-hook-form"
 import usePaymentIntent from "../hooks/usePaymentIntent"
 import useBillingData from "../hooks/useBillingData"
 import useStore, { AppStateInterface } from "../store"
-
-type StatsProps = {
-  number: number
-  title: string
-  style?: ViewStyle
-}
-
-const Stats = ({ number, title, style }: StatsProps) => (
-  <View style={{ alignItems: "center", ...style }}>
-    <Text style={{ fontWeight: "bold" }}>
-      {number > 999 ? formatToUnits(number) : number}
-    </Text>
-    <Text>{title}</Text>
-  </View>
-)
-
-type ButtonProps = {
-  style?: ViewStyle
-  children: React.ReactNode
-  onPress?: () => void
-  transparent?: boolean
-  disable?: boolean
-}
-
-const Button = ({
-  children,
-  style,
-  onPress,
-  transparent,
-  disable,
-}: ButtonProps) => {
-  const handleOnPress = () => {
-    if (disable) return
-
-    onPress && onPress()
-  }
-
-  return (
-    <TouchableOpacity
-      style={[
-        {
-          alignItems: "center",
-          justifyContent: "center",
-          paddingHorizontal: 8,
-          paddingVertical: 2,
-          borderRadius: 6,
-          opacity: disable ? 0.7 : 1,
-          backgroundColor: transparent ? "transparent" : undefined,
-          ...style,
-        },
-      ]}
-      onPress={handleOnPress}
-    >
-      {children}
-    </TouchableOpacity>
-  )
-}
+import Button from "../components/Button"
+import Stats from "../components/Starts"
 
 type RouteParamsProps = RouteProp<
   {

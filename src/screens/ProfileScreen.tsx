@@ -8,9 +8,6 @@ import {
   Right,
   View,
   Thumbnail,
-  Card,
-  CardItem,
-  Body,
 } from "native-base"
 
 import { Feather } from "@expo/vector-icons"
@@ -23,66 +20,15 @@ import { colors } from "../utils/colors"
 import { screenNames } from "../utils/screens"
 import { formatToUnits } from "../utils/formatNumber"
 import useStore, { AppStateInterface } from "../store"
+import useMyModels from "../hooks/useMyModels"
+import useMyFollowers from "../hooks/useMyFollowers"
 import moment from "moment"
 
 import useGetModelPrice from "../hooks/useGetModelPrice"
-
-type StatsProps = {
-  number: number
-  title: string
-  style?: ViewStyle
-}
-
-const Stats = ({ number, title, style }: StatsProps) => (
-  <View style={{ alignItems: "center", ...style }}>
-    <Text style={{ fontWeight: "bold" }}>
-      {number > 999 ? formatToUnits(number) : number}
-    </Text>
-    <Text>{title}</Text>
-  </View>
-)
-
-type ButtonProps = {
-  style?: ViewStyle
-  children: React.ReactNode
-  onPress?: () => void
-  transparent?: boolean
-  disable?: boolean
-}
-
-const Button = ({
-  children,
-  style,
-  onPress,
-  transparent,
-  disable,
-}: ButtonProps) => {
-  const handleOnPress = () => {
-    if (disable) return
-
-    onPress && onPress()
-  }
-
-  return (
-    <TouchableOpacity
-      style={[
-        {
-          alignItems: "center",
-          justifyContent: "center",
-          paddingHorizontal: 8,
-          paddingVertical: 2,
-          borderRadius: 6,
-          opacity: disable ? 0.7 : 1,
-          backgroundColor: transparent ? "transparent" : "",
-        },
-        style,
-      ]}
-      onPress={handleOnPress}
-    >
-      {children}
-    </TouchableOpacity>
-  )
-}
+import ModelCard from "../components/ModelCard"
+import UserCard from "../components/UserCard"
+import Button from "../components/Button"
+import Stats from "../components/Starts"
 
 export default function ProfileScreen() {
   const navigation = useNavigation()
@@ -113,6 +59,12 @@ export default function ProfileScreen() {
   }
 
   const { price } = useGetModelPrice(currentUser?.modele?.hash)
+
+  const { modelsData, modelLoading, modelError, refetchModel } = useMyModels()
+  const { followersData, followerLoading, followerError } = useMyFollowers()
+
+  const modelList = modelsData?.fetchMyModels
+  const userList = followersData?.fetchMyFollowers
 
   return (
     <Container>
@@ -358,16 +310,15 @@ export default function ProfileScreen() {
                 >
                   <Text
                     style={{
-                      color: colors.pink,
                       fontWeight: "bold",
                     }}
                   >
-                    ${price.cost}/month{" "}
+                    ${price.cost}{" "}
                     <Feather
                       name="edit"
                       size={17}
                       color={colors.blackOpact}
-                      style={{ marginLeft: 10 }}
+                      style={{ marginLeft: 20 }}
                     />
                   </Text>
                 </TouchableOpacity>
@@ -395,49 +346,10 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {!isAmodel && currentUser?.modele && (
-          <Card style={{ marginTop: 30, marginLeft: 0, marginRight: 0 }}>
-            <CardItem
-              header
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                My Models
-              </Text>
-            </CardItem>
-            <CardItem>
-              <Body
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  justifyContent: "flex-start",
-                }}
-              >
-                {currentUser?.modeles?.map((modele: any) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.navigate(
-                        screenNames.PublicModelProfileScreen,
-                        {
-                          hash: `${modele.hash}`,
-                        }
-                      )
-                    }}
-                    key={modele.id}
-                    style={styles.modelTouch}
-                  >
-                    <Thumbnail
-                      large
-                      source={{
-                        uri: modele.poster,
-                      }}
-                    />
-                    <Text style={styles.modelName}>{modele.stage_name}</Text>
-                  </TouchableOpacity>
-                ))}
-              </Body>
-            </CardItem>
-          </Card>
+        {currentUser?.user_type === "consumer" ? (
+          <ModelCard modelLoading={modelLoading} modelList={modelList} />
+        ) : (
+          <UserCard userLoading={followerLoading} userList={userList} />
         )}
       </Content>
     </Container>
@@ -464,5 +376,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: colors.pink,
   },
-  mediaText: { fontWeight: "bold", marginRight: 20, width: 100 },
+  mediaText: {
+    fontWeight: "bold",
+    color: colors.pink,
+    marginRight: 20,
+    width: 100,
+  },
 })

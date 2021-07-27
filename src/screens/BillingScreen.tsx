@@ -9,160 +9,64 @@ import {
   View,
   Spinner,
 } from "native-base"
-import { FontAwesome } from "@expo/vector-icons"
+import { FontAwesome, Feather } from "@expo/vector-icons"
+import { useForm } from "react-hook-form"
 
-import { formatToUnits } from "../utils/formatNumber"
 import { screenNames } from "../utils/screens"
 
 import useBillingData from "../hooks/useBillingData"
 import useSetDefaultCard from "../hooks/useSetDefaultCard"
 
-import {
-  ViewStyle,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  Image,
-} from "react-native"
+import { StyleSheet, ScrollView } from "react-native"
 
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
 
 import { colors } from "../utils/colors"
 import useStore, { AppStateInterface } from "../store"
-import { RouteProp, useNavigation } from "@react-navigation/native"
+import { useNavigation } from "@react-navigation/native"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import CardInterface from "../interfaces/CardInterface"
 import InvoiceInterface from "../interfaces/InvoiceInterface"
 import { useEffect } from "react"
-import { FC } from "react"
-
-type ButtonProps = {
-  style?: ViewStyle
-  children: React.ReactNode
-  onPress?: () => void
-  transparent?: boolean
-  disable?: boolean
-}
-
-const Button = ({
-  children,
-  style,
-  onPress,
-  transparent,
-  disable,
-}: ButtonProps) => {
-  const handleOnPress = () => {
-    if (disable) return
-
-    onPress && onPress()
-  }
-
-  return (
-    <TouchableOpacity
-      style={[
-        {
-          alignItems: "center",
-          justifyContent: "center",
-          paddingHorizontal: 8,
-          paddingVertical: 2,
-          borderRadius: 6,
-          opacity: disable ? 0.7 : 1,
-          backgroundColor: transparent ? "transparent" : undefined,
-          ...style,
-        },
-      ]}
-      onPress={handleOnPress}
-    >
-      {children}
-    </TouchableOpacity>
-  )
-}
-
-const MyCard: FC<
-  CardInterface & {
-    isDefault?: boolean
-    loading?: boolean
-    updateDefaultCard?: (id: string) => void
-  }
-> = ({ id, brand, last4, isDefault, loading, updateDefaultCard }) => {
-  const handleUpdateCard = () => {
-    if (updateDefaultCard) {
-      updateDefaultCard(id)
-    }
-  }
-
-  return (
-    <View key={id} style={styles.cardContainer}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          alignItems: "center",
-          width: "70%",
-        }}
-      >
-        <FontAwesome
-          // @ts-ignore
-          name={`cc-${brand}`}
-          style={{
-            fontSize: 34,
-            // @ts-ignore
-            color: colors[brand] || "",
-            marginRight: 10,
-          }}
-        />
-        <View>
-          <Text style={{ color: colors.blackOpact }}>
-            {[1, 2, 3].map((list) => (
-              <Text key={list}>
-                <FontAwesome
-                  name="circle"
-                  style={{
-                    marginRight: 10,
-                    color: colors.blackOpact,
-                  }}
-                />{" "}
-              </Text>
-            ))}
-
-            {last4}
-          </Text>
-          <Text
-            style={{
-              color: colors.blackOpact,
-            }}
-          >
-            Exp: 04/25
-          </Text>
-        </View>
-      </View>
-      <View>
-        {isDefault ? (
-          <Text style={{ fontWeight: "bold", color: colors.pink }}>
-            <FontAwesome name="check" size={18} /> Default
-          </Text>
-        ) : (
-          <TouchableOpacity onPress={handleUpdateCard}>
-            {loading ? (
-              <Spinner color={colors.pink} />
-            ) : (
-              <Text style={{ color: colors.pink }}>Set as default</Text>
-            )}
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
-  )
-}
+import MyCard from "../components/MyCard"
+import useCardManagement from "../hooks/useCardManagement"
+import usePaymentIntent from "../hooks/usePaymentIntent"
+import { CardField, useConfirmSetupIntent } from "@stripe/stripe-react-native"
+import Modal from "react-native-modal"
+import Button from "../components/Button"
 
 export default function SettingsScreen() {
   const navigation = useNavigation()
+  const { control, handleSubmit, errors, watch, getValues, reset } =
+    useForm<any>({
+      mode: "onBlur",
+    })
+
   const {
     data: billingData,
     loading: billingLoading,
     error: billingError,
+    refetch: billingRefetch,
   } = useBillingData()
+
   const { setDefaultCard, data, error, loading } = useSetDefaultCard()
+
+  const [cardModal, setCardModal] = useState<boolean>(false)
+  const showModal = () => {
+    setCardModal(true)
+    hideMenu()
+  }
+
+  const {
+    deleteThisCard,
+    deleteCardData,
+    deleteCardError,
+    deleteCardLoading,
+    addCard,
+    addCardData,
+    addCardError,
+    addCardLoading,
+  } = useCardManagement()
 
   const { currentUser, updateCardData } = useStore(
     (state: AppStateInterface) => ({
@@ -170,6 +74,44 @@ export default function SettingsScreen() {
       updateCardData: state.updateCardData,
     })
   )
+
+  const { client_secret } = usePaymentIntent()
+  const [secret, setSecret] = useState<string>(client_secret)
+  useEffect(() => {
+    setSecret(client_secret)
+  }, [])
+
+  useEffect(() => {
+    client_secret && setSecret(client_secret)
+  }, [client_secret])
+
+  const { confirmSetupIntent, loading: loadingSetupIntent } =
+    useConfirmSetupIntent()
+
+  const onSubmit = async () => {
+    setCardModal(false)
+    // Gather the customer's billing information (e.g., email)
+    const billingDetails = {
+      email: currentUser?.email,
+    }
+
+    const { setupIntent, error } = await confirmSetupIntent(secret, {
+      type: "Card",
+      billingDetails,
+    })
+
+    if (error) {
+      console.log(error)
+    }
+
+    if (setupIntent) {
+      console.log(setupIntent)
+      addCard({ card: `${setupIntent.paymentMethodId}` })
+    }
+
+    if (addCardData?.addCard.success) {
+    }
+  }
 
   let menu: any = null
 
@@ -181,15 +123,29 @@ export default function SettingsScreen() {
     menu.show()
   }
 
+  const hideMenu = () => {
+    menu.hide()
+  }
+
   const setDefault = (id: string) => {
     setDefaultCard({ card: id })
   }
 
+  const deleteCard = (id: string) => {
+    deleteThisCard({ card: id })
+  }
+
   useEffect(() => {
     if (data) {
-      // updateCardData({ last4: data.setDefaultCard.last4 })
+      updateCardData({ last4: data.setDefaultCard.last4 })
     }
   }, [data])
+
+  useEffect(() => {
+    deleteCardData && billingRefetch()
+  }, [deleteCardData])
+
+  console.log(addCardData)
 
   return (
     <Container>
@@ -203,10 +159,7 @@ export default function SettingsScreen() {
             transparent
             onPress={() => navigation.navigate(screenNames.Setting)}
           >
-            <FontAwesome
-              name="chevron-left"
-              style={{ color: colors.white, fontSize: 20 }}
-            />
+            <Feather name="arrow-left" color={colors.white} size={24} />
           </Button>
 
           <Text
@@ -223,14 +176,15 @@ export default function SettingsScreen() {
           <Menu
             ref={setMenuRef}
             button={
-              <FontAwesome
+              <Feather
                 onPress={showMenu}
-                name="ellipsis-h"
-                style={{ color: colors.white, fontSize: 20 }}
+                name="more-vertical"
+                color={colors.white}
+                size={24}
               />
             }
           >
-            <MenuItem>Add a Card</MenuItem>
+            {/* <MenuItem onPress={() => showModal()}>Add a Card</MenuItem> */}
             <MenuDivider />
             {/* <MenuItem onPress={logout}>Logout</MenuItem> */}
           </Menu>
@@ -245,7 +199,6 @@ export default function SettingsScreen() {
               <View style={{ padding: 12 }}>
                 <View
                   style={{
-                    flex: 1,
                     flexDirection: "row",
                     alignItems: "center",
                     marginBottom: 25,
@@ -264,7 +217,57 @@ export default function SettingsScreen() {
                   >
                     My cards
                   </Text>
+
+                  <TouchableOpacity
+                    onPress={() => setCardModal(true)}
+                    style={{ marginLeft: 10 }}
+                  >
+                    <FontAwesome name="plus" color={colors.pink} size={16} />
+                  </TouchableOpacity>
                 </View>
+
+                <Modal
+                  isVisible={cardModal}
+                  useNativeDriver
+                  onBackButtonPress={() => setCardModal(false)}
+                  onBackdropPress={() => setCardModal(false)}
+                >
+                  <View style={styles.modal}>
+                    <CardField
+                      postalCodeEnabled={true}
+                      placeholder={{
+                        number: "4242 4242 4242 4242",
+                      }}
+                      cardStyle={{
+                        backgroundColor: "#FFFFFF",
+                        textColor: "#000000",
+                        borderWidth: 1,
+                        borderColor: "#fce3e9",
+                        borderRadius: 5,
+                      }}
+                      style={{
+                        width: "100%",
+                        height: 45,
+                        marginVertical: 30,
+                      }}
+                    />
+                    <Button
+                      onPress={handleSubmit(onSubmit)}
+                      style={{
+                        backgroundColor: colors.pink,
+                        maxWidth: "30%",
+                        marginTop: 20,
+                        paddingTop: 7,
+                        paddingBottom: 7,
+                        borderRadius: 5,
+                      }}
+                    >
+                      <Text style={{ color: colors.white }}>Add</Text>
+                    </Button>
+                  </View>
+                </Modal>
+
+                {addCardLoading && <Spinner color={colors.pink} />}
 
                 {billingData.myCards.map((card: CardInterface) => (
                   <MyCard
@@ -272,7 +275,9 @@ export default function SettingsScreen() {
                     {...card}
                     isDefault={currentUser?.pm_last_four === card.last4}
                     updateDefaultCard={setDefault}
+                    deleteCard={deleteCard}
                     loading={loading}
+                    deleteCardLoading={deleteCardLoading}
                   />
                 ))}
 
@@ -352,5 +357,11 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     borderBottomColor: colors.lightGrey,
     borderBottomWidth: 0.2,
+  },
+  modal: {
+    borderRadius: 5,
+    overflow: "hidden",
+    backgroundColor: colors.white,
+    padding: 10,
   },
 })
