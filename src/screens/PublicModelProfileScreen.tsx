@@ -294,6 +294,7 @@ export default function PublicModelProfileScreen() {
                           : colors.white,
                         borderWidth: 1,
                         height: 40,
+                        width: 345,
                       }}
                       onPress={() =>
                         !viewPaymentMethod
@@ -316,6 +317,7 @@ export default function PublicModelProfileScreen() {
                         marginLeft: 4,
                         borderColor: colors.pink,
                         borderWidth: 1,
+                        height: 40,
                       }}
                     >
                       <FontAwesome

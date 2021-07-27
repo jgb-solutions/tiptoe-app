@@ -13,12 +13,11 @@ import {
 import { Feather } from "@expo/vector-icons"
 
 import { useNavigation } from "@react-navigation/native"
-import { ViewStyle, StyleSheet, TouchableOpacity } from "react-native"
+import { StyleSheet, TouchableOpacity } from "react-native"
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
 
 import { colors } from "../utils/colors"
 import { screenNames } from "../utils/screens"
-import { formatToUnits } from "../utils/formatNumber"
 import useStore, { AppStateInterface } from "../store"
 import useMyModels from "../hooks/useMyModels"
 import useMyFollowers from "../hooks/useMyFollowers"
@@ -214,7 +213,7 @@ export default function ProfileScreen() {
                   borderColor: colors.pink,
                   borderWidth: 1,
                   paddingVertical: 10,
-                  width: 180,
+                  width: 200,
                   borderRadius: 0,
                 }}
                 onPress={() => setShowModelInfo(false)}
@@ -234,7 +233,7 @@ export default function ProfileScreen() {
                   borderColor: colors.pink,
                   justifyContent: "center",
                   paddingVertical: 10,
-                  width: 180,
+                  width: 200,
                   borderRadius: 0,
                 }}
                 onPress={() => setShowModelInfo(true)}
@@ -346,10 +345,12 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {currentUser?.user_type === "consumer" ? (
+        {currentUser?.user_type === "consumer" && modelList > 0 ? (
           <ModelCard modelLoading={modelLoading} modelList={modelList} />
         ) : (
-          <UserCard userLoading={followerLoading} userList={userList} />
+          userList && (
+            <UserCard userLoading={followerLoading} userList={userList} />
+          )
         )}
       </Content>
     </Container>
