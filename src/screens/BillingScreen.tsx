@@ -9,7 +9,7 @@ import {
   View,
   Spinner,
 } from "native-base"
-import { FontAwesome, Feather } from "@expo/vector-icons"
+import { FontAwesome, Feather, MaterialIcons } from "@expo/vector-icons"
 import { useForm } from "react-hook-form"
 
 import { screenNames } from "../utils/screens"
@@ -34,6 +34,9 @@ import usePaymentIntent from "../hooks/usePaymentIntent"
 import { CardField, useConfirmSetupIntent } from "@stripe/stripe-react-native"
 import Modal from "react-native-modal"
 import Button from "../components/Button"
+import { SCREEN_WIDTH } from "../utils/constants"
+import Stats from "../components/Starts"
+import useMyFollowers from "../hooks/useMyFollowers"
 
 export default function SettingsScreen() {
   const navigation = useNavigation()
@@ -145,7 +148,10 @@ export default function SettingsScreen() {
     deleteCardData && billingRefetch()
   }, [deleteCardData])
 
-  console.log(addCardData)
+  const { followersData, followerLoading, followerError } = useMyFollowers()
+
+  const followerList = followersData?.fetchMyFollowers
+  const newUserCount = currentUser?.modele?.new_follower_count
 
   return (
     <Container>
@@ -191,6 +197,68 @@ export default function SettingsScreen() {
         </Right>
       </Header>
       <Content>
+        {currentUser?.user_type === "model" && (
+          <View style={styles.infoBox}>
+            <View style={styles.box}>
+              <Stats
+                title={`Falower${followerList?.length !== 1 ? "s" : ""}`}
+                number={followerList?.length}
+                sign={
+                  <Feather
+                    name={followerList?.length !== 1 ? "users" : "user"}
+                    size={17}
+                    style={{ marginRight: 10 }}
+                    color="black"
+                  />
+                }
+              />
+            </View>
+
+            <View style={styles.box}>
+              <Stats
+                title={`Total money`}
+                number={100000}
+                sign={
+                  <Feather
+                    name="dollar-sign"
+                    size={17}
+                    style={{ marginRight: 10 }}
+                    color="black"
+                  />
+                }
+              />
+            </View>
+
+            <View style={styles.box}>
+              <Stats
+                title={`Balance`}
+                number={50}
+                sign={
+                  <Feather
+                    name="dollar-sign"
+                    size={17}
+                    style={{ marginRight: 10 }}
+                    color="black"
+                  />
+                }
+              />
+            </View>
+          </View>
+        )}
+
+        <View style={{ padding: 15, flexDirection: "row" }}>
+          <Feather
+            name="user-plus"
+            size={17}
+            style={{ marginRight: 10 }}
+            color="black"
+          />
+          <Text>
+            {newUserCount} new follower{newUserCount !== 1 ? "s" : ""} this
+            month
+          </Text>
+        </View>
+
         {billingLoading ? (
           <Spinner color={colors.pink} />
         ) : (
@@ -233,6 +301,7 @@ export default function SettingsScreen() {
                   onBackdropPress={() => setCardModal(false)}
                 >
                   <View style={styles.modal}>
+                    <Text style={styles.title}>Add a new Card</Text>
                     <CardField
                       postalCodeEnabled={true}
                       placeholder={{
@@ -281,6 +350,13 @@ export default function SettingsScreen() {
                   />
                 ))}
 
+                {billingData.myCards.length === 0 && (
+                  <Text style={[styles.notFound, { marginTop: -15 }]}>
+                    {" "}
+                    No card found
+                  </Text>
+                )}
+
                 <View
                   style={{
                     flex: 1,
@@ -327,6 +403,10 @@ export default function SettingsScreen() {
                     {/* <Text style={{ color: colors.blackOpact }}></Text> */}
                   </TouchableOpacity>
                 ))}
+
+                {billingData.myInvoices.length === 0 && (
+                  <Text style={styles.notFound}> No invoice found</Text>
+                )}
               </View>
             </ScrollView>
           )
@@ -341,6 +421,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  title: {
+    color: colors.pink,
+    fontSize: 18,
+    fontWeight: "bold",
   },
   displayNone: {
     opacity: 0,
@@ -363,5 +448,26 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: colors.white,
     padding: 10,
+  },
+  infoBox: {
+    flex: 1,
+    flexDirection: "row",
+    padding: 10,
+    justifyContent: "space-between",
+  },
+  box: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: SCREEN_WIDTH / 3.5,
+    height: 70,
+    borderWidth: 1,
+    backgroundColor: colors.pinkOpact,
+    borderColor: colors.pinkOpact,
+    borderRadius: 5,
+  },
+  notFound: {
+    color: colors.pink,
+    marginLeft: 25,
   },
 })
