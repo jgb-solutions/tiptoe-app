@@ -264,3 +264,22 @@ export const GETMODELPRICE = gql`
     }
   }
 `
+export const FETCH_MY_MODELS = gql`
+  query {
+    fetchMyModels {
+      id
+      stage_name
+      hash
+      poster
+    }
+  }
+`
+export const FETCH_MY_FOLLOWERS = gql`
+  query {
+    fetchMyFollowers {
+      id
+      name
+      avatar
+    }
+  }
+`
