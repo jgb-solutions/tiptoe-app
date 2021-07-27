@@ -124,6 +124,7 @@ export const FETCH_MODEL = gql`
       hash
       instagram
       followed_by_me
+      new_follower_count
       photos {
         id
         uri
@@ -135,6 +136,7 @@ export const FETCH_MODEL = gql`
       followers {
         id
         name
+        is_new
       }
     }
 
@@ -280,6 +282,7 @@ export const FETCH_MY_FOLLOWERS = gql`
       id
       name
       avatar
+      created_at
     }
   }
 `

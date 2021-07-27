@@ -24,9 +24,11 @@ export const SIGN_USER_UP = gql`
             twitter
             youtube
             poster
+            new_follower_count
             followers {
               id
               name
+              is_new
             }
             photos {
               id
@@ -81,9 +83,11 @@ export const LOG_USER_IN = gql`
           twitter
           youtube
           poster
+          new_follower_count
           followers {
             id
             name
+            is_new
           }
           photos {
             id
