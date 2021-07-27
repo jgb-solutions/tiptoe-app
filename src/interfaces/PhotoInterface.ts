@@ -1,4 +1,5 @@
 export default interface PhotoInterface {
+	bucket: string;
 	for_my_modele: PhotoInterface;
 	type: string;
 	id: string

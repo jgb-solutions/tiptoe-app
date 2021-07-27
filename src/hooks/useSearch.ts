@@ -2,24 +2,24 @@ import { useState } from "react"
 import { useQuery } from "@apollo/react-hooks"
 import get from "lodash/get"
 
-import { FETCH_FAVORITE_PHOTOS } from "../graphql/queries"
-import { FETCH_FAVORITE_PHOTOS_NUMBER } from "../utils/constants"
+import { FETCH_PHOTOS } from "../graphql/queries"
+import { FETCH_PHOTOS_NUMBER } from "../utils/constants"
 
-export default function useFavoritePhotos() {
+export default function useSearch() {
 	const [hasMore, setHasMore] = useState(true)
 	const { loading, error, data, fetchMore, refetch, subscribeToMore } =
-		useQuery(FETCH_FAVORITE_PHOTOS, {
+		useQuery(FETCH_PHOTOS, {
 			fetchPolicy: "network-only",
 			// notifyOnNetworkStatusChange: true,
 			variables: {
-				first: FETCH_FAVORITE_PHOTOS_NUMBER,
+				page: 1,
+				first: FETCH_PHOTOS_NUMBER,
 				orderBy: [{ column: "created_at", order: "DESC" }],
 			},
 		})
  
-	const loadMorePhotos = () => {
-		const { currentPage } = data.favoritePhoto.paginatorInfo
-
+	const loadMore = () => {
+		const { currentPage } = data.photos.paginatorInfo
 		fetchMore({
 			variables: {
 				page: currentPage + 1,
@@ -53,9 +53,10 @@ export default function useFavoritePhotos() {
 		loading,
 		error,
 		data,
-		loadMorePhotos,
-		hasMorePhotos: hasMore,
+		loadMore,
+		hasMore,
 		refetch,
 		subscribeToMore,
 	}
+
 }

@@ -1,7 +1,9 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Root } from "native-base"
-import AppLoading from 'expo-app-loading'
+import AppLoading from "expo-app-loading"
 import { StripeProvider } from "@stripe/stripe-react-native"
+import useStore, { AppStateInterface } from "./src/store"
+
 import {
   useFonts,
   Roboto_100Thin,
@@ -16,7 +18,7 @@ import {
   Roboto_700Bold_Italic,
   Roboto_900Black,
   Roboto_900Black_Italic,
-} from '@expo-google-fonts/roboto'
+} from "@expo-google-fonts/roboto"
 
 import { MainNavigation } from "./src/navigation"
 
@@ -36,12 +38,17 @@ export default function App() {
     Roboto_900Black_Italic,
   })
 
+  const { publishableKey: key } = useStore((state: AppStateInterface) => ({
+    publishableKey: state.publishableKey,
+  }))
 
   if (!fontsLoaded) return <AppLoading />
 
   return (
     <Root>
-      <StripeProvider publishableKey="pk_test_51HnTzqAEoJWPUiKcW6O3xeaLujtzRtqg2sZO0VcAX11sQVYrIFlZSxFMHWKKJhYBoNaZesz7vPRTYlD4GszN0REB00HZ5uloE6">
+      <StripeProvider
+        publishableKey={`pk_test_51IljqbEERboeLMjcnCmNOaFBA7buzIpWXz8ifCdpdzCrtgMkggYfXYWMz6tBXnRMsFIAy8k4bMU8R8qYkxFjkCGF00lYjHyvLT`}
+      >
         <MainNavigation />
       </StripeProvider>
     </Root>

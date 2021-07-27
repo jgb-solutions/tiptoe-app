@@ -18,11 +18,12 @@ import AddPhotoStep2Screen from "../screens/AddPhotoStep2Screen"
 import AddPhotoStep3Screen from "../screens/AddPhotoStep3Screen"
 import SettingsScreen from "../screens/SettingsScreen"
 import ChangePasswordScreen from "../screens/ChangePasswordScreen"
-import LogInWithEmailScreen from "../screens/LogInWithEmailScreen."
+import LogInWithEmailScreen from "../screens/LogInWithEmailScreen"
 import SignUpWithEmailScreen from "../screens/SignUpWithEmailScreen"
 import PublicModelProfileScreen from "../screens/PublicModelProfileScreen"
 import TermsConditionScreen from "../screens/TermsConditionScreen"
 import BillingScreen from "../screens/BillingScreen"
+import ModelPriceScreen from "../screens/ModelPriceScreen"
 
 // Other stuff
 import { colors } from "../utils/colors"
@@ -179,6 +180,10 @@ function MainNavigation() {
 						<Stack.Screen
 							name={screenNames.Billing}
 							component={BillingScreen}
+						/>
+						<Stack.Screen
+							name={screenNames.ModelPrice}
+							component={ModelPriceScreen}
 						/>
 						<Stack.Screen
 							name={screenNames.UpdateInfo}

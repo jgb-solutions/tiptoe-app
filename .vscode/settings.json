@@ -1,0 +1,22 @@
+
+{
+    "workbench.colorCustomizations": {
+      "activityBar.activeBackground": "#f1849d",
+      "activityBar.activeBorder": "#d1f8c6",
+      "activityBar.background": "#f1849d",
+      "activityBar.foreground": "#15202b",
+      "activityBar.inactiveForeground": "#15202b99",
+      "activityBarBadge.background": "#d1f8c6",
+      "activityBarBadge.foreground": "#15202b",
+      "statusBar.background": "#ec5678",
+      "statusBar.foreground": "#15202b",
+      "statusBarItem.hoverBackground": "#e72853",
+      "titleBar.activeBackground": "#ec5678",
+      "titleBar.activeForeground": "#15202b",
+      "titleBar.inactiveBackground": "#ec567899",
+      "titleBar.inactiveForeground": "#15202b99"
+    },
+    "peacock.color": "#EC5678",
+    "prettier.semi": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }

@@ -15,4 +15,5 @@ export default interface UserInterface {
 	user_type: string 
 	gender: string
 	updated_at: Date
+	pm_last_four: string
 }

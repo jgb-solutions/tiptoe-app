@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { screenNames } from "../utils/screens"
-import { Text, View, Button, Item, Input, Label } from "native-base"
+import { Text, View, Item, Input, Label } from "native-base"
 import * as Permissions from "expo-permissions"
 
 import { colors } from "../utils/colors"
