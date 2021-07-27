@@ -5,7 +5,7 @@ export const colors = {
   white: "#ffffff",
   red: "#ab3954",
   pink: "#EC5678",
-  pinkOpact: "#f0ced5",
+  pinkOpact: "rgba(236, 86, 120, 0.1)",
   darkGrey: "#434343",
   lightGrey: "#bbbbbb",
   error: "#ff0000",
