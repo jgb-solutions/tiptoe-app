@@ -32,7 +32,7 @@ export default function HomeScreen() {
   const {
     photosLoading,
     photosError,
-    photosData,
+    photoData,
     loadMorePhotos,
     refetchPhotos,
     subscribeToMorePhotos,
@@ -70,7 +70,7 @@ export default function HomeScreen() {
                   })
                 }}
               />
-              {photosData.photos.data.filter(
+              {photoData.photos.data.filter(
                 (photo: any) =>
                   (photo.for_my_modele || photo.is_for_me) && photo
               ).length === 0 && (
@@ -103,7 +103,7 @@ export default function HomeScreen() {
               </Text>
             </View>
           )}
-          data={photosData?.photos?.data}
+          data={photoData?.photos?.data}
           keyExtractor={(photo) => photo.id}
           renderItem={({ item: photo }: { item: PhotoInterface }) => (
             <View>
