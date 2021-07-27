@@ -18,7 +18,7 @@ import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
 import { colors } from "../utils/colors"
 import useStore, { AppStateInterface } from "../store"
 import { RouteProp, useNavigation } from "@react-navigation/native"
-import { TouchableOpacity } from "react-native-gesture-handler"
+import { TouchableOpacity, ScrollView } from "react-native-gesture-handler"
 import Button from "../components/Button"
 
 export default function SettingsScreen() {
@@ -68,98 +68,97 @@ export default function SettingsScreen() {
         </Left>
       </Header>
       <Content>
-        <View>
-          <View
-            style={{
-              flexDirection: "row",
-              borderTopColor: "#EFEFEF",
-              borderTopWidth: 1,
-              padding: 12,
-            }}
-          >
-            <FontAwesome
-              name="user"
-              style={{
-                fontSize: 17,
-                color: colors.pink,
-                marginRight: 10,
-              }}
-            />
+        <ScrollView style={{ padding: 5 }}>
+          <View style={styles.row}>
             <TouchableOpacity
               onPress={() => navigation.navigate(screenNames.UpdateInfo)}
+              style={styles.rowBox}
             >
-              <Text>Update account information</Text>
+              <Feather
+                name="user"
+                size={30}
+                color={colors.pink}
+                style={{
+                  width: 50,
+                }}
+              />
+              <Text style={styles.textRow}>Update account information</Text>
             </TouchableOpacity>
+
+            <Feather
+              name="chevron-right"
+              size={25}
+              color={colors.pink}
+              style={{}}
+            />
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              borderTopColor: "#EFEFEF",
-              borderTopWidth: 1,
-              padding: 12,
-            }}
-          >
-            <FontAwesome
-              name="money"
-              style={{
-                fontSize: 17,
-                color: colors.pink,
-                marginRight: 10,
-              }}
-            />
-
+          <View style={styles.row}>
             <TouchableOpacity
               onPress={() => navigation.navigate(screenNames.Billing)}
+              style={styles.rowBox}
             >
-              <Text>Billing information</Text>
+              <FontAwesome
+                name="money"
+                size={30}
+                color={colors.pink}
+                style={{
+                  width: 50,
+                }}
+              />
+              <Text style={styles.textRow}>Billing information</Text>
             </TouchableOpacity>
+            <Feather
+              name="chevron-right"
+              size={25}
+              color={colors.pink}
+              style={{}}
+            />
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              borderTopColor: "#EFEFEF",
-              borderTopWidth: 1,
-              padding: 12,
-            }}
-          >
-            <FontAwesome
-              name="lock"
-              style={{
-                fontSize: 17,
-                color: colors.pink,
-                marginRight: 10,
-              }}
-            />
+          <View style={styles.row}>
             <TouchableOpacity
               onPress={() => navigation.navigate(screenNames.ChangePassword)}
+              style={styles.rowBox}
             >
-              <Text>Change password</Text>
+              <Feather
+                name="lock"
+                size={30}
+                color={colors.pink}
+                style={{
+                  width: 50,
+                }}
+              />
+              <Text style={styles.textRow}>Change password</Text>
             </TouchableOpacity>
+            <Feather
+              name="chevron-right"
+              size={25}
+              color={colors.pink}
+              style={{}}
+            />
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              borderTopColor: "#EFEFEF",
-              borderTopWidth: 1,
-              padding: 12,
-            }}
-          >
-            <FontAwesome
-              name="trash"
-              style={{
-                fontSize: 17,
-                color: colors.pink,
-                marginRight: 10,
-              }}
-            />
-            <TouchableOpacity>
-              <Text>Delete my account</Text>
+          <View style={styles.row}>
+            <TouchableOpacity style={styles.rowBox}>
+              <Feather
+                name="trash"
+                size={30}
+                color={colors.pink}
+                style={{
+                  width: 50,
+                }}
+              />
+              <Text style={styles.textRow}>Delete my account</Text>
             </TouchableOpacity>
+            <Feather
+              name="chevron-right"
+              size={25}
+              color={colors.pink}
+              style={{}}
+            />
           </View>
-        </View>
+        </ScrollView>
       </Content>
     </Container>
   )
@@ -170,5 +169,30 @@ const styles = StyleSheet.create({
     opacity: 0,
     height: 0,
     flex: 0,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 5,
+    margin: 5,
+    borderWidth: 1,
+    borderColor: colors.pinkOpact,
+    borderRadius: 5,
+    shadowColor: colors.pink,
+    overflow: "hidden",
+    shadowRadius: 10,
+    shadowOpacity: 1,
+
+    elevation: 3,
+  },
+  rowBox: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textRow: {
+    color: colors.blackOpact,
+    fontSize: 17,
+    fontWeight: "bold",
   },
 })
