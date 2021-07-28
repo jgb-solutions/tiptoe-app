@@ -182,8 +182,7 @@ const styles = StyleSheet.create({
     shadowColor: colors.pink,
     overflow: "hidden",
     shadowRadius: 10,
-    shadowOpacity: 1,
-
+    shadowOpacity: 0.3,
     elevation: 3,
   },
   rowBox: {
