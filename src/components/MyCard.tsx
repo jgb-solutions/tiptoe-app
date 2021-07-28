@@ -45,16 +45,31 @@ const MyCard: FC<
           width: "70%",
         }}
       >
-        <FontAwesome
-          // @ts-ignore
-          name={`cc-${brand}`}
-          style={{
-            fontSize: 34,
+        {console.log(brand)}
+        {brand === "unionpay" ? (
+          <FontAwesome
             // @ts-ignore
-            color: colors[brand] || "",
-            marginRight: 10,
-          }}
-        />
+            name={`credit-card`}
+            style={{
+              fontSize: 34,
+              // @ts-ignore
+              color: colors[brand] || "",
+              marginRight: 10,
+            }}
+          />
+        ) : (
+          <FontAwesome
+            // @ts-ignore
+            name={`cc-${brand === "diners" ? "diners-club" : brand}`}
+            style={{
+              fontSize: 34,
+              // @ts-ignore
+              color: colors[brand] || "",
+              marginRight: 10,
+            }}
+          />
+        )}
+
         <View>
           <Text style={{ color: colors.blackOpact }}>
             {[1, 2, 3].map((list) => (
