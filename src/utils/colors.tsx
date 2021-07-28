@@ -14,5 +14,9 @@ export const colors = {
   warning: "#e79d43",
   visa: "#4267b2",
   discover: "#722335",
-  mastercard: "#374554",
+  mastercard: "#F25A01",
+  amex: "#0269C6",
+  diners: "",
+  jcb: "#C9A453",
+  unionpay: "#122444",
 }
