@@ -35,7 +35,9 @@ export default function ProfileScreen() {
     logout: state.doLogout,
     currentUser: state.authData.user,
   }))
-  const [isAmodel, setIsAmodel] = useState(currentUser?.modele ? true : false)
+
+  const [isAmodel, setIsAmodel] = useState(currentUser?.user_type === "MODEL")
+
   const [showModelInfo, setShowModelInfo] = useState(false)
 
   let menu: any = null
@@ -140,16 +142,18 @@ export default function ProfileScreen() {
               >
                 <Stats
                   title={`Post${
-                    currentUser?.modele?.photos?.length !== 1 ? "s" : ""
+                    currentUser?.modele?.photos_count !== 1 ? "s" : ""
                   }`}
-                  number={currentUser?.modele?.photos?.length}
+                  //@ts-ignore
+                  number={currentUser?.modele?.photos_count}
                 />
                 <Stats
                   style={{ marginLeft: 12 }}
                   title={`Follower${
-                    currentUser?.modele?.followers.length !== 1 ? "s" : ""
+                    currentUser?.modele?.followers_count !== 1 ? "s" : ""
                   }`}
-                  number={currentUser?.modele?.followers.length}
+                  //@ts-ignore
+                  number={currentUser?.modele?.followers_count}
                 />
               </View>
             ) : (
@@ -163,7 +167,13 @@ export default function ProfileScreen() {
                 }}
               >
                 <View>
-                  <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      fontWeight: "bold",
+                      color: colors.pink,
+                    }}
+                  >
                     {currentUser?.name}
                   </Text>
                 </View>
@@ -213,7 +223,7 @@ export default function ProfileScreen() {
                   borderColor: colors.pink,
                   borderWidth: 1,
                   paddingVertical: 10,
-                  width: 200,
+                  width: 195,
                   borderRadius: 0,
                 }}
                 onPress={() => setShowModelInfo(false)}
@@ -233,7 +243,7 @@ export default function ProfileScreen() {
                   borderColor: colors.pink,
                   justifyContent: "center",
                   paddingVertical: 10,
-                  width: 200,
+                  width: 195,
                   borderRadius: 0,
                 }}
                 onPress={() => setShowModelInfo(true)}
@@ -299,7 +309,7 @@ export default function ProfileScreen() {
 
               <Text>{currentUser?.modele?.youtube}</Text>
             </View>
-            {price.cost ? (
+            {price?.cost ? (
               <View style={styles.infos}>
                 <Text style={styles.mediaText}>Price</Text>
                 <TouchableOpacity
@@ -312,7 +322,7 @@ export default function ProfileScreen() {
                       fontWeight: "bold",
                     }}
                   >
-                    ${price.cost}{" "}
+                    ${price?.cost}{" "}
                     <Feather
                       name="edit"
                       size={17}
@@ -345,13 +355,11 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {currentUser?.user_type === "consumer" && modelList > 0 ? (
-          <ModelCard modelLoading={modelLoading} modelList={modelList} />
-        ) : (
-          userList && (
-            <UserCard userLoading={followerLoading} userList={userList} />
-          )
+        {currentUser?.user_type === "MODEL" && userList && (
+          <UserCard userLoading={followerLoading} userList={userList} />
         )}
+
+        <ModelCard modelLoading={modelLoading} modelList={modelList} />
       </Content>
     </Container>
   )
