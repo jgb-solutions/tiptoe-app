@@ -18,35 +18,20 @@ export const SIGN_USER_UP = gql`
             id
             stage_name
             bio
-            hash
             facebook
+            hash
             instagram
             twitter
             youtube
             poster
+            modele_account_data {
+              account
+              balance
+              created_at
+            }
             new_follower_count
-            followers {
-              id
-              name
-              is_new
-            }
-            photos {
-              id
-              uri
-              bucket
-              caption
-              detail
-              featured
-              publish
-              category {
-                id
-                name
-              }
-              users {
-                id
-                name
-              }
-            }
+            photos_count
+            followers_count
             created_at
           }
         }
@@ -83,29 +68,14 @@ export const LOG_USER_IN = gql`
           twitter
           youtube
           poster
+          modele_account_data {
+            account
+            balance
+            created_at
+          }
           new_follower_count
-          followers {
-            id
-            name
-            is_new
-          }
-          photos {
-            id
-            uri
-            bucket
-            caption
-            detail
-            featured
-            publish
-            category {
-              id
-              name
-            }
-            users {
-              id
-              name
-            }
-          }
+          photos_count
+          followers_count
           created_at
         }
       }
