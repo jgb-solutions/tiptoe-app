@@ -13,7 +13,9 @@ export default interface UserInterface {
   name: string
   telephone: string
   user_type: string
+  is_model: boolean
+  is_cunsumer: boolean
   gender: string
   updated_at: Date
-  pm_last_four: string
+  pm_last_four?: string
 }
