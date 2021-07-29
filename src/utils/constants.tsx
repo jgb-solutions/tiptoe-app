@@ -33,3 +33,5 @@ export const FETCH_FAVORITE_PHOTOS_NUMBER = 24
 
 export const SCREEN_WIDTH = Dimensions.get("window").width
 export const SCREEN_HEIGHT = Dimensions.get("window").height
+export const DEFAULT_AVATAR =
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Info_Simple_bw.svg/1024px-Info_Simple_bw.svg.png"
