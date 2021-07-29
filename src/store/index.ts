@@ -30,6 +30,7 @@ export type AppStateInterface = {
   doLogin: (userData: UserDataInterface) => void
   doLogout: () => void
   updateCardData: (params: { last4: string }) => void
+  updateUserState: (userData: UserDataInterface) => void
 }
 
 export const INITIAL_USER_STATE = {
@@ -80,6 +81,24 @@ const useStore = createStore<AppStateInterface>(
             isLoggedIn: true,
           },
         }))
+      },
+      updateUserState: async (userData) => {
+        set(({ authData }) => {
+          const { user, ...rest } = authData
+          if (user) {
+            return {
+              authData: {
+                ...rest,
+                user: {
+                  ...user,
+                  ...userData,
+                },
+              },
+            }
+          } else {
+            return { authData }
+          }
+        })
       },
       doLogout: async () => {
         set((_) => ({
