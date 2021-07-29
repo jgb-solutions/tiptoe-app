@@ -9,7 +9,7 @@ import {
   View,
   Spinner,
 } from "native-base"
-import { FontAwesome, Feather, MaterialIcons } from "@expo/vector-icons"
+import { FontAwesome, Feather } from "@expo/vector-icons"
 import { useForm } from "react-hook-form"
 
 import { screenNames } from "../utils/screens"
@@ -197,67 +197,83 @@ export default function SettingsScreen() {
         </Right>
       </Header>
       <Content>
-        {currentUser?.user_type === "model" && (
-          <View style={styles.infoBox}>
-            <View style={styles.box}>
-              <Stats
-                title={`Falower${followerList?.length !== 1 ? "s" : ""}`}
-                number={followerList?.length}
-                sign={
-                  <Feather
-                    name={followerList?.length !== 1 ? "users" : "user"}
-                    size={17}
-                    style={{ marginRight: 10 }}
-                    color="black"
-                  />
-                }
-              />
+        {currentUser?.is_model && (
+          <View>
+            <View style={styles.infoBox}>
+              <View style={styles.box}>
+                <Stats
+                  title={`Falower${followerList?.length !== 1 ? "s" : ""}`}
+                  number={followerList?.length}
+                  sign={
+                    <Feather
+                      name={followerList?.length !== 1 ? "users" : "user"}
+                      size={17}
+                      style={{ marginRight: 10 }}
+                      color={colors.pink}
+                    />
+                  }
+                />
+              </View>
+
+              <View style={styles.box}>
+                <Stats
+                  title={`Total money`}
+                  //@ts-ignore
+                  number={currentUser?.modele?.modele_account_data?.account}
+                  sign={
+                    <Feather
+                      name="dollar-sign"
+                      size={17}
+                      style={{ marginRight: 10 }}
+                      color={colors.pink}
+                    />
+                  }
+                />
+              </View>
+
+              <View style={styles.box}>
+                <Stats
+                  title={`Balance`}
+                  //@ts-ignore
+                  number={currentUser?.modele?.modele_account_data?.balance}
+                  sign={
+                    <Feather
+                      name="dollar-sign"
+                      size={17}
+                      style={{ marginRight: 10 }}
+                      color={colors.pink}
+                    />
+                  }
+                />
+              </View>
             </View>
 
-            <View style={styles.box}>
-              <Stats
-                title={`Total money`}
-                number={100000}
-                sign={
-                  <Feather
-                    name="dollar-sign"
-                    size={17}
-                    style={{ marginRight: 10 }}
-                    color="black"
-                  />
-                }
+            <View
+              style={{
+                padding: 15,
+                flexDirection: "row",
+                borderWidth: 1,
+                borderColor: colors.pinkOpact,
+                shadowColor: colors.pink,
+                overflow: "hidden",
+                shadowRadius: 10,
+                shadowOpacity: 0.5,
+                elevation: 3,
+              }}
+            >
+              <Feather
+                name="user-plus"
+                size={17}
+                style={{ marginRight: 10 }}
+                color="black"
               />
-            </View>
-
-            <View style={styles.box}>
-              <Stats
-                title={`Balance`}
-                number={50}
-                sign={
-                  <Feather
-                    name="dollar-sign"
-                    size={17}
-                    style={{ marginRight: 10 }}
-                    color="black"
-                  />
-                }
-              />
+              <Text>
+                {newUserCount} new follower{newUserCount !== 1 ? "s" : ""} this
+                month
+              </Text>
             </View>
           </View>
         )}
-
-        <View style={{ padding: 15, flexDirection: "row" }}>
-          <Feather
-            name="user-plus"
-            size={17}
-            style={{ marginRight: 10 }}
-            color="black"
-          />
-          <Text>
-            {newUserCount} new follower{newUserCount !== 1 ? "s" : ""} this
-            month
-          </Text>
-        </View>
 
         {billingLoading ? (
           <Spinner color={colors.pink} />
@@ -464,7 +480,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: colors.pinkOpact,
     borderColor: colors.pinkOpact,
-    borderRadius: 5,
+    borderRadius: 10,
   },
   notFound: {
     color: colors.pink,

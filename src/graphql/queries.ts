@@ -232,7 +232,7 @@ export const GETPUBLISHABLEKEY = gql`
   }
 `
 
-export const CREATEPAYMENTINTENT = gql`
+export const CREATE_PAYMENT_INTENT = gql`
   query createPaymentIntent {
     createPaymentIntent {
       client_secret
@@ -258,7 +258,7 @@ export const BILLING = gql`
     }
   }
 `
-export const GETMODELPRICE = gql`
+export const GET_MODEL_PRICE = gql`
   query modelInformation($hash: String) {
     getModelPrice(hash: $hash) {
       price_id

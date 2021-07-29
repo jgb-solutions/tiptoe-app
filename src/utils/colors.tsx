@@ -3,6 +3,7 @@ export const colors = {
   blackB: "#282523",
   blackOpact: "rgba(10, 10, 10, 0.6)",
   white: "#ffffff",
+  whiteOpact: "rgba(255, 255, 255, 0.5)",
   red: "#ab3954",
   pink: "#EC5678",
   pinkOpact: "rgba(236, 86, 120, 0.1)",
@@ -14,5 +15,9 @@ export const colors = {
   warning: "#e79d43",
   visa: "#4267b2",
   discover: "#722335",
-  mastercard: "#374554",
+  mastercard: "#F25A01",
+  amex: "#0269C6",
+  diners: "#AEB4BB",
+  jcb: "#C9A453",
+  unionpay: "#122444",
 }

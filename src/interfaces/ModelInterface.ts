@@ -1,5 +1,6 @@
 import RoomInterface from "./RoomInterface"
 import PhotoInterface from "./PhotoInterface"
+import ModelAccountInterface from "./ModelAccountInterface"
 
 interface FollowerInterface {
   id: string
@@ -16,6 +17,7 @@ export default interface ModelInterface {
   hash: string
   poster: string
   bio: string
+  modele_account_data: ModelAccountInterface
   facebook: string
   twitter: string
   youtube: string
@@ -24,5 +26,7 @@ export default interface ModelInterface {
   followers: FollowerInterface
   followed_by_me: boolean
   roomWithMe?: RoomInterface
-  new_follower_count: number
+  new_follower_count?: number
+  followers_count?: number
+  photos_count?: number
 }

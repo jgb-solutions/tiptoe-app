@@ -18,18 +18,25 @@ const ModelCard: FC<{
       <View
         style={{
           marginBottom: 15,
-          backgroundColor: colors.pink,
           padding: 5,
           borderRadius: 5,
           maxWidth: 130,
+          shadowColor: colors.pink,
+          overflow: "hidden",
+          shadowRadius: 10,
+          shadowOpacity: 0.5,
+          elevation: 3,
         }}
       >
         <Text
           style={{
             fontWeight: "bold",
             fontSize: 18,
-            color: colors.white,
-            textAlign: "center",
+            color: colors.pink,
+            textAlign: "left",
+            textDecorationColor: colors.pink,
+            textDecorationStyle: "solid",
+            textDecorationLine: "underline",
           }}
         >
           My Models
