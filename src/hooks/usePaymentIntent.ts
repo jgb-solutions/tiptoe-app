@@ -1,13 +1,11 @@
 import { useQuery } from "@apollo/react-hooks"
 
-import { CREATEPAYMENTINTENT } from "../graphql/queries"
+import { CREATE_PAYMENT_INTENT } from "../graphql/queries"
 
 export default function usePaymentIntent() {
-	const {
-		data
-	} = useQuery(CREATEPAYMENTINTENT)
+  const { data } = useQuery(CREATE_PAYMENT_INTENT)
 
-	return { 
-		client_secret: data?.createPaymentIntent?.client_secret,
-	}
+  return {
+    client_secret: data?.createPaymentIntent?.client_secret,
+  }
 }
