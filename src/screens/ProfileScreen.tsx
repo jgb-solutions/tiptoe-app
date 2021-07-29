@@ -36,7 +36,7 @@ export default function ProfileScreen() {
     currentUser: state.authData.user,
   }))
 
-  const [isAmodel, setIsAmodel] = useState(currentUser?.user_type === "MODEL")
+  const [isAmodel, setIsAmodel] = useState(currentUser?.is_model)
 
   const [showModelInfo, setShowModelInfo] = useState(false)
 
@@ -355,7 +355,7 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {currentUser?.user_type === "MODEL" && userList && (
+        {currentUser?.is_model && userList && (
           <UserCard userLoading={followerLoading} userList={userList} />
         )}
 

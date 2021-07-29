@@ -149,7 +149,7 @@ export default function SettingsScreen() {
                   width: 50,
                 }}
               />
-              <Text style={styles.textRow}>Delete my account</Text>
+              <Text style={styles.textRow}>Delete account</Text>
             </TouchableOpacity>
             <Feather
               name="chevron-right"

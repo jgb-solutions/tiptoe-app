@@ -9,7 +9,7 @@ import {
   View,
   Spinner,
 } from "native-base"
-import { FontAwesome, Feather, MaterialIcons } from "@expo/vector-icons"
+import { FontAwesome, Feather } from "@expo/vector-icons"
 import { useForm } from "react-hook-form"
 
 import { screenNames } from "../utils/screens"
@@ -197,7 +197,7 @@ export default function SettingsScreen() {
         </Right>
       </Header>
       <Content>
-        {currentUser?.user_type === "MODEL" && (
+        {currentUser?.is_model && (
           <View>
             <View style={styles.infoBox}>
               <View style={styles.box}>
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: colors.pinkOpact,
     borderColor: colors.pinkOpact,
-    borderRadius: 100,
+    borderRadius: 10,
   },
   notFound: {
     color: colors.pink,
