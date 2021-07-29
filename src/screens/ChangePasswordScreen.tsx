@@ -10,11 +10,8 @@ import {
   Thumbnail,
   Input,
 } from "native-base"
-import * as mime from "react-native-mime-types"
-import Textarea from "react-native-textarea"
-import { Feather, Entypo, FontAwesome } from "@expo/vector-icons"
+import { Feather } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
-import * as ImagePicker from "expo-image-picker"
 
 import { useNavigation } from "@react-navigation/native"
 import { StyleSheet } from "react-native"
@@ -22,20 +19,11 @@ import { StyleSheet } from "react-native"
 import { colors } from "../utils/colors"
 import { screenNames } from "../utils/screens"
 import useStore, { AppStateInterface } from "../store"
-import ModelInterface from "../interfaces/ModelInterface"
 
 import Button from "../components/Button"
 import { TouchableOpacity } from "react-native-gesture-handler"
-import useUpdateUser from "../hooks/useUpdateUser"
-import UpdateUserInterface from "../interfaces/UpdateUserInterface"
-import SelectPicker from "react-native-form-select-picker"
-import UserInterface from "../interfaces/UserInterface"
 import { DEFAULT_AVATAR } from "../utils/constants"
 import useChangePassword from "../hooks/useChangePassword"
-
-const GENDERS = ["MALE", "FEMALE", "OTHER"]
-
-type Gender = "FEMALE" | "MALE" | "OTHER"
 
 export interface Credentials {
   password: string
@@ -102,7 +90,7 @@ export default function UpdateInfoScreen() {
               color: colors.white,
             }}
           >
-            Edit Profile
+            Change password
           </Text>
         </Left>
         <Right>
@@ -227,6 +215,20 @@ export default function UpdateInfoScreen() {
             />
           </View>
 
+          <View>
+            {errors?.password && (
+              <Text
+                style={{
+                  color: colors.error,
+                  marginTop: 4,
+                  fontSize: 15,
+                }}
+              >
+                {errors?.password}
+              </Text>
+            )}
+          </View>
+
           <View style={styles.infos}>
             <Text style={styles.mediaText}>New password</Text>
             <Controller
@@ -245,6 +247,20 @@ export default function UpdateInfoScreen() {
               rules={{ required: "The new password is required" }}
             />
           </View>
+
+          {/* {errors.new_password && (
+            <View>
+              <Text
+                style={{
+                  color: colors.error,
+                  marginTop: 4,
+                  fontSize: 15,
+                }}
+              >
+                {errors.new_password}
+              </Text>
+            </View>
+          )} */}
 
           <View style={styles.infos}>
             <Text style={styles.mediaText}>Confirm password</Text>
@@ -269,20 +285,19 @@ export default function UpdateInfoScreen() {
             />
           </View>
 
-          <View>
-            {Object.keys(errors).map((error: string, idx) => (
+          {/* {errors.password_confirmation && (
+            <View>
               <Text
-                key={error}
                 style={{
                   color: colors.error,
                   marginTop: 4,
                   fontSize: 15,
                 }}
               >
-                {idx + 1}- {error}
+                {errors.password_confirmation}
               </Text>
-            ))}
-          </View>
+            </View>
+          )} */}
         </View>
       </Content>
     </Container>
