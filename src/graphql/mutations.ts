@@ -13,6 +13,8 @@ export const SIGN_USER_UP = gql`
           telephone
           created_at
           user_type
+          is_model
+          is_consumer
           gender
           modele {
             id
@@ -56,6 +58,8 @@ export const LOG_USER_IN = gql`
         telephone
         created_at
         user_type
+        is_model
+        is_consumer
         gender
         pm_last_four
         modele {
