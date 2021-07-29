@@ -6,7 +6,6 @@ import {
   FETCH_MY_MODELS,
   GET_MODEL_PRICE,
 } from "../graphql/queries"
-import ModelInterface from "../interfaces/ModelInterface"
 import UpdateModelInterface from "../interfaces/UpdateModelInterface"
 import UpdateUserInterface from "../interfaces/UpdateUserInterface"
 
