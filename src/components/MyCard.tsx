@@ -45,7 +45,6 @@ const MyCard: FC<
           width: "70%",
         }}
       >
-        {console.log(brand)}
         {brand === "unionpay" ? (
           <FontAwesome
             // @ts-ignore
@@ -53,7 +52,7 @@ const MyCard: FC<
             style={{
               fontSize: 34,
               // @ts-ignore
-              color: colors[brand] || "",
+              color: colors[brand],
               marginRight: 10,
             }}
           />
