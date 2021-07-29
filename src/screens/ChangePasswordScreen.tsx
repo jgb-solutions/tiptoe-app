@@ -1,117 +1,63 @@
-import React, { useState, useRef } from "react"
+import React, { useState } from "react"
 import { Container, Header, Content, Text, Icon, Left, View } from "native-base"
-import { formatToUnits } from "../utils/formatNumber"
+import Constants from "expo-constants"
+
 import { screenNames } from "../utils/screens"
 import FormInput from "../components/FormInput"
-import { request } from "graphql-request"
-import { GRAPHQL_API_URL } from "../utils/constants"
-import { CHANGE_PASSWORD } from "../graphql/mutations"
 
-import { StyleSheet, ScrollView, SafeAreaView, ViewStyle } from "react-native"
+import {
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  Platform,
+  Image,
+} from "react-native"
 
 import { colors } from "../utils/colors"
-import useStore, { AppStateInterface } from "../store"
+import useChangePassword from "../hooks/useChangePassword"
 import { useNavigation } from "@react-navigation/native"
-import { TouchableOpacity } from "react-native-gesture-handler"
 import FormButton from "../components/FormButton"
 
 import { useForm, Controller } from "react-hook-form"
-
-type StatsProps = {
-  number: number
-  title: string
-  style?: ViewStyle
-}
-
-const Stats = ({ number, title, style }: StatsProps) => (
-  <View style={{ alignItems: "center", ...style }}>
-    <Text style={{ fontWeight: "bold" }}>
-      {number > 999 ? formatToUnits(number) : number}
-    </Text>
-    <Text>{title}</Text>
-  </View>
-)
-
-type ButtonProps = {
-  style?: ViewStyle
-  children: React.ReactNode
-  onPress?: () => void
-  transparent?: boolean
-  disable?: boolean
-}
-
-const Button = ({
-  children,
-  style,
-  onPress,
-  transparent,
-  disable,
-}: ButtonProps) => {
-  const handleOnPress = () => {
-    if (disable) return
-
-    onPress && onPress()
-  }
-
-  return (
-    <TouchableOpacity
-      style={[
-        {
-          alignItems: "center",
-          justifyContent: "center",
-          paddingHorizontal: 8,
-          paddingVertical: 2,
-          borderRadius: 6,
-          opacity: disable ? 0.7 : 1,
-          backgroundColor: transparent ? "transparent" : undefined,
-          ...style,
-        },
-      ]}
-      onPress={handleOnPress}
-    >
-      {children}
-    </TouchableOpacity>
-  )
-}
+import Button from "../components/Button"
+const TipToeLogo = require("../../assets/images/TipToeLogo.png")
 
 export interface Credentials {
   password: string
-  newPassword: string
-  passwordConfirmation: string
+  new_password: string
+  password_confirmation: string
 }
 
 export default function ChangePasswordScreen() {
-  const { control, handleSubmit, errors } = useForm<Credentials>({
+  const { control, handleSubmit, errors, watch } = useForm<Credentials>({
     mode: "onBlur",
   })
 
+  const {
+    changePassword,
+    changePasswordLoading,
+    changePasswordError,
+    changePasswordData,
+  } = useChangePassword()
+
   const navigation = useNavigation()
-  const { currentUser } = useStore((state: AppStateInterface) => ({
-    currentUser: state.authData.user,
-  }))
 
   const [passwordError, setPasswordError] = useState<any | null>("")
 
-  const changePassword = async (input: Credentials) => {
+  const onSubmit = async (credentials: Credentials) => {
     try {
-      const { register: data } = await request(
-        GRAPHQL_API_URL,
-        CHANGE_PASSWORD,
-        {
-          input: input,
-        }
-      )
+      const payload = {
+        password: credentials.password,
+        new_password: credentials.new_password,
+      }
+      changePassword(payload)
 
-      if (data) {
-        navigation.navigate(screenNames.Profile)
+      if (changePasswordError) {
+        console.log(changePasswordError)
       }
 
-      if (input.newPassword !== input.passwordConfirmation) {
-        setPasswordError("Password confirmation must match")
-      }
-
-      if (errors) {
-        setPasswordError("something went wrong. Please check again")
+      if (changePasswordData.message) {
+        alert(changePasswordData.message)
       }
     } catch (error) {
       setPasswordError(error.response.errors[0].message)
@@ -148,7 +94,7 @@ export default function ChangePasswordScreen() {
       <Content>
         <SafeAreaView style={styles.container}>
           <ScrollView contentContainerStyle={styles.contentContainer}>
-            {/* <Image style={styles.image} source={TipToeLogo} /> */}
+            <Image style={styles.image} source={TipToeLogo} />
 
             <Text style={styles.password}>Reset password</Text>
             <Text style={styles.passwordError}>{passwordError}</Text>
@@ -182,12 +128,11 @@ export default function ChangePasswordScreen() {
                     onChangeText={(value) => onChange(value)}
                     value={value}
                     placeholder="Enter The New Password"
-                    error={errors.newPassword}
+                    error={errors.new_password}
                   />
                 )}
-                name="newPassword"
+                name="new_password"
                 rules={{ required: "The new password is required" }}
-                defaultValue=""
               />
 
               <Controller
@@ -200,19 +145,23 @@ export default function ChangePasswordScreen() {
                     onChangeText={(value) => onChange(value)}
                     value={value}
                     placeholder="Confirm Your new Password"
-                    error={errors.passwordConfirmation}
+                    error={errors.password_confirmation}
                   />
                 )}
-                name="passwordConfirmation"
-                rules={{ required: "The confirmation password is required" }}
-                defaultValue=""
+                name="password_confirmation"
+                rules={{
+                  required: true,
+                  validate: (value) =>
+                    value === watch("new_password") || "Passwords don't match.",
+                }}
               />
             </View>
 
             <FormButton
               btnStyle={{ marginBottom: 12 }}
-              label="Change"
-              onPress={handleSubmit(changePassword)}
+              label={changePasswordLoading ? "please wait..." : "Change"}
+              onPress={handleSubmit(onSubmit)}
+              disabled={changePasswordLoading}
             />
           </ScrollView>
         </SafeAreaView>
@@ -251,5 +200,18 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     // color: colors.white,
     fontSize: 12,
+  },
+  image: {
+    width: 200,
+    height: 78,
+    resizeMode: "contain",
+    ...Platform.select({
+      ios: {
+        marginTop: 54,
+      },
+      android: {
+        marginTop: Constants.statusBarHeight + 54,
+      },
+    }),
   },
 })
