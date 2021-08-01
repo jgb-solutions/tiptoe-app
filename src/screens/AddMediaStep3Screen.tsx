@@ -12,26 +12,26 @@ import { graphqlClient } from "../utils/graphqlClient"
 import { ADD_PHOTO_MUTATION } from "../graphql/mutations"
 
 import {
-	WASABI_ACCESS_KEY_ID, 
-	WASABI_SECRET_ACCESS_KEY, 
-	WASABI_DEFAULT_REGION, 
+	WASABI_ACCESS_KEY_ID,
+	WASABI_SECRET_ACCESS_KEY,
+	WASABI_DEFAULT_REGION,
 	WASABI_BUCKET,
 	WASABI_URL
 } from '@env'
 
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system'
 
 
 import path from "react-native-path"
 
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
-var wasabiEndpoint = new AWS.Endpoint('s3.wasabisys.com');
-var s3 = new AWS.S3({
-    endpoint: wasabiEndpoint,
-    accessKeyId: WASABI_ACCESS_KEY_ID,
-    secretAccessKey: WASABI_SECRET_ACCESS_KEY
-});
+const wasabiEndpoint = new AWS.Endpoint('s3.wasabisys.com')
+const s3 = new AWS.S3({
+	endpoint: wasabiEndpoint,
+	accessKeyId: WASABI_ACCESS_KEY_ID,
+	secretAccessKey: WASABI_SECRET_ACCESS_KEY
+})
 
 type RouteParamsProps = RouteProp<
 	{
@@ -72,11 +72,10 @@ export default function AddPhotoStep2Screen() {
 		})
 	}, [route])
 
-	const publish = () => {
+	const publish = async () => {
 		let payload = {
 			caption: route.params?.photo.caption,
-			detail: route.params?.photo.details,
-			type: route.params?.photo.asset.mediaType, 
+			type: route.params?.photo.asset.mediaType,
 			category_id: parseInt(`${route.params?.photo.category_id}`),
 			modele_id: parseInt(`${currentUser?.modele?.id}`),
 			publish: true,
@@ -84,22 +83,30 @@ export default function AddPhotoStep2Screen() {
 			uri: null
 		}
 
+		const imagePath = route.params?.photo.asset.uri
+		const imageExt = route.params?.photo.asset.filename.split('.').pop()
+		let media = await (await fetch(imagePath)).blob()
 
-		var params = {
-			Bucket: "file.tiptoe.app", 
+		console.log(media)
+
+		const fileData = new File([media], route.params?.photo.asset.filename)
+		console.log(fileData)
+
+		const params = {
+			Bucket: "file.tiptoe.app",
 			Key: path.basename(route.params?.photo.asset.filename),
-			Body: route.params?.photo.asset.uri,
-			Metadata: { 'type': route.params?.photo.asset.mediaType},
+			Body: fileData,
+			Metadata: { 'type': route.params?.photo.asset.mediaType },
 			ACL: 'public-read',
-		};
+		}
 
-		var options = {
+		const options = {
 			partSize: 10 * 1024 * 1024, // 10 MB
 			queueSize: 10,
-		};
+		}
 
 
-		s3.upload(params, options, async function (err: any, data:any) {
+		s3.upload(params, options, async function (err: any, data: any) {
 			if (!err) {
 				// successful response
 				console.log(data.Location)
@@ -107,14 +114,14 @@ export default function AddPhotoStep2Screen() {
 					...payload,
 					bucket: data.Bucket,
 					uri: data.Location
-				} 
+				}
 
 				try {
-					const { addPhoto } = await  graphqlClient.request(
-					ADD_PHOTO_MUTATION,
-					{ input: payload },
+					const { addPhoto } = await graphqlClient.request(
+						ADD_PHOTO_MUTATION,
+						{ input: payload },
 					)
-						
+
 					if (addPhoto) {
 						navigation.navigate(screenNames.Home)
 					}
@@ -123,11 +130,11 @@ export default function AddPhotoStep2Screen() {
 				}
 
 			} else {
-				console.log(err); // an error occurred
+				console.log(err) // an error occurred
 			}
-		});
+		})
 	}
- 
+
 	return (
 		<Container>
 			<Header
@@ -162,9 +169,11 @@ export default function AddPhotoStep2Screen() {
 				</Body>
 				<Right style={{ flex: 1 }}>
 					<TouchableOpacity onPress={publish}>
-						<Text
-							style={{ fontSize: 18, fontWeight: "bold", color: colors.white }}
-						>
+						<Text style={{
+							fontSize: 18,
+							fontWeight: "bold",
+							color: colors.white
+						}}>
 							Publish
 						</Text>
 					</TouchableOpacity>

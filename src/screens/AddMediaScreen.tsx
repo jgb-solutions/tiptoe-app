@@ -49,7 +49,7 @@ export type UserFormRouteParamsProps = RouteProp<
   "params"
 >
 
-export default function AddPhotoScreen() {
+export default function AddMediaScreen() {
   const navigation = useNavigation()
   createContext(null)
 
@@ -135,7 +135,7 @@ export default function AddPhotoScreen() {
               fontSize: 18,
             }}
           >
-            Add a Photo
+            New Post
           </Text>
         </Left>
         <Right style={{ flex: 1 }}>
@@ -182,8 +182,7 @@ export default function AddPhotoScreen() {
                 fetchAllPhotosFromLibrary(galleryImages.length + 10)
               }
             }}
-            scrollEventThrottle={400}
-          >
+            scrollEventThrottle={400}>
             <View style={styles.imageWrapper}>
               {galleryImages?.map((image: any) => (
                 <TouchableOpacity
@@ -193,8 +192,7 @@ export default function AddPhotoScreen() {
                       ...imageSelected,
                       asset: image,
                     })
-                  }
-                >
+                  }>
                   <Image
                     style={styles.image}
                     source={{
@@ -210,8 +208,6 @@ export default function AddPhotoScreen() {
     </Container>
   )
 }
-
-AddPhotoScreen.propTypes = {}
 
 const styles = StyleSheet.create({
   container: {

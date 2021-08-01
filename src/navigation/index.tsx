@@ -13,9 +13,9 @@ import UpdateInfoScreen from "../screens/UpdateInfoScreen"
 import ProfileScreen from "../screens/ProfileScreen"
 import ChatListScreen from "../screens/ChatListScreen"
 import FavoritesScreen from "../screens/FavoritesScreen"
-import AddPhotoScreen from "../screens/AddPhotoScreen"
-import AddPhotoStep2Screen from "../screens/AddPhotoStep2Screen"
-import AddPhotoStep3Screen from "../screens/AddPhotoStep3Screen"
+import AddMediaScreen from "../screens/AddMediaScreen"
+import AddPhotoStep2Screen from "../screens/AddMediaStep2Screen"
+import AddPhotoStep3Screen from "../screens/AddMediaStep3Screen"
 import SettingsScreen from "../screens/SettingsScreen"
 import ChangePasswordScreen from "../screens/ChangePasswordScreen"
 import LogInWithEmailScreen from "../screens/LogInWithEmailScreen"
@@ -91,7 +91,7 @@ function TabNavigation() {
 			{currentUser?.modele && (
 				<Tab.Screen
 					name={screenNames.Add}
-					component={AddPhotoScreen}
+					component={AddMediaScreen}
 					options={{
 						tabBarLabel: "Add Photo",
 						tabBarIcon: ({ color, size }) => (

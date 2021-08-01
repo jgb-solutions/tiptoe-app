@@ -11,11 +11,11 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { useForm, Controller } from "react-hook-form"
 import Textarea from "react-native-textarea"
+import { SCREEN_WIDTH } from "../utils/constants"
 
 export interface Credentials {
 	type: string
 	category_id: number
-	details: string
 	caption: string
 }
 
@@ -58,7 +58,7 @@ export default function AddPhotoStep2Screen() {
 		navigation.navigate(screenNames.AddPhotoStep3, {
 			photo: payload
 		})
-		
+
 		// alert(JSON.stringify(payload))
 		// navigation.navigate(screenNames.Home)
 	}
@@ -87,7 +87,6 @@ export default function AddPhotoStep2Screen() {
 									...image,
 									caption: watch("caption"),
 									category_id: watch("category_id"),
-									details: watch("details"),
 								})
 							}
 						>
@@ -96,45 +95,25 @@ export default function AddPhotoStep2Screen() {
 					</Text>
 				</Left>
 				<Body>
-					<Text
-						style={{ fontSize: 18, fontWeight: "bold", color: colors.white }}
-					>
-						Add a Photo
+					<Text style={{ fontSize: 18, fontWeight: "bold", color: colors.white }}>
+						Media info
 					</Text>
 				</Body>
 				<Right style={{ flex: 1 }}>
-					<TouchableOpacity  onPress={handleSubmit(onSubmit)}>
+					<TouchableOpacity onPress={handleSubmit(onSubmit)}>
 						<Icon name="arrow-forward" style={{ color: colors.white }} />
 					</TouchableOpacity>
 				</Right>
 			</Header>
 			<Content>
-				<Item
-					style={[
-						styles.items,
-						{ height: 100, flexDirection: "row", paddingHorizontal: 10 },
-					]}
-				>
-					<Image
-						source={{ uri: image?.asset?.uri }}
-						style={{ height: 70, width: 70 }}
-					/>
-					<View style={styles.inputContainer}>
-						<Controller
-							control={control}
-							render={({ onChange, onBlur, value }) => (
-								<Input
-									style={{ paddingLeft: 9 }}
-									placeholder="Add a caption"
-									value={value}
-									onChangeText={(value) => onChange(value)}
-								/>
-							)}
-							name="caption"
-							rules={{ required: "The caption is required" }}
-						/>
-					</View>
-				</Item>
+				<Image
+					source={{ uri: image?.asset?.uri }}
+					style={{
+						width: SCREEN_WIDTH * .9,
+						height: SCREEN_WIDTH * .9,
+						alignSelf: 'center'
+					}}
+				/>
 
 				<Item style={[styles.items, { paddingBottom: 10 }]}>
 					<View style={styles.inputContainer}>
@@ -164,8 +143,8 @@ export default function AddPhotoStep2Screen() {
 				<Item style={[styles.items, { paddingBottom: 10, height: 100 }]}>
 					<View style={styles.inputContainer}>
 						<Controller
-							name="details"
-							rules={{ required: "Please add some details" }}
+							name="caption"
+							rules={{ required: "Say something about this" }}
 							control={control}
 							render={({ onChange, onBlur, value }) => (
 								<Textarea
@@ -174,7 +153,7 @@ export default function AddPhotoStep2Screen() {
 									onChangeText={(value: string) => onChange(value)}
 									defaultValue={value}
 									// maxLength={300}
-									placeholder={"Add details here"}
+									placeholder={"Add your caption here"}
 									placeholderTextColor={"#c7c7c7"}
 									underlineColorAndroid={"transparent"}
 								/>
