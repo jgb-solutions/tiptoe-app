@@ -39,7 +39,6 @@ export default function PublicModelProfileScreen() {
     photoData: data,
     loadMorePhotos,
     refetchPhotos: refetch,
-    subscribeToMorePhotos: subscribeToMore,
   } = usePhotos()
 
   const {
@@ -61,28 +60,15 @@ export default function PublicModelProfileScreen() {
     })
   }
 
-  useEffect(() => {
-    refetch()
-  }, [])
-
-  useEffect(() => {
-    // fetch new types of data depending on
-    // the segment that was clicked 'on
-    switch (segmentNameChosen) {
-      case "Medias":
-        refetch()
-        break
-      case "Models":
-        refetchModels()
-        break
-    }
-  }, [segmentNameChosen])
+  // useEffect(() => {
+  //   refetch()
+  // }, [])
 
   const handleSearch = (text: string) => {
     console.log(`Searching for ${text}`)
   }
 
-  console.log(data)
+  // console.log(data)
   return (
     <Container>
       <Header
