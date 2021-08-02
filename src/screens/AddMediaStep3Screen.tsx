@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react"
+import { TouchableOpacity } from "react-native"
 import { Container, Header, Content, Text, Icon, Left, Right, Body, } from "native-base"
-import { screenNames } from "../utils/screens"
-
-import PhotoCard from "../components/PhotoCard"
+import * as MediaLibrary from "expo-media-library"
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 
 import { colors } from "../utils/colors"
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
-import { TouchableOpacity } from "react-native-gesture-handler"
+import { screenNames } from "../utils/screens"
+import MediaCard from "../components/MediaCard"
 import useStore, { AppStateInterface } from "../store"
 import { graphqlClient } from "../utils/graphqlClient"
 import { ADD_PHOTO_MUTATION } from "../graphql/mutations"
@@ -19,10 +19,7 @@ import {
 	WASABI_URL
 } from '@env'
 
-import * as FileSystem from 'expo-file-system'
-
-
-import path from "react-native-path"
+import ModelInterface from "../interfaces/ModelInterface"
 
 const AWS = require('aws-sdk')
 
@@ -33,14 +30,17 @@ const s3 = new AWS.S3({
 	secretAccessKey: WASABI_SECRET_ACCESS_KEY
 })
 
-type RouteParamsProps = RouteProp<
-	{
-		params: {
-			photo: any
-		}
-	},
-	"params"
->
+export interface AppMedia {
+	caption: string
+	category_id: string
+	asset: MediaLibrary.Asset
+}
+
+type RouteParamsProps = RouteProp<{
+	params: {
+		media: AppMedia
+	}
+}, "params">
 
 export default function AddPhotoStep2Screen() {
 	const { currentUser } = useStore((state: AppStateInterface) => ({
@@ -49,54 +49,63 @@ export default function AddPhotoStep2Screen() {
 
 	const navigation = useNavigation()
 
-
-	const route = useRoute<RouteParamsProps>()
-	const [data, setData] = useState<any>()
-	const [photoSelected, setPhotoSelected] = useState<any>()
+	const { params } = useRoute<RouteParamsProps>()
+	const [media, setMedia] = useState<AppMedia>()
+	const [assetSelected, setAssetSelected] = useState<{
+		id: string,
+		type: string,
+		uri: string,
+		modele?: ModelInterface,
+		likes_count: number,
+		liked_by_me: boolean,
+		caption: string
+	}>()
 
 	useEffect(() => {
-		photoSelected && setPhotoSelected(photoSelected)
-	}, [photoSelected])
+		assetSelected && setAssetSelected(assetSelected)
+	}, [assetSelected])
 
 	useEffect(() => {
-		setData(route.params?.photo)
-		setPhotoSelected({
-			id: 1,
-			type: route.params?.photo.asset.mediaType,
-			uri: route.params?.photo.asset.uri,
+		setMedia(params?.media)
+
+		setAssetSelected({
+			id: params.media.asset.id,
+			type: params?.media?.asset.mediaType,
+			uri: params?.media?.asset.uri,
 			modele: currentUser?.modele,
 			likes_count: 0,
 			liked_by_me: false,
-			caption: route.params?.photo.caption,
-			details: route.params?.photo.details
+			caption: params?.media.caption,
 		})
-	}, [route])
+	}, [params])
 
 	const publish = async () => {
 		let payload = {
-			caption: route.params?.photo.caption,
-			type: route.params?.photo.asset.mediaType,
-			category_id: parseInt(`${route.params?.photo.category_id}`),
+			caption: params?.media.caption,
+			type: params?.media.asset.mediaType,
+			category_id: parseInt(`${params?.media.category_id}`),
 			modele_id: parseInt(`${currentUser?.modele?.id}`),
 			publish: true,
 			bucket: null,
 			uri: null
 		}
 
-		const imagePath = route.params?.photo.asset.uri
-		const imageExt = route.params?.photo.asset.filename.split('.').pop()
-		let media = await (await fetch(imagePath)).blob()
+		const assetPath = params?.media.asset.uri
+		const assetExt = params?.media.asset.filename.split('.').pop()
+		const assetblob = await (await fetch(assetPath)).blob()
 
-		console.log(media)
+		// console.log(assetblob)
 
-		const fileData = new File([media], route.params?.photo.asset.filename)
+		const fileData = new File([assetblob], params?.media.asset.filename)
+
 		console.log(fileData)
+		return
 
-		const params = {
+		const s3Params = {
 			Bucket: "file.tiptoe.app",
-			Key: path.basename(route.params?.photo.asset.filename),
+			Key: params?.media.asset.filename.split('.').pop(),
 			Body: fileData,
-			Metadata: { 'type': route.params?.photo.asset.mediaType },
+			Metadata: { 'type': params?.media.asset.mediaType },
 			ACL: 'public-read',
 		}
 
@@ -106,7 +115,7 @@ export default function AddPhotoStep2Screen() {
 		}
 
 
-		s3.upload(params, options, async function (err: any, data: any) {
+		s3.upload(s3Params, options, async function (err: any, data: any) {
 			if (!err) {
 				// successful response
 				console.log(data.Location)
@@ -152,7 +161,7 @@ export default function AddPhotoStep2Screen() {
 						<TouchableOpacity
 							onPress={() =>
 								navigation.navigate(screenNames.AddPhotoStep2, {
-									photo: data,
+									media
 								})
 							}
 						>
@@ -161,10 +170,12 @@ export default function AddPhotoStep2Screen() {
 					</Text>
 				</Left>
 				<Body>
-					<Text
-						style={{ fontSize: 18, fontWeight: "bold", color: colors.white }}
-					>
-						Add a Photo
+					<Text style={{
+						fontSize: 18,
+						fontWeight: "bold",
+						color: colors.white
+					}}>
+						New Post
 					</Text>
 				</Body>
 				<Right style={{ flex: 1 }}>
@@ -180,7 +191,7 @@ export default function AddPhotoStep2Screen() {
 				</Right>
 			</Header>
 			<Content>
-				<PhotoCard photo={photoSelected} />
+				{assetSelected && <MediaCard asset={assetSelected} />}
 			</Content>
 		</Container>
 	)

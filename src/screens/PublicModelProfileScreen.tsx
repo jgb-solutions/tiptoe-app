@@ -32,7 +32,7 @@ import useModel from "../hooks/useModel"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import ModelInterface from "../interfaces/ModelInterface"
 import CardInterface from "../interfaces/CardInterface"
-import PhotoCard from "../components/PhotoCard"
+import MediaCard from "../components/MediaCard"
 import useToggleFollow from "../hooks/useToggleFollow"
 import NegativeResponse from "../components/NegativeResponse"
 import { useForm } from "react-hook-form"
@@ -200,9 +200,9 @@ export default function PublicModelProfileScreen() {
             {model?.followed_by_me || !modelData?.getModelPrice?.cost
               ? model?.stage_name
               : "Follow " +
-                model?.stage_name +
-                " for $" +
-                modelData?.getModelPrice?.cost}
+              model?.stage_name +
+              " for $" +
+              modelData?.getModelPrice?.cost}
           </Text>
         </Left>
         <Right style={{ flex: 1 }}>
@@ -264,16 +264,14 @@ export default function PublicModelProfileScreen() {
                       }}
                     >
                       <Stats
-                        title={`Post${
-                          modelData.modele.photos.length !== 1 ? "s" : ""
-                        }`}
+                        title={`Post${modelData.modele.photos.length !== 1 ? "s" : ""
+                          }`}
                         number={modelData.modele.photos.length}
                       />
                       <Stats
                         style={{ marginLeft: 12 }}
-                        title={`Follower${
-                          modelData.modele.followers.length !== 1 ? "s" : ""
-                        }`}
+                        title={`Follower${modelData.modele.followers.length !== 1 ? "s" : ""
+                          }`}
                         number={modelData.modele.followers.length}
                       />
                     </View>
@@ -307,8 +305,8 @@ export default function PublicModelProfileScreen() {
                         {modelData.modele.followed_by_me
                           ? "Unfollow"
                           : !viewPaymentMethod
-                          ? "Follow"
-                          : "Cancel"}
+                            ? "Follow"
+                            : "Cancel"}
                       </Text>
                     </Button>
 
@@ -451,7 +449,7 @@ export default function PublicModelProfileScreen() {
                   onBackdropPress={() => setCurrentPhoto(null)}
                 >
                   <View style={{ borderRadius: 15, overflow: "hidden" }}>
-                    <PhotoCard hideHeader photo={currentPhoto} />
+                    <MediaCard hideHeader photo={currentPhoto} />
                   </View>
                 </Modal>
               )}

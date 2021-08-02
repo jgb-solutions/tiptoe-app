@@ -1,71 +1,63 @@
-import React, { useState, useEffect } from "react"
-import { Container, Header, Content, Text, Icon, Left, Right, View, Body, Item, Input } from "native-base"
-import { screenNames } from "../utils/screens"
-
-import SelectPicker from "react-native-form-select-picker"
-import useCategories from "../hooks/useCategories"
 import { Image, StyleSheet } from "react-native"
+import React, { useState, useEffect } from "react"
+import * as MediaLibrary from "expo-media-library"
+import { Container, Header, Content, Text, Icon, Left, Right, View, Body, Item, Input } from "native-base"
+
+import { screenNames } from "../utils/screens"
+import { SCREEN_WIDTH } from "../utils/constants"
+import useCategories from "../hooks/useCategories"
+import SelectPicker from "react-native-form-select-picker"
 
 import { colors } from "../utils/colors"
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 import { TouchableOpacity } from "react-native-gesture-handler"
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 import { useForm, Controller } from "react-hook-form"
 import Textarea from "react-native-textarea"
-import { SCREEN_WIDTH } from "../utils/constants"
 
-export interface Credentials {
-	type: string
-	category_id: number
+export interface MediaInfo {
+	category_id: string
 	caption: string
 }
 
 type RouteParamsProps = RouteProp<
 	{
 		params: {
-			photo: any
+			media: {
+				caption: string
+				category_id: string
+				asset: MediaLibrary.Asset
+			}
+
+			asset?: MediaLibrary.Asset
 		}
 	},
 	"params"
 >
 
-const DEFAULT_IMAGE =
-	"https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-512.png"
-
-export default function AddPhotoStep2Screen() {
+export default function AddPhotoStrep2Screen() {
 	const navigation = useNavigation()
-
 	const { categoriesData } = useCategories()
-
 	const route = useRoute<RouteParamsProps>()
-	const [image, setImage] = useState<any>(DEFAULT_IMAGE)
+	const [asset, setAsset] = useState<MediaLibrary.Asset>()
 
-	const { control, handleSubmit, formState, watch } = useForm<Credentials>({
+
+	const { control, handleSubmit, formState, watch } = useForm<MediaInfo>({
 		mode: "onBlur",
-		defaultValues: route.params?.photo,
+		defaultValues: {
+			caption: route.params?.media?.caption,
+			category_id: route.params?.media?.category_id
+		}
 	})
 
 	useEffect(() => {
-		setImage(route.params?.photo)
+		setAsset(route.params?.asset)
 	}, [route])
 
-	const onSubmit = (credentials: Credentials) => {
-		const payload = {
-			...image,
-			...credentials,
-			type: image?.asset?.mediaType
-		}
-
+	const onSubmit = (credentials: MediaInfo) => {
 		navigation.navigate(screenNames.AddPhotoStep3, {
-			photo: payload
+			media: { asset, ...credentials }
 		})
-
-		// alert(JSON.stringify(payload))
-		// navigation.navigate(screenNames.Home)
 	}
-
-	const { isValid } = formState
-
-	// console.log(image)
 
 	return (
 		<Container>
@@ -84,7 +76,7 @@ export default function AddPhotoStep2Screen() {
 						<TouchableOpacity
 							onPress={() =>
 								navigation.navigate(screenNames.Add, {
-									...image,
+									asset,
 									caption: watch("caption"),
 									category_id: watch("category_id"),
 								})
@@ -107,7 +99,7 @@ export default function AddPhotoStep2Screen() {
 			</Header>
 			<Content>
 				<Image
-					source={{ uri: image?.asset?.uri }}
+					source={{ uri: asset?.uri }}
 					style={{
 						width: SCREEN_WIDTH * .9,
 						height: SCREEN_WIDTH * .9,

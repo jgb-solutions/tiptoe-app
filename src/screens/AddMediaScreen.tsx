@@ -1,28 +1,14 @@
-import React, { useState, useEffect, createContext } from "react"
-import {
-  Container,
-  Header,
-  Content,
-  Text,
-  Icon,
-  Left,
-  Right,
-  View,
-} from "native-base"
-import { screenNames } from "../utils/screens"
-
-import { Image, StyleSheet, ScrollView, Dimensions } from "react-native"
-
-import { colors } from "../utils/colors"
-import { TouchableOpacity } from "react-native-gesture-handler"
-
+import { Video } from "expo-av"
 import * as MediaLibrary from "expo-media-library"
-
-import { Video, AVPlaybackStatus } from "expo-av"
+import React, { useState, useEffect } from "react"
+import { Container, Header, Content, Text, Icon, Left, Right, View } from "native-base"
+import { Image, StyleSheet, ScrollView } from "react-native"
+import { TouchableOpacity } from "react-native-gesture-handler"
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 
-const SCREEN_WIDTH = Dimensions.get("window").width
-const SCREEN_HEIGHT = Dimensions.get("window").height
+import { screenNames } from "../utils/screens"
+import { colors } from "../utils/colors"
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../utils/constants"
 
 const isCloseToBottom = ({
   layoutMeasurement,
@@ -39,8 +25,7 @@ const isCloseToBottom = ({
 export type UserFormRouteParamsProps = RouteProp<
   {
     params: {
-      uri: string
-      type: string
+      asset: MediaLibrary.Asset
       caption: string
       category_id: string
       details: string
@@ -51,14 +36,11 @@ export type UserFormRouteParamsProps = RouteProp<
 
 export default function AddMediaScreen() {
   const navigation = useNavigation()
-  createContext(null)
-
   const route = useRoute<UserFormRouteParamsProps>()
 
-  const [imageSelected, setImageSelected] = useState<any>()
-  const [galleryImages, setGalleryImages] = useState<any>([])
-  const [loarded, setLoarded] = useState<boolean>(false)
-  const [assetInfo, setAssetInfo] = useState<object>({})
+  const [assetSelected, setAssetSelected] = useState<MediaLibrary.Asset>()
+  const [allMediaAssets, setAllMediaAssets] = useState<MediaLibrary.Asset[]>([])
+  const [loaded, setLoaded] = useState(false)
 
   const video = React.useRef(null)
   const [status, setStatus] = React.useState({})
@@ -68,7 +50,7 @@ export default function AddMediaScreen() {
       const isCameraRolleEnable = await MediaLibrary.requestPermissionsAsync()
 
       if (isCameraRolleEnable.granted) {
-        setLoarded(true)
+        setLoaded(true)
         return
       }
 
@@ -77,45 +59,48 @@ export default function AddMediaScreen() {
         MediaLibrary.getAssetsAsync({
           sortBy: [[MediaLibrary.SortBy.default, true]],
         })
-        setLoarded(true)
+        setLoaded(true)
       }
     }
     askPermission()
-  }, [loarded])
+  }, [loaded])
 
   useEffect(() => {
     fetchAllPhotosFromLibrary()
   }, [])
 
   const fetchAllPhotosFromLibrary = async (amount = 20) => {
-    const getAllPhotos = await MediaLibrary.getAssetsAsync({
+    const allMedia = await MediaLibrary.getAssetsAsync({
       first: amount,
       sortBy: ["creationTime"],
-      mediaType: ["photo", "video"],
+      mediaType: [
+        MediaLibrary.MediaType.photo,
+        MediaLibrary.MediaType.video
+      ],
     })
-    setImageSelected({ asset: getAllPhotos.assets[0] })
-    setGalleryImages(getAllPhotos.assets)
+    console.log(allMedia)
+    setAssetSelected(allMedia.assets[0])
+    setAllMediaAssets(allMedia.assets)
   }
 
   useEffect(() => {
     if (
       route.params?.caption !== "" ||
-      route.params?.details !== "" ||
       route.params?.category_id !== ""
     ) {
-      setImageSelected(route.params)
+      setAssetSelected(route.params?.asset)
     }
   }, [route.params])
 
   const nextStep = () => {
     if (
-      imageSelected.asset?.mediaType === "video" &&
-      imageSelected.asset?.duration > 300
+      assetSelected?.mediaType === "video" &&
+      assetSelected?.duration > 300
     ) {
       alert("The video duration must less than or equal to 5 minutes")
     } else {
       navigation.navigate(screenNames.AddPhotoStep2, {
-        photo: imageSelected,
+        asset: assetSelected,
       })
     }
   }
@@ -153,18 +138,18 @@ export default function AddMediaScreen() {
             width: SCREEN_WIDTH,
           }}
         >
-          <View style={styles.imageSelectedBox}>
-            {imageSelected?.asset?.mediaType === "photo" ? (
+          <View style={styles.assetSelectedBox}>
+            {assetSelected?.mediaType === "photo" ? (
               <Image
-                style={styles.imageSelected}
-                source={{ uri: imageSelected.asset?.uri }}
+                style={styles.assetSelected}
+                source={{ uri: assetSelected.uri }}
               />
             ) : (
               <Video
                 ref={video}
-                style={styles.imageSelected}
+                style={styles.assetSelected}
                 source={{
-                  uri: imageSelected?.asset?.uri,
+                  uri: `${assetSelected?.uri}`,
                 }}
                 useNativeControls
                 resizeMode="contain"
@@ -179,24 +164,19 @@ export default function AddMediaScreen() {
             style={styles.imageBox}
             onScroll={({ nativeEvent }) => {
               if (isCloseToBottom(nativeEvent)) {
-                fetchAllPhotosFromLibrary(galleryImages.length + 10)
+                fetchAllPhotosFromLibrary(allMediaAssets.length + 10)
               }
             }}
             scrollEventThrottle={400}>
             <View style={styles.imageWrapper}>
-              {galleryImages?.map((image: any) => (
+              {allMediaAssets?.map(asset => (
                 <TouchableOpacity
-                  key={image.id}
-                  onPress={() =>
-                    setImageSelected({
-                      ...imageSelected,
-                      asset: image,
-                    })
-                  }>
+                  key={asset.id}
+                  onPress={() => setAssetSelected(asset)}>
                   <Image
                     style={styles.image}
                     source={{
-                      uri: image.uri,
+                      uri: asset.uri,
                     }}
                   />
                 </TouchableOpacity>
@@ -220,7 +200,7 @@ const styles = StyleSheet.create({
     height: 0,
     flex: 0,
   },
-  imageSelectedBox: {
+  assetSelectedBox: {
     height: SCREEN_HEIGHT / 2.3,
     width: "70%",
     padding: 2,
@@ -228,7 +208,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: "#000",
   },
-  imageSelected: {
+  assetSelected: {
     height: "100%",
     width: "100%",
   },

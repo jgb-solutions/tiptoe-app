@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import { Text, Spinner, Item } from "native-base"
+import React, { useEffect } from "react"
+import { Text, Spinner } from "native-base"
 import { View, FlatList } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 
@@ -9,13 +9,13 @@ import usePhotos from "../hooks/usePhotos"
 import Page from "../components/layouts/Page"
 import useHomeData from "../hooks/useHomeData"
 import { screenNames } from "../utils/screens"
-import PhotoCard from "../components/PhotoCard"
+import MediaCard from "../components/MediaCard"
+import useStore, { AppStateInterface } from "../store"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import ModelInterface from "../interfaces/ModelInterface"
-import ThumbnailScrollList from "../components/ThumbnailScrollList"
 import NegativeResponse from "../components/NegativeResponse"
-import useStore, { AppStateInterface } from "../store"
 import useGetPublishableKey from "../hooks/useGetPublishableKey"
+import ThumbnailScrollList from "../components/ThumbnailScrollList"
 
 export default function HomeScreen() {
   const navigation = useNavigation()
@@ -74,20 +74,20 @@ export default function HomeScreen() {
                 (photo: any) =>
                   (photo.for_my_modele || photo.is_for_me) && photo
               ).length === 0 && (
-                <View
-                  style={{
-                    margin: 10,
-                    borderTopColor: colors.blackOpact,
-                    borderTopWidth: 0.17,
-                    paddingTop: 10,
-                  }}
-                >
-                  <Text style={{ textAlign: "center" }}>
-                    Your timeline is empty! You should start following some
-                    models.
-                  </Text>
-                </View>
-              )}
+                  <View
+                    style={{
+                      margin: 10,
+                      borderTopColor: colors.blackOpact,
+                      borderTopWidth: 0.17,
+                      paddingTop: 10,
+                    }}
+                  >
+                    <Text style={{ textAlign: "center" }}>
+                      Your timeline is empty! You should start following some
+                      models.
+                    </Text>
+                  </View>
+                )}
             </>
           }
           ListEmptyComponent={() => (
@@ -108,7 +108,7 @@ export default function HomeScreen() {
           renderItem={({ item: photo }: { item: PhotoInterface }) => (
             <View>
               {(photo.for_my_modele || photo.is_for_me) && (
-                <PhotoCard photo={photo} />
+                <MediaCard asset={photo} />
               )}
             </View>
           )}
