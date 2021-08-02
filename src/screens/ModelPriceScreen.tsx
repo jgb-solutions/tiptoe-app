@@ -18,7 +18,6 @@ import { ViewStyle, StyleSheet, TouchableOpacity } from "react-native"
 
 import { colors } from "../utils/colors"
 import { screenNames } from "../utils/screens"
-import { formatToUnits } from "../utils/formatNumber"
 import useStore, { AppStateInterface } from "../store"
 import useSetupPrice from "../hooks/useSetupPrice"
 
@@ -143,16 +142,18 @@ export default function ModelPriceScreen() {
             >
               <Stats
                 title={`Post${
-                  currentUser?.modele?.photos?.length !== 1 ? "s" : ""
+                  currentUser?.modele?.photos_count !== 1 ? "s" : ""
                 }`}
-                number={currentUser?.modele?.photos?.length}
+                //@ts-ignore
+                number={currentUser?.modele?.photos_count}
               />
               <Stats
                 style={{ marginLeft: 12 }}
                 title={`Follower${
-                  currentUser?.modele?.followers.length !== 1 ? "s" : ""
+                  currentUser?.modele?.followers_count !== 1 ? "s" : ""
                 }`}
-                number={currentUser?.modele?.followers.length}
+                //@ts-ignore
+                number={currentUser?.modele?.followers_count}
               />
             </View>
           </View>
@@ -203,165 +204,178 @@ export default function ModelPriceScreen() {
             </Button>
           </NegativeResponse>
         ) : (
-          <View
-            style={{
-              paddingHorizontal: 15,
-              paddingTop: 20,
-              borderTopColor: colors.pink,
-              borderTopWidth: 1,
-            }}
-          >
-            <Text style={styles.title}>Setup you price</Text>
+          <View>
+            <View
+              style={{
+                backgroundColor: colors.pink,
+                justifyContent: "center",
+                borderColor: colors.pink,
+                borderWidth: 1,
+                padding: 12,
+                borderRadius: 0,
+              }}
+            >
+              <Text style={{ color: colors.white }}>Setup you price</Text>
+            </View>
 
             <View
               style={{
-                marginTop: 20,
+                paddingHorizontal: 15,
+                paddingTop: 20,
+                // borderTopColor: colors.pink,
+                // borderTopWidth: 1,
               }}
             >
-              <Text
+              <View
                 style={{
-                  color: colors.blackB,
+                  marginTop: 20,
                 }}
               >
-                Put the price that you want to receive from your followers every
-                month.
-              </Text>
-
-              <Text
-                style={{
-                  color: colors.blackB,
-                  marginTop: 10,
-                  marginBottom: 50,
-                }}
-              >
-                The price choosen with decrease by 17.7% + $0.30
-              </Text>
-
-              <View style={[{ marginBottom: 30 }, styles.inputContainer]}>
-                <Text style={styles.inputLeft}>Enter your price</Text>
-                <Controller
-                  control={control}
-                  render={({ onChange, onBlur, value }) => (
-                    <Input
-                      keyboardType="numeric"
-                      style={[
-                        styles.inputRight,
-                        {
-                          borderBottomColor: errors.cost
-                            ? colors.pink
-                            : colors.blackOpact,
-                        },
-                      ]}
-                      placeholderTextColor={
-                        errors.cost ? colors.pink : colors.blackOpact
-                      }
-                      placeholder={
-                        errors.cost ? "Please enter a number" : "Ex: 200"
-                      }
-                      autoCapitalize="none"
-                      onChangeText={(value) => onChange(value)}
-                      value={value}
-                      defaultValue={cost?.cost ? `${cost?.cost}` : ""}
-                    />
-                  )}
-                  name="cost"
-                  type="number"
-                  rules={{ required: true }}
-                />
-              </View>
-
-              <View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLeftDetails}></Text>
-                  <Text style={styles.inputRightDetails}>
-                    Decrease by 17.7% | - $
-                    {cost?.cost && (parseInt(cost?.cost) * 17.7) / 100}
-                  </Text>
-                </View>
-
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLeftDetails}></Text>
-                  <Text style={styles.inputRightDetails}>- $0.30</Text>
-                </View>
-
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLeftDetails}></Text>
-
-                  <TouchableOpacity onPress={() => setShowDetais(true)}>
-                    <Text style={[styles.inputRightDetails]}>
-                      Total receive: $
-                      {cost?.cost &&
-                        parseInt(cost?.cost) -
-                          ((parseInt(cost?.cost) * 17.7) / 100 + 0.3)}{" "}
-                      <Entypo
-                        name="info-with-circle"
-                        size={17}
-                        color={colors.pink}
-                      />
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-                <Modal
-                  isVisible={showDetails}
-                  useNativeDriver
-                  onBackButtonPress={() => setShowDetais(false)}
-                  onBackdropPress={() => setShowDetais(false)}
-                >
-                  <View style={styles.modal}>
-                    <Text style={[{ marginBottom: 10 }, styles.title]}>
-                      Here are the details about the payment
-                    </Text>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        marginBottom: 5,
-                      }}
-                    >
-                      <FontAwesome
-                        name="hand-o-right"
-                        size={17}
-                        color={colors.pink}
-                      />
-                      <Text style={{ marginLeft: 10 }}>
-                        We charrge you 15% for the the service
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        marginBottom: 5,
-                      }}
-                    >
-                      <FontAwesome
-                        name="hand-o-right"
-                        size={17}
-                        color={colors.pink}
-                      />
-                      <Text style={{ marginLeft: 10 }}>
-                        We use Stripe and they charge 2.7% + $0.30 per payment
-                      </Text>
-                    </View>
-                  </View>
-                </Modal>
-
-                <View
+                <Text
                   style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    marginTop: 50,
+                    color: colors.blackB,
                   }}
                 >
-                  <Button
-                    style={styles.buttonStyle}
-                    onPress={handleSubmit(onSubmit)}
-                    disable={disabled}
-                  >
-                    <Text style={{ color: colors.white }}>
-                      Submit your price
+                  Put the price that you want to receive from your followers
+                  every month.
+                </Text>
+
+                <Text
+                  style={{
+                    color: colors.blackB,
+                    marginTop: 10,
+                    marginBottom: 50,
+                  }}
+                >
+                  The price choosen with decrease by 17.7% + $0.30
+                </Text>
+
+                <View style={[{ marginBottom: 30 }, styles.inputContainer]}>
+                  <Text style={styles.inputLeft}>Enter your price</Text>
+                  <Controller
+                    control={control}
+                    render={({ onChange, onBlur, value }) => (
+                      <Input
+                        keyboardType="numeric"
+                        style={[
+                          styles.inputRight,
+                          {
+                            borderBottomColor: errors.cost
+                              ? colors.pink
+                              : colors.blackOpact,
+                          },
+                        ]}
+                        placeholderTextColor={
+                          errors.cost ? colors.pink : colors.blackOpact
+                        }
+                        placeholder={
+                          errors.cost ? "Please enter a number" : "Ex: 200"
+                        }
+                        autoCapitalize="none"
+                        onChangeText={(value) => onChange(value)}
+                        value={value}
+                        defaultValue={cost?.cost ? `${cost?.cost}` : ""}
+                      />
+                    )}
+                    name="cost"
+                    type="number"
+                    rules={{ required: true }}
+                  />
+                </View>
+
+                <View>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.inputLeftDetails}></Text>
+                    <Text style={styles.inputRightDetails}>
+                      Decrease by 17.7% | - $
+                      {cost?.cost && (parseInt(cost?.cost) * 17.7) / 100}
                     </Text>
-                  </Button>
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.inputLeftDetails}></Text>
+                    <Text style={styles.inputRightDetails}>- $0.30</Text>
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.inputLeftDetails}></Text>
+
+                    <TouchableOpacity onPress={() => setShowDetais(true)}>
+                      <Text style={[styles.inputRightDetails]}>
+                        Total receive: $
+                        {cost?.cost &&
+                          parseInt(cost?.cost) -
+                            ((parseInt(cost?.cost) * 17.7) / 100 + 0.3)}{" "}
+                        <Entypo
+                          name="info-with-circle"
+                          size={17}
+                          color={colors.pink}
+                        />
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <Modal
+                    isVisible={showDetails}
+                    useNativeDriver
+                    onBackButtonPress={() => setShowDetais(false)}
+                    onBackdropPress={() => setShowDetais(false)}
+                  >
+                    <View style={styles.modal}>
+                      <Text style={[{ marginBottom: 10 }, styles.title]}>
+                        Here are the details about the payment
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          marginBottom: 5,
+                        }}
+                      >
+                        <FontAwesome
+                          name="hand-o-right"
+                          size={17}
+                          color={colors.pink}
+                        />
+                        <Text style={{ marginLeft: 10 }}>
+                          We charrge you 15% for the the service
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          marginBottom: 5,
+                        }}
+                      >
+                        <FontAwesome
+                          name="hand-o-right"
+                          size={17}
+                          color={colors.pink}
+                        />
+                        <Text style={{ marginLeft: 10 }}>
+                          We use Stripe and they charge 2.7% + $0.30 per payment
+                        </Text>
+                      </View>
+                    </View>
+                  </Modal>
+
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      marginTop: 50,
+                    }}
+                  >
+                    <Button
+                      style={styles.buttonStyle}
+                      onPress={handleSubmit(onSubmit)}
+                      disable={disabled}
+                    >
+                      <Text style={{ color: colors.white }}>
+                        Submit your price
+                      </Text>
+                    </Button>
+                  </View>
                 </View>
               </View>
             </View>
