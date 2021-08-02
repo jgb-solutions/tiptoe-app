@@ -110,7 +110,7 @@ export default function PublicModelProfileScreen() {
               <Text>You have no favorite photos yet.</Text>
             </View>
           )}
-          data={data?.favoritePhoto.data?.filter(
+          data={data?.favoritePhoto?.data?.filter(
             (photo: any) => photo.liked_by_me && photo
           )}
           keyExtractor={(photo) => photo.id}
