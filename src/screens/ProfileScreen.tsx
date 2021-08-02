@@ -28,6 +28,7 @@ import ModelCard from "../components/ModelCard"
 import UserCard from "../components/UserCard"
 import Button from "../components/Button"
 import Stats from "../components/Starts"
+import { SCREEN_WIDTH } from "../utils/constants"
 
 export default function ProfileScreen() {
   const navigation = useNavigation()
@@ -35,8 +36,6 @@ export default function ProfileScreen() {
     logout: state.doLogout,
     currentUser: state.authData.user,
   }))
-
-  const [isAmodel, setIsAmodel] = useState(currentUser?.is_model)
 
   const [showModelInfo, setShowModelInfo] = useState(false)
 
@@ -67,6 +66,7 @@ export default function ProfileScreen() {
   const modelList = modelsData?.fetchMyModels
   const userList = followersData?.fetchMyFollowers
 
+  console.log(currentUser?.modele)
   return (
     <Container>
       <Header
@@ -207,34 +207,35 @@ export default function ProfileScreen() {
               <Text>{currentUser?.email}</Text>
             </View>
           </View>
-          {isAmodel && (
-            <View
+
+          <View
+            style={{
+              flexDirection: "row",
+              marginBottom: 10,
+              justifyContent: "space-around",
+            }}
+          >
+            <Button
               style={{
-                flexDirection: "row",
-                marginBottom: 10,
-                justifyContent: "space-around",
+                flex: 1,
+                backgroundColor: !showModelInfo ? colors.pink : colors.white,
+                justifyContent: "center",
+                borderColor: colors.pink,
+                borderWidth: 1,
+                paddingVertical: 10,
+                width: currentUser?.is_model ? 195 : SCREEN_WIDTH - 30,
+                borderRadius: 0,
               }}
+              onPress={() => setShowModelInfo(false)}
+              disable={!showModelInfo}
             >
-              <Button
-                style={{
-                  flex: 1,
-                  backgroundColor: !showModelInfo ? colors.pink : colors.white,
-                  justifyContent: "center",
-                  borderColor: colors.pink,
-                  borderWidth: 1,
-                  paddingVertical: 10,
-                  width: 195,
-                  borderRadius: 0,
-                }}
-                onPress={() => setShowModelInfo(false)}
-                disable={!showModelInfo}
+              <Text
+                style={{ color: showModelInfo ? colors.black : colors.white }}
               >
-                <Text
-                  style={{ color: showModelInfo ? colors.black : colors.white }}
-                >
-                  Personal Information
-                </Text>
-              </Button>
+                Personal Information
+              </Text>
+            </Button>
+            {currentUser?.is_model && (
               <Button
                 style={{
                   flex: 1,
@@ -257,8 +258,8 @@ export default function ProfileScreen() {
                   Model Information
                 </Text>
               </Button>
-            </View>
-          )}
+            )}
+          </View>
         </View>
         {!showModelInfo ? (
           <View>
