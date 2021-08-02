@@ -16,6 +16,7 @@ export const screenNames = {
   ChangePassword: "ChangePassword",
   AddPhotoStep2: "AddPhotoStep2",
   AddPhotoStep3: "AddPhotoStep3",
-  Billing: "Billing", 
-  ModelPrice: "ModelPrice", 
+  Billing: "Billing",
+  ModelPrice: "ModelPrice",
+  DeleteAccount: "DeleteAccount",
 }
