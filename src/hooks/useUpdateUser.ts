@@ -1,22 +1,12 @@
 import { useMutation } from "@apollo/react-hooks"
 
-import { UPDATE_USER } from "../graphql/mutations"
+import { UPDATE_USER, UPDATE_USER_WITH_MODEL } from "../graphql/mutations"
 import {
   FETCH_MY_FOLLOWERS,
   FETCH_MY_MODELS,
   GET_MODEL_PRICE,
 } from "../graphql/queries"
-import UpdateModelInterface from "../interfaces/UpdateModelInterface"
 import UpdateUserInterface from "../interfaces/UpdateUserInterface"
-
-export type UpdatedUserProps = {
-  id: string | undefined
-  name: string | undefined
-  email: string | undefined
-  gender: string | undefined
-  telephone: string | undefined
-  modele?: UpdateModelInterface
-}
 
 export default function useUpdateUser() {
   const [updateUserMutation, { data, loading, error }] = useMutation(
@@ -31,11 +21,42 @@ export default function useUpdateUser() {
     }
   )
 
-  const updateUser = (input: UpdateUserInterface) => {
+  const updateUser = (input: UpdateUserInterface, id?: string) => {
     updateUserMutation({
-      variables: { input },
+      variables: { id, input },
     })
   }
 
-  return { updateUser, loading, error, data }
+  const [
+    updateUserWithModelMutation,
+    {
+      data: dataUpdateWithModel,
+      loading: loadingUpdateWithModel,
+      error: errorUpdateWithModel,
+    },
+  ] = useMutation(UPDATE_USER_WITH_MODEL, {
+    fetchPolicy: "no-cache",
+    refetchQueries: [
+      { query: FETCH_MY_FOLLOWERS },
+      { query: GET_MODEL_PRICE },
+      { query: FETCH_MY_MODELS },
+    ],
+  })
+
+  const updateUserWithModel = (input: UpdateUserInterface, id?: string) => {
+    updateUserWithModelMutation({
+      variables: { id, input },
+    })
+  }
+
+  return {
+    updateUser,
+    loading,
+    error,
+    data,
+    updateUserWithModel,
+    dataUpdateWithModel,
+    loadingUpdateWithModel,
+    errorUpdateWithModel,
+  }
 }

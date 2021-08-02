@@ -95,10 +95,12 @@ export const VERIFY_USER_EMAIL = gql`
   }
 `
 
-export const UPDATE_USER = gql`
-  mutation UpdateUser($input: UpdateUserInput!) {
-    updateUser(input: $input) {
+export const UPDATE_USER_WITH_MODEL = gql`
+  mutation UpdateUserWithModel($id: ID!, $input: UpdateUserWithModelInput!) {
+    updateUserWithModel(id: $id, input: $input) {
       id
+      active
+      admin
       name
       email
       first_login
@@ -106,15 +108,70 @@ export const UPDATE_USER = gql`
       telephone
       created_at
       user_type
+      is_model
+      is_consumer
       gender
+      pm_last_four
       modele {
         id
+        stage_name
         bio
         facebook
+        hash
         instagram
-        stage_name
         twitter
         youtube
+        poster
+        modele_account_data {
+          account
+          balance
+          created_at
+        }
+        new_follower_count
+        photos_count
+        followers_count
+        created_at
+      }
+    }
+  }
+`
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {
+    updateUser(id: $id, input: $input) {
+      id
+      active
+      admin
+      name
+      email
+      first_login
+      avatar
+      telephone
+      created_at
+      user_type
+      is_model
+      is_consumer
+      gender
+      pm_last_four
+      modele {
+        id
+        stage_name
+        bio
+        facebook
+        hash
+        instagram
+        twitter
+        youtube
+        poster
+        modele_account_data {
+          account
+          balance
+          created_at
+        }
+        new_follower_count
+        photos_count
+        followers_count
+        created_at
       }
     }
   }
@@ -125,6 +182,58 @@ export const CHANGE_PASSWORD = gql`
     changePassword(input: $input) {
       success
       message
+    }
+  }
+`
+
+export const DELETE_USER_ACCOUNT = gql`
+  mutation DeleteUser($input: DeleteUserInput!) {
+    deleteUser(input: $input) {
+      id
+    }
+  }
+`
+
+export const DELETE_MODEL_ACCOUNT = gql`
+  mutation DeleteModel($input: DeleteModelInput!) {
+    deleteModel(input: $input) {
+      success
+      user {
+        id
+        active
+        admin
+        name
+        email
+        first_login
+        avatar
+        telephone
+        created_at
+        user_type
+        is_model
+        is_consumer
+        gender
+        pm_last_four
+        modele {
+          id
+          stage_name
+          bio
+          facebook
+          hash
+          instagram
+          twitter
+          youtube
+          poster
+          modele_account_data {
+            account
+            balance
+            created_at
+          }
+          new_follower_count
+          photos_count
+          followers_count
+          created_at
+        }
+      }
     }
   }
 `

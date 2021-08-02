@@ -10,6 +10,8 @@ import {
   Thumbnail,
   Input,
 } from "native-base"
+
+import RNPickerSelect from "react-native-picker-select"
 import * as mime from "react-native-mime-types"
 import Textarea from "react-native-textarea"
 import { Feather, Entypo, FontAwesome } from "@expo/vector-icons"
@@ -31,8 +33,6 @@ import UpdateUserInterface from "../interfaces/UpdateUserInterface"
 import SelectPicker from "react-native-form-select-picker"
 import UserInterface from "../interfaces/UserInterface"
 import { DEFAULT_AVATAR } from "../utils/constants"
-
-const GENDERS = ["MALE", "FEMALE", "OTHER"]
 
 type Gender = "FEMALE" | "MALE" | "OTHER"
 
@@ -67,6 +67,7 @@ export default function UpdateInfoScreen() {
   )
 
   useEffect(() => {
+    console.log(userState)
     userState && setCurrentUser(userState)
   }, [userState])
 
@@ -90,40 +91,71 @@ export default function UpdateInfoScreen() {
   const [avatar, setAvatar] = useState<any | null>()
   const [poster, setPoster] = useState<any | null>()
 
-  const { updateUser, data: updateUserData } = useUpdateUser()
+  const {
+    updateUser,
+    updateUserWithModel,
+    data: updateUserData,
+    dataUpdateWithModel,
+  } = useUpdateUser()
 
   const onSubmit = async (credentials: UpdateUserInterface) => {
-    const payload = {
-      id: currentUser?.id,
-      ...credentials,
-      modele: {
-        update: {
-          id: currentUser?.modele?.id,
-          ...credentials.modele,
+    let payload
+    if (!currentUser?.modele?.id) {
+      payload = {
+        id: currentUser?.id,
+        ...credentials,
+      }
+
+      updateUser(payload, currentUser?.id)
+    } else {
+      payload = {
+        id: currentUser?.id,
+        ...credentials,
+        modele: {
+          update: {
+            id: currentUser?.modele?.id,
+            ...credentials.modele,
+            poster: currentUser?.modele?.poster,
+          },
         },
-      },
+      }
+      updateUserWithModel(payload, currentUser?.id)
     }
 
-    updateUser(payload)
-    if (updateUserData) {
-      updateUserState(updateUserData.updateUser)
+    console.log(payload)
+
+    if (updateUserData || dataUpdateWithModel) {
+      updateUserState(updateUserData || dataUpdateWithModel)
       alert("Your profile has been updated")
     }
   }
 
+  // console.log(currentUser)
   useEffect(() => {
     if (currentUser?.first_login) {
       const payload: UpdateUserInterface = {
         id: currentUser?.id,
         first_login: false,
       }
-      updateUser(payload)
-
-      if (updateUserData) {
-        updateUserState(updateUserData.updateUser)
-      }
+      updateUser(payload, currentUser?.id)
     }
-  }, [currentUser?.first_login, updateUserData])
+
+    if (updateUserData) {
+      const payload = {
+        ...currentUser,
+        ...updateUserData.updateUser,
+      }
+      updateUserState(payload)
+    }
+
+    if (dataUpdateWithModel) {
+      const payload = {
+        ...currentUser,
+        ...dataUpdateWithModel.updateUserWithModel,
+      }
+      updateUserState(payload)
+    }
+  }, [currentUser?.first_login, updateUserData, dataUpdateWithModel])
 
   useEffect(() => {
     ;(async () => {
@@ -164,7 +196,11 @@ export default function UpdateInfoScreen() {
     }
   }
 
-  console.log(currentUser?.modele?.poster)
+  let gender: { label: string; value: string }[] = [
+    { label: "Male", value: "MALE" },
+    { label: "Female", value: "FEMALE" },
+    { label: "Other", value: "OTHER" },
+  ]
 
   return (
     <Container>
@@ -262,9 +298,11 @@ export default function UpdateInfoScreen() {
                       <Text>Show avatar</Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity onPress={() => setModelPoster(true)}>
-                      <Text>Show model poster</Text>
-                    </TouchableOpacity>
+                    currentUser?.is_model && (
+                      <TouchableOpacity onPress={() => setModelPoster(true)}>
+                        <Text>Show model poster</Text>
+                      </TouchableOpacity>
+                    )
                   )}
                 </Text>
               </View>
@@ -339,23 +377,16 @@ export default function UpdateInfoScreen() {
               name="gender"
               control={control}
               render={({ onChange, onBlur, value }) => (
-                <SelectPicker
-                  onValueChange={onChange}
-                  selected={value}
-                  placeholder="Select your gender"
-                  placeholderStyle={{
-                    fontSize: 18,
-                    color: "#000",
+                <RNPickerSelect
+                  onValueChange={(e) => onChange(e)}
+                  value={currentUser?.gender}
+                  items={gender}
+                  style={pickerSelectStyles}
+                  placeholder={{
+                    label: "Select your gender",
+                    value: null,
                   }}
-                >
-                  {GENDERS.map((gender, index) => (
-                    <SelectPicker.Item
-                      key={index}
-                      label={gender.toLowerCase()}
-                      value={gender}
-                    />
-                  ))}
-                </SelectPicker>
+                />
               )}
             />
           </View>
@@ -557,5 +588,29 @@ const styles = StyleSheet.create({
     height: 90,
     fontSize: 18,
     color: "#333",
+  },
+})
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    // borderWidth: 1,
+    // borderColor: "#fce3e9",
+    borderRadius: 5,
+    height: 45,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    // borderWidth: 0.5,
+    // borderColor: "#fce3e9",
+    borderRadius: 8,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
   },
 })
