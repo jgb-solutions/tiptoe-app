@@ -24,6 +24,7 @@ import PublicModelProfileScreen from "../screens/PublicModelProfileScreen"
 import TermsConditionScreen from "../screens/TermsConditionScreen"
 import BillingScreen from "../screens/BillingScreen"
 import ModelPriceScreen from "../screens/ModelPriceScreen"
+import DeleteAccountScreen from "../screens/DeleteAccountScreen"
 
 // Other stuff
 import { colors } from "../utils/colors"
@@ -37,197 +38,201 @@ const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 
 function TabNavigation() {
-	const { currentUser } = useStore((state: AppStateInterface) => ({
-		currentUser: state.authData.user,
-	}))
-	const navigatorScreenOptions = { headerShown: false }
+  const { currentUser } = useStore((state: AppStateInterface) => ({
+    currentUser: state.authData.user,
+  }))
+  const navigatorScreenOptions = { headerShown: false }
 
-	return (
-		<Tab.Navigator
-			initialRouteName={screenNames.Home}
-			tabBarOptions={{
-				activeTintColor: colors.pink,
-				inactiveTintColor: colors.black,
-				tabStyle: {},
-				style: {
-					paddingVertical: 5,
-				},
-				showLabel: false,
-			}}
-		>
-			<Tab.Screen
-				name={screenNames.Home}
-				component={HomeScreen}
-				options={{
-					tabBarLabel: "Home",
-					tabBarIcon: ({ color, size }) => (
-						<Icon
-							name="home"
-							style={{
-								fontSize: size,
-								color,
-							}}
-						/>
-					),
-				}}
-			/>
+  return (
+    <Tab.Navigator
+      initialRouteName={screenNames.Home}
+      tabBarOptions={{
+        activeTintColor: colors.pink,
+        inactiveTintColor: colors.black,
+        tabStyle: {},
+        style: {
+          paddingVertical: 5,
+        },
+        showLabel: false,
+      }}
+    >
+      <Tab.Screen
+        name={screenNames.Home}
+        component={HomeScreen}
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: ({ color, size }) => (
+            <Icon
+              name="home"
+              style={{
+                fontSize: size,
+                color,
+              }}
+            />
+          ),
+        }}
+      />
 
-			<Tab.Screen
-				name={screenNames.Search}
-				component={SearchScreen}
-				options={{
-					tabBarLabel: "Search",
-					tabBarIcon: ({ color, size }) => (
-						<Icon
-							name="search"
-							style={{
-								fontSize: size,
-								color,
-							}}
-						/>
-					),
-				}}
-			/>
-			{currentUser?.modele && (
-				<Tab.Screen
-					name={screenNames.Add}
-					component={AddPhotoScreen}
-					options={{
-						tabBarLabel: "Add Photo",
-						tabBarIcon: ({ color, size }) => (
-							<Icon
-								name="add-circle"
-								style={{
-									fontSize: size * 1.9,
-									color,
-								}}
-							/>
-						),
-					}}
-				/>
-			)}
+      <Tab.Screen
+        name={screenNames.Search}
+        component={SearchScreen}
+        options={{
+          tabBarLabel: "Search",
+          tabBarIcon: ({ color, size }) => (
+            <Icon
+              name="search"
+              style={{
+                fontSize: size,
+                color,
+              }}
+            />
+          ),
+        }}
+      />
+      {currentUser?.modele && (
+        <Tab.Screen
+          name={screenNames.Add}
+          component={AddPhotoScreen}
+          options={{
+            tabBarLabel: "Add Photo",
+            tabBarIcon: ({ color, size }) => (
+              <Icon
+                name="add-circle"
+                style={{
+                  fontSize: size * 1.9,
+                  color,
+                }}
+              />
+            ),
+          }}
+        />
+      )}
 
-			<Tab.Screen
-				name={screenNames.Favorites}
-				component={FavoritesScreen}
-				options={{
-					tabBarLabel: "Favorites",
-					tabBarIcon: ({ color, size }) => (
-						<Icon
-							name="heart"
-							style={{
-								fontSize: size,
-								color,
-							}}
-						/>
-					),
-					// tabBarBadge: 3
-				}}
-			/>
-			<Tab.Screen
-				name={screenNames.Profile}
-				component={ProfileScreen}
-				options={{
-					tabBarLabel: "Profile",
-					tabBarIcon: ({ color, size }) => (
-						<Icon
-							name="person"
-							style={{
-								fontSize: size,
-								color,
-							}}
-						/>
-					),
-				}}
-			/>
-		</Tab.Navigator>
-	)
+      <Tab.Screen
+        name={screenNames.Favorites}
+        component={FavoritesScreen}
+        options={{
+          tabBarLabel: "Favorites",
+          tabBarIcon: ({ color, size }) => (
+            <Icon
+              name="heart"
+              style={{
+                fontSize: size,
+                color,
+              }}
+            />
+          ),
+          // tabBarBadge: 3
+        }}
+      />
+      <Tab.Screen
+        name={screenNames.Profile}
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: "Profile",
+          tabBarIcon: ({ color, size }) => (
+            <Icon
+              name="person"
+              style={{
+                fontSize: size,
+                color,
+              }}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  )
 }
 
 function MainNavigation() {
-	const { isLoggedIn, currentUser } = useStore(
-		(state: AppStateInterface) => ({
-			isLoggedIn: state.authData.isLoggedIn,
-			currentUser: state.authData.user,
-		})
-	)
-	const navigatorScreenOptions = { headerShown: false }
+  const { isLoggedIn, currentUser } = useStore((state: AppStateInterface) => ({
+    isLoggedIn: state.authData.isLoggedIn,
+    currentUser: state.authData.user,
+  }))
+  const navigatorScreenOptions = { headerShown: false }
 
-	return (
-		<NavigationContainer>
-			{isLoggedIn ? (
-				<ApolloProvider client={getClient()}>
-					<Stack.Navigator
-						initialRouteName={
-							currentUser?.first_login ? screenNames.UpdateInfo : screenNames.Home
-						}
-						screenOptions={navigatorScreenOptions}
-					>
-						<Stack.Screen name="TabNavigation" component={TabNavigation} />
-						<Stack.Screen name={screenNames.Chat} component={ChatScreen} />
-						<Stack.Screen
-							name={screenNames.ChatList}
-							component={ChatListScreen}
-						/>
-						<Stack.Screen
-							name={screenNames.PublicModelProfileScreen}
-							component={PublicModelProfileScreen}
-						/>
-						<Stack.Screen
-							name={screenNames.Setting}
-							component={SettingsScreen}
-						/>
-						<Stack.Screen
-							name={screenNames.Billing}
-							component={BillingScreen}
-						/>
-						<Stack.Screen
-							name={screenNames.ModelPrice}
-							component={ModelPriceScreen}
-						/>
-						<Stack.Screen
-							name={screenNames.UpdateInfo}
-							component={UpdateInfoScreen}
-						/>
-						<Stack.Screen
-							name={screenNames.ChangePassword}
-							component={ChangePasswordScreen}
-						/>
-						<Stack.Screen
-							name={screenNames.AddPhotoStep2}
-							component={AddPhotoStep2Screen}
-						/>
-						<Stack.Screen
-							name={screenNames.AddPhotoStep3}
-							component={AddPhotoStep3Screen}
-						/>
-					</Stack.Navigator>
-				</ApolloProvider>
-			) : (
-				<Stack.Navigator
-					screenOptions={navigatorScreenOptions}
-					initialRouteName={screenNames.LogIn}
-				>
-					<Stack.Screen
-						name={screenNames.LogIn}
-						component={LogInWithEmailScreen}
-					/>
-					<Stack.Screen
-						name={screenNames.SignUpWithEmail}
-						component={SignUpWithEmailScreen}
-					/>
-					<Stack.Screen
-						name={screenNames.SignUpWithEmailStep2}
-						component={SignUpWithEmailStep2Screen}
-					/>
-					<Stack.Screen
-						name={screenNames.TermsCondition}
-						component={TermsConditionScreen}
-					/>
-				</Stack.Navigator>
-			)}
-		</NavigationContainer>
-	)
+  return (
+    <NavigationContainer>
+      {isLoggedIn ? (
+        <ApolloProvider client={getClient()}>
+          <Stack.Navigator
+            initialRouteName={
+              currentUser?.first_login
+                ? screenNames.UpdateInfo
+                : screenNames.Home
+            }
+            screenOptions={navigatorScreenOptions}
+          >
+            <Stack.Screen name="TabNavigation" component={TabNavigation} />
+            <Stack.Screen name={screenNames.Chat} component={ChatScreen} />
+            <Stack.Screen
+              name={screenNames.ChatList}
+              component={ChatListScreen}
+            />
+            <Stack.Screen
+              name={screenNames.PublicModelProfileScreen}
+              component={PublicModelProfileScreen}
+            />
+            <Stack.Screen
+              name={screenNames.Setting}
+              component={SettingsScreen}
+            />
+            <Stack.Screen
+              name={screenNames.Billing}
+              component={BillingScreen}
+            />
+            <Stack.Screen
+              name={screenNames.ModelPrice}
+              component={ModelPriceScreen}
+            />
+            <Stack.Screen
+              name={screenNames.UpdateInfo}
+              component={UpdateInfoScreen}
+            />
+            <Stack.Screen
+              name={screenNames.ChangePassword}
+              component={ChangePasswordScreen}
+            />
+            <Stack.Screen
+              name={screenNames.DeleteAccount}
+              component={DeleteAccountScreen}
+            />
+            <Stack.Screen
+              name={screenNames.AddPhotoStep2}
+              component={AddPhotoStep2Screen}
+            />
+            <Stack.Screen
+              name={screenNames.AddPhotoStep3}
+              component={AddPhotoStep3Screen}
+            />
+          </Stack.Navigator>
+        </ApolloProvider>
+      ) : (
+        <Stack.Navigator
+          screenOptions={navigatorScreenOptions}
+          initialRouteName={screenNames.LogIn}
+        >
+          <Stack.Screen
+            name={screenNames.LogIn}
+            component={LogInWithEmailScreen}
+          />
+          <Stack.Screen
+            name={screenNames.SignUpWithEmail}
+            component={SignUpWithEmailScreen}
+          />
+          <Stack.Screen
+            name={screenNames.SignUpWithEmailStep2}
+            component={SignUpWithEmailStep2Screen}
+          />
+          <Stack.Screen
+            name={screenNames.TermsCondition}
+            component={TermsConditionScreen}
+          />
+        </Stack.Navigator>
+      )}
+    </NavigationContainer>
+  )
 }
 
 export { MainNavigation }
