@@ -116,7 +116,7 @@ export default function PublicModelProfileScreen() {
       toggleFollow({
         payment_method:
           selectedCard !== "new" ? selectedCard : setupIntent?.paymentMethodId,
-        modele_id: modelData.modele.id,
+        modele_id: modelData?.modele?.id,
       })
     }
 
@@ -142,7 +142,7 @@ export default function PublicModelProfileScreen() {
 
   const handleToggleFollow = () => {
     // TO DO FOR PAYMENT CHECK
-    if (!modelData.modele.followed_by_me) {
+    if (!modelData?.modele?.followed_by_me) {
       setViewPaymentMethod(true)
     } else {
       Alert.alert(
@@ -156,7 +156,7 @@ export default function PublicModelProfileScreen() {
           },
           {
             text: "OK",
-            onPress: () => toggleFollow({ modele_id: modelData.modele.id }),
+            onPress: () => toggleFollow({ modele_id: modelData?.modele?.id }),
           },
         ],
         { cancelable: false }
@@ -170,7 +170,9 @@ export default function PublicModelProfileScreen() {
     setCurrentPhoto(photo)
   }
 
-  let cardList: any = [{ label: `Pay with a new card`, value: `new` }]
+  let cardList: [{ label: string; value: string }] = [
+    { label: "Pay with a new card", value: "new" },
+  ]
 
   data?.myCards.map((card: CardInterface) => {
     cardList.unshift({
@@ -250,7 +252,7 @@ export default function PublicModelProfileScreen() {
                   >
                     <Thumbnail
                       large
-                      source={{ uri: modelData.modele.poster }}
+                      source={{ uri: modelData?.modele?.poster }}
                       style={{}}
                     />
 
@@ -265,23 +267,23 @@ export default function PublicModelProfileScreen() {
                     >
                       <Stats
                         title={`Post${
-                          modelData.modele.photos.length !== 1 ? "s" : ""
+                          modelData?.modele?.photos.length !== 1 ? "s" : ""
                         }`}
-                        number={modelData.modele.photos.length}
+                        number={modelData?.modele?.photos.length}
                       />
                       <Stats
                         style={{ marginLeft: 12 }}
                         title={`Follower${
-                          modelData.modele.followers.length !== 1 ? "s" : ""
+                          modelData?.modele?.followers.length !== 1 ? "s" : ""
                         }`}
-                        number={modelData.modele.followers.length}
+                        number={modelData?.modele?.followers.length}
                       />
                     </View>
                   </View>
 
                   <View style={{ marginBottom: 24, marginLeft: 20 }}>
-                    <Text>{modelData.modele.stage_name}</Text>
-                    <Text>{modelData.modele.bio}</Text>
+                    <Text>{modelData?.modele?.stage_name}</Text>
+                    <Text>{modelData?.modele?.bio}</Text>
                   </View>
 
                   <View style={{ flexDirection: "row", marginBottom: 24 }}>
@@ -289,7 +291,7 @@ export default function PublicModelProfileScreen() {
                       style={{
                         flex: 1,
                         backgroundColor: colors.pink,
-                        borderColor: modelData.modele.followed_by_me
+                        borderColor: modelData?.modele?.followed_by_me
                           ? colors.pink
                           : colors.white,
                         borderWidth: 1,
@@ -304,7 +306,7 @@ export default function PublicModelProfileScreen() {
                       disable={toggleFollowLoading}
                     >
                       <Text style={{ color: colors.white }}>
-                        {modelData.modele.followed_by_me
+                        {modelData?.modele?.followed_by_me
                           ? "Unfollow"
                           : !viewPaymentMethod
                           ? "Follow"
@@ -412,7 +414,7 @@ export default function PublicModelProfileScreen() {
                   )}
                 </View>
               ) : (
-                !modelData.modele.followed_by_me && (
+                !modelData?.modele?.followed_by_me && (
                   <View style={{ paddingLeft: 15, paddingRight: 15 }}>
                     <View
                       style={{
@@ -464,10 +466,10 @@ export default function PublicModelProfileScreen() {
               <Text>That model has no photos yet.</Text>
             </NegativeResponse>
           )}
-          data={modelData.modele.photos}
+          data={modelData?.modele?.photos}
           keyExtractor={(photo) => photo.id}
           renderItem={({ item: photo }: { item: PhotoInterface }) =>
-            modelData.modele.followed_by_me && (
+            modelData?.modele?.followed_by_me && (
               <TouchableOpacity
                 style={{
                   borderWidth: 1,
