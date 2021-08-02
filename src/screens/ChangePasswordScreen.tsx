@@ -10,7 +10,7 @@ import {
   Thumbnail,
   Input,
 } from "native-base"
-import { Feather } from "@expo/vector-icons"
+import { Feather, FontAwesome } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
 
 import { useNavigation } from "@react-navigation/native"
@@ -31,7 +31,7 @@ export interface Credentials {
   password_confirmation: string
 }
 
-export default function UpdateInfoScreen() {
+export default function ChangePasswordScreen() {
   const navigation = useNavigation()
 
   const {
@@ -215,19 +215,20 @@ export default function UpdateInfoScreen() {
             />
           </View>
 
-          <View>
-            {errors?.password && (
+          {errors.password && (
+            <View>
               <Text
                 style={{
                   color: colors.error,
-                  marginTop: 4,
+                  marginBottom: 10,
                   fontSize: 15,
                 }}
               >
-                {errors?.password}
+                <FontAwesome name="warning" size={15} color={colors.error} />{" "}
+                {errors.password.message}
               </Text>
-            )}
-          </View>
+            </View>
+          )}
 
           <View style={styles.infos}>
             <Text style={styles.mediaText}>New password</Text>
@@ -248,19 +249,20 @@ export default function UpdateInfoScreen() {
             />
           </View>
 
-          {/* {errors.new_password && (
+          {errors.new_password && (
             <View>
               <Text
                 style={{
                   color: colors.error,
-                  marginTop: 4,
+                  marginBottom: 10,
                   fontSize: 15,
                 }}
               >
-                {errors.new_password}
+                <FontAwesome name="warning" size={15} color={colors.error} />{" "}
+                {errors.new_password.message}
               </Text>
             </View>
-          )} */}
+          )}
 
           <View style={styles.infos}>
             <Text style={styles.mediaText}>Confirm password</Text>
@@ -285,19 +287,20 @@ export default function UpdateInfoScreen() {
             />
           </View>
 
-          {/* {errors.password_confirmation && (
+          {errors.password_confirmation && (
             <View>
               <Text
                 style={{
                   color: colors.error,
-                  marginTop: 4,
+                  marginBottom: 10,
                   fontSize: 15,
                 }}
               >
-                {errors.password_confirmation}
+                <FontAwesome name="warning" size={15} color={colors.error} />{" "}
+                {errors.password_confirmation.message}
               </Text>
             </View>
-          )} */}
+          )}
         </View>
       </Content>
     </Container>
