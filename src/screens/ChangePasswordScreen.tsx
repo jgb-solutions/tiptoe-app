@@ -45,7 +45,7 @@ export default function ChangePasswordScreen() {
     currentUser: state.authData.user,
   }))
 
-  const { control, handleSubmit, errors, watch } = useForm<Credentials>({
+  const { control, handleSubmit, errors, reset, watch } = useForm<Credentials>({
     mode: "onBlur",
   })
 
@@ -60,14 +60,19 @@ export default function ChangePasswordScreen() {
       if (changePasswordError) {
         console.log(changePasswordError)
       }
-
-      if (changePasswordData.message) {
-        alert(changePasswordData.message)
-      }
     } catch (error) {
       alert(error.response.errors[0].message)
     }
   }
+
+  useEffect(() => {
+    if (changePasswordData?.changePassword?.message) {
+      alert(changePasswordData?.changePassword?.message)
+    }
+    if (changePasswordData?.changePassword?.success) {
+      reset({ password: "", new_password: "", password_confirmation: "" })
+    }
+  }, [changePasswordData])
 
   return (
     <Container>

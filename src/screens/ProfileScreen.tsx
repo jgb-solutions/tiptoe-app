@@ -66,7 +66,6 @@ export default function ProfileScreen() {
   const modelList = modelsData?.fetchMyModels
   const userList = followersData?.fetchMyFollowers
 
-  console.log(currentUser?.modele)
   return (
     <Container>
       <Header
