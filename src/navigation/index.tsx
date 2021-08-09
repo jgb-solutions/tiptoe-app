@@ -25,6 +25,9 @@ import TermsConditionScreen from "../screens/TermsConditionScreen"
 import BillingScreen from "../screens/BillingScreen"
 import ModelPriceScreen from "../screens/ModelPriceScreen"
 import DeleteAccountScreen from "../screens/DeleteAccountScreen"
+import ResetPasswordScreen from "../screens/ResetPasswordScreen"
+import ResetPasswordStep2Screen from "../screens/ResetPasswordStep2Screen"
+import ResetPasswordStep3Screen from "../screens/ResetPasswordStep3Screen"
 
 // Other stuff
 import { colors } from "../utils/colors"
@@ -228,6 +231,18 @@ function MainNavigation() {
           <Stack.Screen
             name={screenNames.TermsCondition}
             component={TermsConditionScreen}
+          />
+          <Stack.Screen
+            name={screenNames.ResetPassword}
+            component={ResetPasswordScreen}
+          />
+          <Stack.Screen
+            name={screenNames.ResetPasswordStep2}
+            component={ResetPasswordStep2Screen}
+          />
+          <Stack.Screen
+            name={screenNames.ResetPasswordStep3}
+            component={ResetPasswordStep3Screen}
           />
         </Stack.Navigator>
       )}

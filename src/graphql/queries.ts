@@ -286,3 +286,17 @@ export const FETCH_MY_FOLLOWERS = gql`
     }
   }
 `
+export const VERIFY_EMAIL = gql`
+  query verifyEmail($email: String) {
+    verifyEmail(email: $email) {
+      message
+    }
+  }
+`
+export const VERIFY_CODE = gql`
+  query verifyCode($input: CodeVerificationInput) {
+    verifyCode(input: $input) {
+      success
+    }
+  }
+`

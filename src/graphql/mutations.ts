@@ -186,6 +186,15 @@ export const CHANGE_PASSWORD = gql`
   }
 `
 
+export const RESET_PASSWORD = gql`
+  mutation ResetPassword($input: ResetPasswordInput!) {
+    resetPassword(input: $input) {
+      success
+      message
+    }
+  }
+`
+
 export const DELETE_USER_ACCOUNT = gql`
   mutation DeleteUser($input: DeleteUserInput!) {
     deleteUser(input: $input) {
