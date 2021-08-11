@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { TouchableOpacity } from "react-native"
-import { Container, Header, Content, Text, Icon, Left, Right, Body, } from "native-base"
+import { Container, Header, Content, Text, Icon, Left, Right, Body } from "native-base"
 import * as MediaLibrary from "expo-media-library"
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 
@@ -11,24 +11,8 @@ import useStore, { AppStateInterface } from "../store"
 import { graphqlClient } from "../utils/graphqlClient"
 import { ADD_PHOTO_MUTATION } from "../graphql/mutations"
 
-import {
-	WASABI_ACCESS_KEY_ID,
-	WASABI_SECRET_ACCESS_KEY,
-	WASABI_DEFAULT_REGION,
-	WASABI_BUCKET,
-	WASABI_URL
-} from '@env'
-
 import ModelInterface from "../interfaces/ModelInterface"
-
-const AWS = require('aws-sdk')
-
-const wasabiEndpoint = new AWS.Endpoint('s3.wasabisys.com')
-const s3 = new AWS.S3({
-	endpoint: wasabiEndpoint,
-	accessKeyId: WASABI_ACCESS_KEY_ID,
-	secretAccessKey: WASABI_SECRET_ACCESS_KEY
-})
+import useFileUpload from "../hooks/useFileUpload"
 
 export interface AppMedia {
 	caption: string
@@ -43,11 +27,53 @@ type RouteParamsProps = RouteProp<{
 }, "params">
 
 export default function AddPhotoStep2Screen() {
+	const navigation = useNavigation()
 	const { currentUser } = useStore((state: AppStateInterface) => ({
 		currentUser: state.authData.user,
 	}))
+	const {
+		upload,
+		uploading,
+		isUploaded,
+		percentUploaded,
+		errorMessage,
+		filename
+	} = useFileUpload({
+		message: "There was a problem upload this media."
+	})
 
-	const navigation = useNavigation()
+	useEffect(() => {
+		console.log(uploading, isUploaded, percentUploaded, errorMessage, filename)
+	}, [upload, uploading, isUploaded, percentUploaded, errorMessage, filename])
+
+	useEffect(() => {
+		(async () => {
+			if (isUploaded) {
+				let payload = {
+					caption: params?.media.caption,
+					type: params?.media.asset.mediaType,
+					category_id: parseInt(`${params?.media.category_id}`),
+					modele_id: parseInt(`${currentUser?.modele?.id}`),
+					publish: true,
+					bucket: null,
+					uri: null
+				}
+
+				try {
+					const { addPhoto } = await graphqlClient.request(
+						ADD_PHOTO_MUTATION,
+						{ input: payload },
+					)
+
+					if (addPhoto) {
+						navigation.navigate(screenNames.Home)
+					}
+				} catch (error) {
+					console.error(JSON.stringify(error))
+				}
+			}
+		})()
+	}, [isUploaded])
 
 	const { params } = useRoute<RouteParamsProps>()
 	const [media, setMedia] = useState<AppMedia>()
@@ -80,16 +106,6 @@ export default function AddPhotoStep2Screen() {
 	}, [params])
 
 	const publish = async () => {
-		let payload = {
-			caption: params?.media.caption,
-			type: params?.media.asset.mediaType,
-			category_id: parseInt(`${params?.media.category_id}`),
-			modele_id: parseInt(`${currentUser?.modele?.id}`),
-			publish: true,
-			bucket: null,
-			uri: null
-		}
-
 		const assetPath = params?.media.asset.uri
 		const assetExt = params?.media.asset.filename.split('.').pop()
 		const assetblob = await (await fetch(assetPath)).blob()
@@ -98,50 +114,15 @@ export default function AddPhotoStep2Screen() {
 
 		const fileData = new File([assetblob], params?.media.asset.filename)
 
-		console.log(fileData)
-		return
+		// const s3Params = {
+		// 	Bucket: "file.tiptoe.app",
+		// 	Key: params?.media.asset.filename.split('.').pop(),
+		// 	Body: fileData,
+		// 	Metadata: { 'type': params?.media.asset.mediaType },
+		// 	ACL: 'public-read',
+		// }
 
-		const s3Params = {
-			Bucket: "file.tiptoe.app",
-			Key: params?.media.asset.filename.split('.').pop(),
-			Body: fileData,
-			Metadata: { 'type': params?.media.asset.mediaType },
-			ACL: 'public-read',
-		}
-
-		const options = {
-			partSize: 10 * 1024 * 1024, // 10 MB
-			queueSize: 10,
-		}
-
-
-		s3.upload(s3Params, options, async function (err: any, data: any) {
-			if (!err) {
-				// successful response
-				console.log(data.Location)
-				payload = {
-					...payload,
-					bucket: data.Bucket,
-					uri: data.Location
-				}
-
-				try {
-					const { addPhoto } = await graphqlClient.request(
-						ADD_PHOTO_MUTATION,
-						{ input: payload },
-					)
-
-					if (addPhoto) {
-						navigation.navigate(screenNames.Home)
-					}
-				} catch (error) {
-					alert(JSON.stringify(error.response.errors[0].message))
-				}
-
-			} else {
-				console.log(err) // an error occurred
-			}
-		})
+		upload(fileData)
 	}
 
 	return (
@@ -191,7 +172,7 @@ export default function AddPhotoStep2Screen() {
 				</Right>
 			</Header>
 			<Content>
-				{assetSelected && <MediaCard asset={assetSelected} />}
+				{assetSelected && <MediaCard asset={assetSelected as any} />}
 			</Content>
 		</Container>
 	)
