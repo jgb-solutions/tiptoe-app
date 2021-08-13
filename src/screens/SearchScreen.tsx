@@ -18,7 +18,7 @@ import Modal from "react-native-modal"
 import { colors } from "../utils/colors"
 import usePhotos from "../hooks/usePhotos"
 import useHomeData from "../hooks/useHomeData"
-import PhotoCard from "../components/PhotoCard"
+import MediaCard from "../components/MediaCard"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import NegativeResponse from "../components/NegativeResponse"
 import { SCREEN_WIDTH } from "../utils/constants"
@@ -182,7 +182,7 @@ export default function PublicModelProfileScreen() {
                       onBackdropPress={() => setCurrentPhoto(null)}
                     >
                       <View style={{ borderRadius: 15, overflow: "hidden" }}>
-                        <PhotoCard photo={currentPhoto} />
+                        <MediaCard asset={currentPhoto} />
                       </View>
                     </Modal>
                   )}

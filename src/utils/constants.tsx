@@ -1,7 +1,7 @@
 import { Dimensions } from "react-native"
 
-import { API_URL } from "@env"
-
+// import { API_URL } from "@env"
+const API_URL = 'http://tiptoe-laravel.loc'
 console.log(API_URL)
 export const APP_NAME = `TipToe`
 
@@ -35,3 +35,5 @@ export const SCREEN_WIDTH = Dimensions.get("window").width
 export const SCREEN_HEIGHT = Dimensions.get("window").height
 export const DEFAULT_AVATAR =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Info_Simple_bw.svg/1024px-Info_Simple_bw.svg.png"
+
+export const DEFAULT_IMAGE = require('../../assets/images/default-image.png')

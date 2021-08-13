@@ -32,7 +32,7 @@ import useModel from "../hooks/useModel"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import ModelInterface from "../interfaces/ModelInterface"
 import CardInterface from "../interfaces/CardInterface"
-import PhotoCard from "../components/PhotoCard"
+import MediaCard from "../components/MediaCard"
 import useToggleFollow from "../hooks/useToggleFollow"
 import NegativeResponse from "../components/NegativeResponse"
 import { useForm } from "react-hook-form"
@@ -267,16 +267,16 @@ export default function PublicModelProfileScreen() {
                     >
                       <Stats
                         title={`Post${
-                          modelData?.modele?.photos.length !== 1 ? "s" : ""
+                          modelData.modele.photos.length !== 1 ? "s" : ""
                         }`}
-                        number={modelData?.modele?.photos.length}
+                        number={modelData.modele.photos.length}
                       />
                       <Stats
                         style={{ marginLeft: 12 }}
                         title={`Follower${
-                          modelData?.modele?.followers.length !== 1 ? "s" : ""
+                          modelData.modele.followers.length !== 1 ? "s" : ""
                         }`}
-                        number={modelData?.modele?.followers.length}
+                        number={modelData.modele.followers.length}
                       />
                     </View>
                   </View>
@@ -453,7 +453,7 @@ export default function PublicModelProfileScreen() {
                   onBackdropPress={() => setCurrentPhoto(null)}
                 >
                   <View style={{ borderRadius: 15, overflow: "hidden" }}>
-                    <PhotoCard hideHeader photo={currentPhoto} />
+                    <MediaCard hideHeader asset={currentPhoto} />
                   </View>
                 </Modal>
               )}

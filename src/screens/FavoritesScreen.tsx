@@ -22,7 +22,7 @@ import Modal from "react-native-modal"
 
 import { colors } from "../utils/colors"
 import PhotoInterface from "../interfaces/PhotoInterface"
-import PhotoCard from "../components/PhotoCard"
+import MediaCard from "../components/MediaCard"
 import useFavoritePhotos from "../hooks/useFavoritePhotos"
 import { PHOTO_UPDATES_SUBSCRIPTION } from "../graphql/subscriptions"
 import { SUBSCRIPTION_TOPICS } from "../utils/constants"
@@ -91,7 +91,7 @@ export default function PublicModelProfileScreen() {
                   onBackdropPress={() => setCurrentPhoto(null)}
                 >
                   <View style={{ borderRadius: 15, overflow: "hidden" }}>
-                    <PhotoCard photo={currentPhoto} />
+                    <MediaCard asset={currentPhoto} />
                   </View>
                 </Modal>
               )}
