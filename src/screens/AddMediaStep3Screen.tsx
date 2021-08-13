@@ -55,8 +55,8 @@ export default function AddPhotoStep2Screen() {
 					category_id: parseInt(`${params?.media.category_id}`),
 					modele_id: parseInt(`${currentUser?.modele?.id}`),
 					publish: true,
-					bucket: null,
-					uri: null
+					bucket: "null",
+					uri: filename
 				}
 
 				try {
@@ -106,23 +106,7 @@ export default function AddPhotoStep2Screen() {
 	}, [params])
 
 	const publish = async () => {
-		const assetPath = params?.media.asset.uri
-		const assetExt = params?.media.asset.filename.split('.').pop()
-		const assetblob = await (await fetch(assetPath)).blob()
-
-		// console.log(assetblob)
-
-		const fileData = new File([assetblob], params?.media.asset.filename)
-
-		// const s3Params = {
-		// 	Bucket: "file.tiptoe.app",
-		// 	Key: params?.media.asset.filename.split('.').pop(),
-		// 	Body: fileData,
-		// 	Metadata: { 'type': params?.media.asset.mediaType },
-		// 	ACL: 'public-read',
-		// }
-
-		upload(fileData)
+		upload(params?.media.asset)
 	}
 
 	return (

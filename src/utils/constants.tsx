@@ -1,7 +1,7 @@
 import { Dimensions } from "react-native"
 
-import { API_URL } from "@env"
-
+// import { API_URL } from "@env"
+const API_URL = 'http://tiptoe-laravel.loc'
 console.log(API_URL)
 export const APP_NAME = `TipToe`
 

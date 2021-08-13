@@ -6,7 +6,7 @@ import * as MediaLibrary from "expo-media-library"
 import { UPLOAD_URL_QUERY } from '../graphql/queries'
 
 type UploadFileType = {
-  upload: (file: File) => Promise<void>,
+  upload: (asset: MediaLibrary.Asset) => Promise<void>,
   fileUrl?: string,
   filename?: string,
   uploading: boolean,
@@ -15,6 +15,8 @@ type UploadFileType = {
   percentUploaded: number,
   errorMessage?: string
 }
+
+const getFileType = (mediaType: string) => mediaType === 'photo' ? 'image/jpeg' : 'video/mp4'
 
 type Params = {
   message?: string,
@@ -32,12 +34,6 @@ export default function useFileUpload({ message }: Params): UploadFileType {
   const [isUploaded, setIsUploaded] = useState(false)
   const [percentUploaded, setPercentUploaded] = useState(0)
 
-  const getHeaders = () => {
-    return {
-      "x-amz-acl": 'public-read'
-    }
-  }
-
   useEffect(() => {
     if (isValid) {
       setErrorMessage(undefined)
@@ -53,29 +49,30 @@ export default function useFileUpload({ message }: Params): UploadFileType {
     setUploading(percentUploaded > 0 && percentUploaded < 100)
   }, [percentUploaded])
 
-  const upload = async (file: File) => {
-    if (!file) return
-    console.log('got the file')
+  const upload = async (asset: MediaLibrary.Asset) => {
+    if (!asset) return
+
+    setIsUploaded(false)
 
     try {
       const { data: { uploadUrl: { signedUrl, filename } } } = await client.query({
         query: UPLOAD_URL_QUERY,
         variables: {
           input: {
-            name: file.name,
+            name: asset.filename.toLowerCase(),
           }
         },
         fetchPolicy: 'network-only'
       })
 
-      console.log(signedUrl)
       setFilename(filename)
 
       const options = {
         headers: {
-          "Content-Type": file.type,
+          "Content-Type": getFileType(asset.mediaType),
+          "Content-Disposition": "inline",
           'X-Requested-With': 'XMLHttpRequest',
-          ...getHeaders()
+          "x-amz-acl": 'public-read'
         },
         onUploadProgress: (progressEvent: ProgressEvent) => {
           const percentCompleted = Math.round(
@@ -86,10 +83,21 @@ export default function useFileUpload({ message }: Params): UploadFileType {
         }
       }
 
+      const media = new FormData()
+
+      // const assetblob = await (await fetch(asset.uri)).blob()
+      media.append("media", {
+        uri: asset.uri,
+        name: asset.filename.toLowerCase(),
+        type: getFileType(asset.mediaType)
+      })
+
+
       try {
         setIsValid(true)
-        await axios.put(signedUrl, file, options)
+        await axios.put(signedUrl, media, options)
       } catch (error) {
+        console.error(error)
         setError(error)
         setIsValid(false)
       }
