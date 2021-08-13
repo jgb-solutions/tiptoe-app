@@ -1,25 +1,26 @@
 import axios from "axios"
-import { useState, useEffect } from 'react'
-import { useApolloClient } from '@apollo/react-hooks'
+import { useState, useEffect } from "react"
+import { useApolloClient } from "@apollo/react-hooks"
 import * as MediaLibrary from "expo-media-library"
 
-import { UPLOAD_URL_QUERY } from '../graphql/queries'
+import { UPLOAD_URL_QUERY } from "../graphql/queries"
 
 type UploadFileType = {
-  upload: (asset: MediaLibrary.Asset) => Promise<void>,
-  fileUrl?: string,
-  filename?: string,
-  uploading: boolean,
-  error: object | null,
-  isUploaded: boolean,
-  percentUploaded: number,
+  upload: (asset: MediaLibrary.Asset) => Promise<void>
+  fileUrl?: string
+  filename?: string
+  uploading: boolean
+  error: object | null
+  isUploaded: boolean
+  percentUploaded: number
   errorMessage?: string
 }
 
-const getFileType = (mediaType: string) => mediaType === 'photo' ? 'image/jpeg' : 'video/mp4'
+const getFileType = (mediaType: string) =>
+  mediaType === "photo" ? "image/jpeg" : "video/mp4"
 
 type Params = {
-  message?: string,
+  message?: string
 }
 
 export default function useFileUpload({ message }: Params): UploadFileType {
@@ -55,14 +56,18 @@ export default function useFileUpload({ message }: Params): UploadFileType {
     setIsUploaded(false)
 
     try {
-      const { data: { uploadUrl: { signedUrl, filename } } } = await client.query({
+      const {
+        data: {
+          uploadUrl: { signedUrl, filename },
+        },
+      } = await client.query({
         query: UPLOAD_URL_QUERY,
         variables: {
           input: {
             name: asset.filename.toLowerCase(),
-          }
+          },
         },
-        fetchPolicy: 'network-only'
+        fetchPolicy: "network-only",
       })
 
       setFilename(filename)
@@ -71,8 +76,8 @@ export default function useFileUpload({ message }: Params): UploadFileType {
         headers: {
           "Content-Type": getFileType(asset.mediaType),
           "Content-Disposition": "inline",
-          'X-Requested-With': 'XMLHttpRequest',
-          "x-amz-acl": 'public-read'
+          "X-Requested-With": "XMLHttpRequest",
+          "x-amz-acl": "public-read",
         },
         onUploadProgress: (progressEvent: ProgressEvent) => {
           const percentCompleted = Math.round(
@@ -80,18 +85,18 @@ export default function useFileUpload({ message }: Params): UploadFileType {
           )
 
           setPercentUploaded(percentCompleted)
-        }
+        },
       }
 
       const media = new FormData()
 
       // const assetblob = await (await fetch(asset.uri)).blob()
       media.append("media", {
+        //@ts-ignore
         uri: asset.uri,
         name: asset.filename.toLowerCase(),
-        type: getFileType(asset.mediaType)
+        type: getFileType(asset.mediaType),
       })
-
 
       try {
         setIsValid(true)
@@ -115,6 +120,6 @@ export default function useFileUpload({ message }: Params): UploadFileType {
     isUploaded,
     percentUploaded,
     errorMessage,
-    filename
+    filename,
   }
 }
