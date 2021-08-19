@@ -13,19 +13,20 @@ import {
 import * as MediaLibrary from "expo-media-library"
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 
+import { ProgressBar } from "react-native-paper"
+
 import { colors } from "../utils/colors"
 import { screenNames } from "../utils/screens"
 import MediaCard from "../components/MediaCard"
 import useStore, { AppStateInterface } from "../store"
-import { graphqlClient } from "../utils/graphqlClient"
-import { ADD_PHOTO_MUTATION } from "../graphql/mutations"
 
 import ModelInterface from "../interfaces/ModelInterface"
 import useFileUpload from "../hooks/useFileUpload"
+import useAddMedia from "../hooks/useAddMedia"
 
 export interface AppMedia {
   caption: string
-  category_id: string
+  category_id?: string
   asset: MediaLibrary.Asset
 }
 
@@ -58,6 +59,9 @@ export default function AddMediaStrep3Screen() {
     console.log(uploading, isUploaded, percentUploaded, errorMessage, filename)
   }, [upload, uploading, isUploaded, percentUploaded, errorMessage, filename])
 
+  const { addMedia, addMediaData, addMediaError, addMediaLoading } =
+    useAddMedia()
+
   useEffect(() => {
     ;(async () => {
       if (isUploaded) {
@@ -72,19 +76,19 @@ export default function AddMediaStrep3Screen() {
         }
 
         try {
-          const { addPhoto } = await graphqlClient.request(ADD_PHOTO_MUTATION, {
-            input: payload,
-          })
-
-          if (addPhoto) {
-            navigation.navigate(screenNames.Home)
-          }
+          addMedia(payload)
         } catch (error) {
           console.error(JSON.stringify(error))
         }
       }
     })()
   }, [isUploaded])
+
+  useEffect(() => {
+    if (addMediaData) {
+      navigation.navigate(screenNames.Home)
+    }
+  }, [addMediaData])
 
   const { params } = useRoute<RouteParamsProps>()
   const [media, setMedia] = useState<AppMedia>()
@@ -136,7 +140,7 @@ export default function AddMediaStrep3Screen() {
           >
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate(screenNames.AddPhotoStep2, {
+                navigation.navigate(screenNames.AddMediaStep2, {
                   media,
                 })
               }
@@ -157,7 +161,7 @@ export default function AddMediaStrep3Screen() {
           </Text>
         </Body>
         <Right style={{ flex: 1 }}>
-          <TouchableOpacity onPress={publish}>
+          <TouchableOpacity onPress={publish} disabled={uploading}>
             <Text
               style={{
                 fontSize: 18,
@@ -165,12 +169,17 @@ export default function AddMediaStrep3Screen() {
                 color: colors.white,
               }}
             >
-              Publish
+              {uploading ? "...Plaese wait" : "Publish"}
             </Text>
           </TouchableOpacity>
         </Right>
       </Header>
       <Content>
+        <ProgressBar
+          progress={percentUploaded}
+          color={colors.logo}
+          style={{ borderRadius: 20 }}
+        />
         {assetSelected && <MediaCard asset={assetSelected as any} />}
       </Content>
     </Container>
