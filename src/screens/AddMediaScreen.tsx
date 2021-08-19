@@ -1,7 +1,16 @@
 import { Video } from "expo-av"
 import * as MediaLibrary from "expo-media-library"
 import React, { useState, useEffect } from "react"
-import { Container, Header, Content, Text, Icon, Left, Right, View } from "native-base"
+import {
+  Container,
+  Header,
+  Content,
+  Text,
+  Icon,
+  Left,
+  Right,
+  View,
+} from "native-base"
 import { Image, StyleSheet, ScrollView } from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
@@ -26,8 +35,8 @@ export type UserFormRouteParamsProps = RouteProp<
   {
     params: {
       asset: MediaLibrary.Asset
-      caption: string
-      category_id: string
+      caption?: string
+      category_id?: string
       details: string
     }
   },
@@ -73,33 +82,24 @@ export default function AddMediaScreen() {
     const allMedia = await MediaLibrary.getAssetsAsync({
       first: amount,
       sortBy: ["creationTime"],
-      mediaType: [
-        MediaLibrary.MediaType.photo,
-        MediaLibrary.MediaType.video
-      ],
+      mediaType: [MediaLibrary.MediaType.photo, MediaLibrary.MediaType.video],
     })
-    console.log(allMedia)
+
     setAssetSelected(allMedia.assets[0])
     setAllMediaAssets(allMedia.assets)
   }
 
-  useEffect(() => {
-    if (
-      route.params?.caption !== "" ||
-      route.params?.category_id !== ""
-    ) {
-      setAssetSelected(route.params?.asset)
-    }
-  }, [route.params])
+  // useEffect(() => {
+  //   if (route.params?.caption !== "" || route.params?.category_id !== "") {
+  //     setAssetSelected(route.params?.asset)
+  //   }
+  // }, [route.params])
 
   const nextStep = () => {
-    if (
-      assetSelected?.mediaType === "video" &&
-      assetSelected?.duration > 300
-    ) {
+    if (assetSelected?.mediaType === "video" && assetSelected?.duration > 300) {
       alert("The video duration must less than or equal to 5 minutes")
     } else {
-      navigation.navigate(screenNames.AddPhotoStep2, {
+      navigation.navigate(screenNames.AddMediaStep2, {
         asset: assetSelected,
       })
     }
@@ -167,12 +167,14 @@ export default function AddMediaScreen() {
                 fetchAllPhotosFromLibrary(allMediaAssets.length + 10)
               }
             }}
-            scrollEventThrottle={400}>
+            scrollEventThrottle={400}
+          >
             <View style={styles.imageWrapper}>
-              {allMediaAssets?.map(asset => (
+              {allMediaAssets?.map((asset) => (
                 <TouchableOpacity
                   key={asset.id}
-                  onPress={() => setAssetSelected(asset)}>
+                  onPress={() => setAssetSelected(asset)}
+                >
                   <Image
                     style={styles.image}
                     source={{
