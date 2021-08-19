@@ -248,14 +248,30 @@ export const DELETE_MODEL_ACCOUNT = gql`
 `
 
 export const ADD_PHOTO_MUTATION = gql`
-  mutation AddPhoto($input: PhotoInput!) {
-    addPhoto(input: $input) {
+  mutation AddMedia($input: MediaInput!) {
+    addMedia(input: $input) {
       id
       uri
       modele {
         id
         stage_name
       }
+    }
+  }
+`
+
+export const UPDATE_AVATAR_MUTATION = gql`
+  mutation UpdateAvatar($input: UpdateAvatarInput!) {
+    updateAvatar(input: $input) {
+      success
+    }
+  }
+`
+
+export const UPDATE_POSTER_MUTATION = gql`
+  mutation UpdatePoster($input: UpdatePosterInput!) {
+    updatePoster(input: $input) {
+      success
     }
   }
 `
