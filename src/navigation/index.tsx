@@ -92,40 +92,7 @@ function TabNavigation() {
           ),
         }}
       />
-      {currentUser?.modele && (
-        <Tab.Screen
-          name={screenNames.Add}
-          component={AddMediaScreen}
-          options={{
-            tabBarLabel: "Add Photo",
-            tabBarIcon: ({ color, size }) => (
-              <Icon
-                name="add-circle"
-                style={{
-                  fontSize: size * 1.9,
-                  color,
-                }}
-              />
-            ),
-          }}
-        />
-      )}
-      <Tab.Screen
-        name={screenNames.Search}
-        component={SearchScreen}
-        options={{
-          tabBarLabel: "Search",
-          tabBarIcon: ({ color, size }) => (
-            <Icon
-              name="search"
-              style={{
-                fontSize: size,
-                color,
-              }}
-            />
-          ),
-        }}
-      />
+
       {currentUser?.modele && (
         <Tab.Screen
           name={screenNames.Add}
@@ -236,11 +203,11 @@ function MainNavigation() {
               component={DeleteAccountScreen}
             />
             <Stack.Screen
-              name={screenNames.AddPhotoStep2}
+              name={screenNames.AddMediaStep2}
               component={AddMediaStep2Screen}
             />
             <Stack.Screen
-              name={screenNames.AddPhotoStep3}
+              name={screenNames.AddMediaStep3}
               component={AddMediaStep3Screen}
             />
           </Stack.Navigator>
