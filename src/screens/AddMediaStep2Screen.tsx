@@ -27,16 +27,16 @@ import { useForm, Controller } from "react-hook-form"
 import Textarea from "react-native-textarea"
 
 export interface MediaInfo {
-  category_id: string
-  caption: string
+  category_id?: string
+  caption?: string
 }
 
 type RouteParamsProps = RouteProp<
   {
     params: {
       media: {
-        caption: string
-        category_id: string
+        caption?: string
+        category_id?: string
         asset: MediaLibrary.Asset
       }
 
@@ -65,9 +65,10 @@ export default function AddMediaStrep2Screen() {
   }, [route])
 
   const onSubmit = (credentials: MediaInfo) => {
-    navigation.navigate(screenNames.AddPhotoStep3, {
-      media: { asset, ...credentials },
-    })
+    ;(credentials.category_id = "1"),
+      navigation.navigate(screenNames.AddMediaStep3, {
+        media: { asset, ...credentials },
+      })
   }
 
   return (
@@ -110,7 +111,7 @@ export default function AddMediaStrep2Screen() {
           </TouchableOpacity>
         </Right>
       </Header>
-      <Content>
+      <Content style={{ paddingTop: 10 }}>
         <Image
           source={{ uri: asset?.uri }}
           style={{
@@ -120,7 +121,7 @@ export default function AddMediaStrep2Screen() {
           }}
         />
 
-        <Item style={[styles.items, { paddingBottom: 10 }]}>
+        {/* <Item style={[styles.items, { padding: 10 }]}>
           <View style={styles.inputContainer}>
             <Controller
               name="category_id"
@@ -143,13 +144,13 @@ export default function AddMediaStrep2Screen() {
               )}
             />
           </View>
-        </Item>
+        </Item> */}
 
-        <Item style={[styles.items, { paddingBottom: 10, height: 100 }]}>
+        <Item style={[styles.items, { padding: 10, height: 100 }]}>
           <View style={styles.inputContainer}>
             <Controller
               name="caption"
-              rules={{ required: "Say something about this" }}
+              rules={{ required: false }}
               control={control}
               render={({ onChange, onBlur, value }) => (
                 <Textarea

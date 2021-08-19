@@ -28,7 +28,7 @@ export default function HomeScreen() {
 
   const { publichableKey } = useGetPublishableKey()
 
-  const { homeData, homeError, homeLoading } = useHomeData()
+  const { homeData, homeError, homeLoading, homeRefetch } = useHomeData()
   const {
     photosLoading,
     photosError,
@@ -38,11 +38,21 @@ export default function HomeScreen() {
     subscribeToMorePhotos,
   } = usePhotos()
 
+  // useEffect(() => {
+  //   unsubscribe()
+  // }, [])
+
   useEffect(() => {
     if (publichableKey?.getPublishableKey?.key && !key) {
       setupStripeKey(publichableKey?.getPublishableKey?.key)
     }
   }, [publichableKey, key])
+
+  useEffect(() => {
+    // navigation.addListener("focus", () => {
+    //   homeRefetch()
+    // })
+  }, [navigation])
 
   return (
     <Page noLeft rightStyle={{ flex: 0 }} noContent>
@@ -74,20 +84,20 @@ export default function HomeScreen() {
                 (photo: any) =>
                   (photo.for_my_modele || photo.is_for_me) && photo
               ).length === 0 && (
-                  <View
-                    style={{
-                      margin: 10,
-                      borderTopColor: colors.blackOpact,
-                      borderTopWidth: 0.17,
-                      paddingTop: 10,
-                    }}
-                  >
-                    <Text style={{ textAlign: "center" }}>
-                      Your timeline is empty! You should start following some
-                      models.
-                    </Text>
-                  </View>
-                )}
+                <View
+                  style={{
+                    margin: 10,
+                    borderTopColor: colors.blackOpact,
+                    borderTopWidth: 0.17,
+                    paddingTop: 10,
+                  }}
+                >
+                  <Text style={{ textAlign: "center" }}>
+                    Your timeline is empty! You should start following some
+                    models.
+                  </Text>
+                </View>
+              )}
             </>
           }
           ListEmptyComponent={() => (
