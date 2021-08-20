@@ -9,15 +9,21 @@ import {
   View,
   Thumbnail,
   Input,
+  Spinner,
 } from "native-base"
+
+import { ProgressBar } from "react-native-paper"
+
+import RNPickerSelect from "react-native-picker-select"
 import * as mime from "react-native-mime-types"
 import Textarea from "react-native-textarea"
 import { Feather, Entypo, FontAwesome } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
 import * as ImagePicker from "expo-image-picker"
+import * as MediaLibrary from "expo-media-library"
 
 import { useNavigation } from "@react-navigation/native"
-import { StyleSheet } from "react-native"
+import { StyleSheet, Image } from "react-native"
 
 import { colors } from "../utils/colors"
 import { screenNames } from "../utils/screens"
@@ -25,14 +31,14 @@ import useStore, { AppStateInterface } from "../store"
 import ModelInterface from "../interfaces/ModelInterface"
 
 import Button from "../components/Button"
-import { TouchableOpacity } from "react-native-gesture-handler"
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler"
 import useUpdateUser from "../hooks/useUpdateUser"
 import UpdateUserInterface from "../interfaces/UpdateUserInterface"
 import SelectPicker from "react-native-form-select-picker"
 import UserInterface from "../interfaces/UserInterface"
-import { DEFAULT_AVATAR } from "../utils/constants"
-
-const GENDERS = ["MALE", "FEMALE", "OTHER"]
+import { DEFAULT_AVATAR, SCREEN_HEIGHT, SCREEN_WIDTH } from "../utils/constants"
+import useUpdatePicture from "../hooks/useUpdatePicture"
+import useFileUpload from "../hooks/useFileUpload"
 
 type Gender = "FEMALE" | "MALE" | "OTHER"
 
@@ -53,6 +59,36 @@ interface Credentials {
 export default function UpdateInfoScreen() {
   const navigation = useNavigation()
 
+  const {
+    updateAvatar,
+    updatePoster,
+    avatarData,
+    avatarLoading,
+    avatarRrror,
+    posterData,
+    posterLoading,
+    posterRrror,
+  } = useUpdatePicture()
+
+  const {
+    upload,
+    uploading,
+    isUploaded,
+    percentUploaded,
+    errorMessage,
+    filename,
+    fileUrl,
+  } = useFileUpload({
+    message: "There was a problem upload this media.",
+  })
+
+  const {
+    updateUser,
+    updateUserWithModel,
+    data: updateUserData,
+    dataUpdateWithModel,
+  } = useUpdateUser()
+
   const { currentUser: userState, updateUserState } = useStore(
     (state: AppStateInterface) => ({
       currentUser: state.authData.user,
@@ -67,87 +103,108 @@ export default function UpdateInfoScreen() {
   )
 
   useEffect(() => {
+    console.log(userState)
     userState && setCurrentUser(userState)
   }, [userState])
 
-  const {
-    control,
-    handleSubmit,
-    errors,
-    getValues,
-    watch,
-    formState: { touched, isValid },
-  } = useForm<UserInterface>({
+  const { control, handleSubmit, watch } = useForm<UserInterface>({
     mode: "onBlur",
     defaultValues: currentUser,
   })
 
-  const minTouched = Object.keys(touched).length > 0
-  const noErrors = Object.keys(errors).length === 0
-
-  const disabled = !(minTouched && noErrors)
-
   const [avatar, setAvatar] = useState<any | null>()
   const [poster, setPoster] = useState<any | null>()
 
-  const { updateUser, data: updateUserData } = useUpdateUser()
-
-  const onSubmit = async (credentials: UpdateUserInterface) => {
-    const payload = {
-      id: currentUser?.id,
-      ...credentials,
-      modele: {
-        update: {
-          id: currentUser?.modele?.id,
-          ...credentials.modele,
-        },
-      },
-    }
-
-    updateUser(payload)
-    if (updateUserData) {
-      updateUserState(updateUserData.updateUser)
-      alert("Your profile has been updated")
-    }
-  }
+  const [allMediaAssets, setAllMediaAssets] = useState<MediaLibrary.Asset[]>([])
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    if (currentUser?.first_login) {
-      const payload: UpdateUserInterface = {
-        id: currentUser?.id,
-        first_login: false,
-      }
-      updateUser(payload)
+    const askPermission = async () => {
+      const isCameraRolleEnable = await MediaLibrary.requestPermissionsAsync()
 
-      if (updateUserData) {
-        updateUserState(updateUserData.updateUser)
+      if (isCameraRolleEnable.granted) {
+        setLoaded(true)
+        return
+      }
+
+      const { granted } = await MediaLibrary.requestPermissionsAsync()
+      if (granted) {
+        MediaLibrary.getAssetsAsync({
+          sortBy: [[MediaLibrary.SortBy.default, true]],
+        })
+        setLoaded(true)
       }
     }
-  }, [currentUser?.first_login, updateUserData])
+    askPermission()
+  }, [loaded])
+
+  const fetchAllPhotosFromLibrary = async (amount = 20) => {
+    const allMedia = await MediaLibrary.getAssetsAsync({
+      first: amount,
+      sortBy: ["creationTime"],
+      mediaType: [MediaLibrary.MediaType.photo],
+    })
+    setAllMediaAssets(allMedia.assets)
+  }
 
   useEffect(() => {
     ;(async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
-      if (status !== "granted") {
-        alert("Sorry, we need camera roll permissions to make this work!")
+      if (isUploaded && filename && !modelPoster) {
+        let payload = {
+          avatar: filename,
+        }
+        try {
+          updateAvatar(payload)
+        } catch (error) {
+          console.error(JSON.stringify(error))
+        }
+      } else if (isUploaded && filename && modelPoster) {
+        let payload = {
+          poster: filename,
+        }
+        try {
+          updatePoster(payload)
+        } catch (error) {
+          console.error(JSON.stringify(error))
+        }
       }
     })()
-  }, [])
+  }, [isUploaded])
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    })
+  useEffect(() => {
+    console.log(uploading, isUploaded, percentUploaded, errorMessage, filename)
+  }, [upload, uploading, isUploaded, percentUploaded, errorMessage, filename])
 
-    console.log(result)
-    if (!result.cancelled) {
-      console.log(mime.lookup(result.uri))
-      setAvatar(result.uri)
-    }
+  const fetchAllImages = async () => {
+    fetchAllPhotosFromLibrary()
   }
+
+  // useEffect(() => {
+  //   if (currentUser && avatarData?.updateAvatar?.success) {
+  //     const payload = {
+  //       ...currentUser,
+  //       avatar: filename,
+  //     }
+  //     //@ts-ignore
+  //     updateUserState(payload)
+  //   } else {
+  //   }
+  // }, [currentUser, filename, avatarData?.updateAvatar?.success])
+
+  // useEffect(() => {
+  //   if (currentUser && posterData?.updatePoster?.success) {
+  //     const payload = {
+  //       ...currentUser,
+  //       modele: {
+  //         ...currentUser.modele,
+  //         poster: filename,
+  //       },
+  //     }
+  //     //@ts-ignore
+  //     updateUserState(payload)
+  //   } else {
+  //   }
+  // }, [currentUser, filename, posterData?.updatePoster?.success])
 
   const pickPoster = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -160,11 +217,126 @@ export default function UpdateInfoScreen() {
     console.log(result)
 
     if (!result.cancelled) {
-      setPoster(result.uri)
+      upload(result.uri)
     }
   }
 
-  console.log(currentUser?.modele?.poster)
+  const onSubmit = async (credentials: UpdateUserInterface) => {
+    let payload
+    if (!currentUser?.modele?.id) {
+      payload = {
+        id: currentUser?.id,
+        ...credentials,
+      }
+
+      updateUser(payload, currentUser?.id)
+    } else {
+      payload = {
+        id: currentUser?.id,
+        ...credentials,
+        modele: {
+          update: {
+            id: currentUser?.modele?.id,
+            ...credentials.modele,
+            poster: currentUser?.modele?.poster,
+          },
+        },
+      }
+      updateUserWithModel(payload, currentUser?.id)
+    }
+
+    console.log(payload)
+
+    if (updateUserData || dataUpdateWithModel) {
+      updateUserState(updateUserData || dataUpdateWithModel)
+      alert("Your profile has been updated")
+    }
+  }
+
+  useEffect(() => {
+    if (currentUser?.first_login) {
+      const payload: UpdateUserInterface = {
+        id: currentUser?.id,
+        first_login: false,
+      }
+      updateUser(payload, currentUser?.id)
+    }
+
+    if (updateUserData) {
+      const payload = {
+        ...currentUser,
+        ...updateUserData.updateUser,
+      }
+      updateUserState(payload)
+    }
+
+    if (dataUpdateWithModel) {
+      const payload = {
+        ...currentUser,
+        ...dataUpdateWithModel.updateUserWithModel,
+      }
+      updateUserState(payload)
+    }
+  }, [currentUser?.first_login, updateUserData, dataUpdateWithModel])
+
+  useEffect(() => {
+    ;(async () => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!")
+      }
+    })()
+  }, [])
+
+  let gender: { label: string; value: string }[] = [
+    { label: "Male", value: "MALE" },
+    { label: "Female", value: "FEMALE" },
+    { label: "Other", value: "OTHER" },
+  ]
+
+  const isCloseToBottom = ({
+    layoutMeasurement,
+    contentOffset,
+    contentSize,
+  }: any) => {
+    const paddingToBottom = 5
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    )
+  }
+
+  if (allMediaAssets.length > 0) {
+    return (
+      <View style={{ marginTop: 50 }}>
+        <ScrollView
+          style={styles.imageBox}
+          onScroll={({ nativeEvent }) => {
+            if (isCloseToBottom(nativeEvent)) {
+              fetchAllPhotosFromLibrary(allMediaAssets.length + 10)
+            }
+          }}
+          scrollEventThrottle={400}
+        >
+          <View style={styles.imageWrapper}>
+            {allMediaAssets?.map((asset) => (
+              <TouchableOpacity
+                key={asset.id}
+                onPress={() => [upload(asset), setAllMediaAssets([])]}
+              >
+                <Image
+                  source={{
+                    uri: asset.uri,
+                  }}
+                  style={styles.image}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    )
+  }
 
   return (
     <Container>
@@ -204,6 +376,11 @@ export default function UpdateInfoScreen() {
         </Right>
       </Header>
       <Content>
+        <ProgressBar
+          progress={percentUploaded}
+          color={colors.logo}
+          style={{ borderRadius: 20 }}
+        />
         <View style={{ padding: 12 }}>
           <View
             style={{
@@ -214,7 +391,7 @@ export default function UpdateInfoScreen() {
             }}
           >
             <TouchableOpacity
-              onPress={modelPoster ? pickPoster : pickImage}
+              onPress={pickPoster}
               style={{ flexDirection: "column", alignItems: "center" }}
             >
               <Thumbnail
@@ -235,15 +412,19 @@ export default function UpdateInfoScreen() {
                 }}
               />
 
-              <FontAwesome
-                name="pencil-square-o"
-                size={24}
-                color={colors.red}
-                style={{
-                  //   position: "absolute",
-                  marginTop: -30,
-                }}
-              />
+              {uploading ? (
+                <Spinner color={colors.pink} style={{ position: "absolute" }} />
+              ) : (
+                <FontAwesome
+                  name="pencil-square-o"
+                  size={24}
+                  color={colors.red}
+                  style={{
+                    //   position: "absolute",
+                    marginTop: -30,
+                  }}
+                />
+              )}
             </TouchableOpacity>
 
             <View
@@ -262,9 +443,11 @@ export default function UpdateInfoScreen() {
                       <Text>Show avatar</Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity onPress={() => setModelPoster(true)}>
-                      <Text>Show model poster</Text>
-                    </TouchableOpacity>
+                    currentUser?.is_model && (
+                      <TouchableOpacity onPress={() => setModelPoster(true)}>
+                        <Text>Show model poster</Text>
+                      </TouchableOpacity>
+                    )
                   )}
                 </Text>
               </View>
@@ -272,7 +455,11 @@ export default function UpdateInfoScreen() {
           </View>
 
           <View
-            style={{ flexDirection: "column", marginBottom: 24, marginTop: 20 }}
+            style={{
+              flexDirection: "column",
+              marginBottom: 24,
+              marginTop: 20,
+            }}
           >
             <View style={{ flexDirection: "row", marginBottom: 10 }}>
               <Feather
@@ -339,23 +526,16 @@ export default function UpdateInfoScreen() {
               name="gender"
               control={control}
               render={({ onChange, onBlur, value }) => (
-                <SelectPicker
-                  onValueChange={onChange}
-                  selected={value}
-                  placeholder="Select your gender"
-                  placeholderStyle={{
-                    fontSize: 18,
-                    color: "#000",
+                <RNPickerSelect
+                  onValueChange={(e) => onChange(e)}
+                  value={currentUser?.gender}
+                  items={gender}
+                  style={pickerSelectStyles}
+                  placeholder={{
+                    label: "Select your gender",
+                    value: null,
                   }}
-                >
-                  {GENDERS.map((gender, index) => (
-                    <SelectPicker.Item
-                      key={index}
-                      label={gender.toLowerCase()}
-                      value={gender}
-                    />
-                  ))}
-                </SelectPicker>
+                />
               )}
             />
           </View>
@@ -557,5 +737,61 @@ const styles = StyleSheet.create({
     height: 90,
     fontSize: 18,
     color: "#333",
+  },
+
+  displayNone: {
+    opacity: 0,
+    height: 0,
+    flex: 0,
+  },
+  assetSelectedBox: {
+    height: SCREEN_HEIGHT / 2.3,
+    width: "70%",
+    padding: 2,
+    backgroundColor: "#fff",
+    borderWidth: 0.5,
+    borderColor: "#000",
+  },
+  assetSelected: {
+    height: "100%",
+    width: "100%",
+  },
+  imageBox: {
+    height: 315,
+  },
+  imageWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  image: {
+    height: SCREEN_WIDTH / 3,
+    width: SCREEN_WIDTH / 3,
+    borderWidth: 0.5,
+    borderColor: "#262626",
+  },
+})
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    // borderWidth: 1,
+    // borderColor: "#fce3e9",
+    borderRadius: 5,
+    height: 45,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    // borderWidth: 0.5,
+    // borderColor: "#fce3e9",
+    borderRadius: 8,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
   },
 })

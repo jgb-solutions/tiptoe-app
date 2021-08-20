@@ -3,6 +3,7 @@ import { Root } from "native-base"
 import AppLoading from "expo-app-loading"
 import { StripeProvider } from "@stripe/stripe-react-native"
 import useStore, { AppStateInterface } from "./src/store"
+import { graphqlClient } from "./src/utils/graphqlClient"
 
 import {
   useFonts,
@@ -21,8 +22,22 @@ import {
 } from "@expo-google-fonts/roboto"
 
 import { MainNavigation } from "./src/navigation"
+import { GETPUBLISHABLEKEY } from "./src/graphql/queries"
 
 export default function App() {
+  const [pk, setPk] = useState<string | "">("")
+
+  async function getKey() {
+    const {
+      getPublishableKey: { key },
+    } = await graphqlClient.request(GETPUBLISHABLEKEY, {})
+
+    key && setPk(key)
+  }
+  useEffect(() => {
+    getKey()
+  }, [])
+
   let [fontsLoaded] = useFonts({
     Roboto_100Thin,
     Roboto_100Thin_Italic,
@@ -38,17 +53,11 @@ export default function App() {
     Roboto_900Black_Italic,
   })
 
-  const { publishableKey: key } = useStore((state: AppStateInterface) => ({
-    publishableKey: state.publishableKey,
-  }))
-
   if (!fontsLoaded) return <AppLoading />
 
   return (
     <Root>
-      <StripeProvider
-        publishableKey={`pk_test_51IljqbEERboeLMjcnCmNOaFBA7buzIpWXz8ifCdpdzCrtgMkggYfXYWMz6tBXnRMsFIAy8k4bMU8R8qYkxFjkCGF00lYjHyvLT`}
-      >
+      <StripeProvider publishableKey={`${pk}`}>
         <MainNavigation />
       </StripeProvider>
     </Root>

@@ -1,23 +1,12 @@
-import React, { useState } from "react"
-import {
-  Container,
-  Header,
-  Content,
-  Text,
-  Left,
-  Right,
-  View,
-} from "native-base"
+import React from "react"
+import { Container, Header, Content, Text, Left, View } from "native-base"
 import { FontAwesome, Feather } from "@expo/vector-icons"
-import { formatToUnits } from "../utils/formatNumber"
 import { screenNames } from "../utils/screens"
 
-import { ViewStyle, StyleSheet, Settings } from "react-native"
-import Menu, { MenuItem, MenuDivider } from "react-native-material-menu"
+import { StyleSheet } from "react-native"
 
 import { colors } from "../utils/colors"
-import useStore, { AppStateInterface } from "../store"
-import { RouteProp, useNavigation } from "@react-navigation/native"
+import { useNavigation } from "@react-navigation/native"
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler"
 import Button from "../components/Button"
 
@@ -26,22 +15,6 @@ export default function SettingsScreen() {
 
   let menu: any = null
 
-  const setMenuRef = (ref: any) => {
-    menu = ref
-  }
-
-  const hideMenu = () => {
-    menu.hide()
-  }
-
-  const showMenu = () => {
-    menu.show()
-  }
-
-  const goToProfile = () => {
-    navigation.navigate(screenNames.Profile)
-    hideMenu()
-  }
   return (
     <Container>
       <Header
@@ -52,7 +25,7 @@ export default function SettingsScreen() {
         <Left style={{ flexDirection: "row", alignItems: "center" }}>
           <Button
             transparent
-            onPress={() => navigation.navigate(screenNames.Profile)}
+            onPress={() => navigation.navigate("TabNavigation")}
           >
             <Feather name="arrow-left" color={colors.white} size={24} />
           </Button>
@@ -140,7 +113,10 @@ export default function SettingsScreen() {
           </View>
 
           <View style={styles.row}>
-            <TouchableOpacity style={styles.rowBox}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(screenNames.DeleteAccount)}
+              style={styles.rowBox}
+            >
               <Feather
                 name="trash"
                 size={30}

@@ -113,7 +113,9 @@ export default function LogInWithEmailScreen() {
 
         <View style={{ flexDirection: "row", marginBottom: 24 }}>
           <Text style={styles.smallText}>FORGOT YOUR PASSWORD? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Reset")}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate(screenNames.ResetPassword)}
+          >
             <Text style={[styles.smallText, { fontWeight: "bold" }]}>
               Reset it
             </Text>

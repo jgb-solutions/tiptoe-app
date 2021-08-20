@@ -1,4 +1,5 @@
 export const colors = {
+  logo: "#252B63",
   black: "#010101",
   blackB: "#282523",
   blackOpact: "rgba(10, 10, 10, 0.6)",

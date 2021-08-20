@@ -10,7 +10,6 @@ export default function usePhotos() {
   const { loading, error, data, fetchMore, refetch, subscribeToMore } =
     useQuery(FETCH_PHOTOS, {
       variables: {
-        page: 1,
         first: FETCH_PHOTOS_NUMBER,
         orderBy: [{ column: "created_at", order: "DESC" }],
       },

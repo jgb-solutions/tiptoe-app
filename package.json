@@ -23,7 +23,7 @@
 		"apollo-link-context": "^1.0.19",
 		"apollo-link-error": "^1.1.12",
 		"apollo-link-http": "^1.5.16",
-		"aws-sdk": "^2.949.0",
+		"axios": "^0.21.1",
 		"babel-plugin-inline-dotenv": "^1.6.0",
 		"expo": "~42.0.1",
 		"expo-app-loading": "^1.1.2",
@@ -50,6 +50,7 @@
 		"react-native-material-menu": "^1.2.0",
 		"react-native-mime-types": "^2.3.0",
 		"react-native-modal": "^12.0.2",
+		"react-native-paper": "^4.9.2",
 		"react-native-path": "^0.0.5",
 		"react-native-picker-select": "^8.0.4",
 		"react-native-screens": "~3.4.0",
@@ -63,7 +64,6 @@
 		"@babel/core": "^7.9.0",
 		"@types/react": "~16.9.35",
 		"@types/react-native": "~0.63.2",
-		"@types/react-native-aws3": "0.0.1",
 		"typescript": "~4.0.0"
 	},
 	"private": true

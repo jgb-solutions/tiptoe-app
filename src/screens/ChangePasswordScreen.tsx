@@ -1,122 +1,78 @@
-import React, { useState, useRef } from "react"
-import { Container, Header, Content, Text, Icon, Left, View } from "native-base"
-import { formatToUnits } from "../utils/formatNumber"
-import { screenNames } from "../utils/screens"
-import FormInput from "../components/FormInput"
-import { request } from "graphql-request"
-import { GRAPHQL_API_URL } from "../utils/constants"
-import { CHANGE_PASSWORD } from "../graphql/mutations"
-
-import { StyleSheet, ScrollView, SafeAreaView, ViewStyle } from "react-native"
-
-import { colors } from "../utils/colors"
-import useStore, { AppStateInterface } from "../store"
-import { useNavigation } from "@react-navigation/native"
-import { TouchableOpacity } from "react-native-gesture-handler"
-import FormButton from "../components/FormButton"
-
+import React, { useEffect, useState } from "react"
+import {
+  Container,
+  Header,
+  Content,
+  Text,
+  Left,
+  Right,
+  View,
+  Thumbnail,
+  Input,
+} from "native-base"
+import { Feather, FontAwesome } from "@expo/vector-icons"
 import { useForm, Controller } from "react-hook-form"
 
-type StatsProps = {
-  number: number
-  title: string
-  style?: ViewStyle
-}
+import { useNavigation } from "@react-navigation/native"
+import { StyleSheet } from "react-native"
 
-const Stats = ({ number, title, style }: StatsProps) => (
-  <View style={{ alignItems: "center", ...style }}>
-    <Text style={{ fontWeight: "bold" }}>
-      {number > 999 ? formatToUnits(number) : number}
-    </Text>
-    <Text>{title}</Text>
-  </View>
-)
+import { colors } from "../utils/colors"
+import { screenNames } from "../utils/screens"
+import useStore, { AppStateInterface } from "../store"
 
-type ButtonProps = {
-  style?: ViewStyle
-  children: React.ReactNode
-  onPress?: () => void
-  transparent?: boolean
-  disable?: boolean
-}
-
-const Button = ({
-  children,
-  style,
-  onPress,
-  transparent,
-  disable,
-}: ButtonProps) => {
-  const handleOnPress = () => {
-    if (disable) return
-
-    onPress && onPress()
-  }
-
-  return (
-    <TouchableOpacity
-      style={[
-        {
-          alignItems: "center",
-          justifyContent: "center",
-          paddingHorizontal: 8,
-          paddingVertical: 2,
-          borderRadius: 6,
-          opacity: disable ? 0.7 : 1,
-          backgroundColor: transparent ? "transparent" : undefined,
-          ...style,
-        },
-      ]}
-      onPress={handleOnPress}
-    >
-      {children}
-    </TouchableOpacity>
-  )
-}
+import Button from "../components/Button"
+import { TouchableOpacity } from "react-native-gesture-handler"
+import { DEFAULT_AVATAR } from "../utils/constants"
+import useChangePassword from "../hooks/useChangePassword"
 
 export interface Credentials {
   password: string
-  newPassword: string
-  passwordConfirmation: string
+  new_password: string
+  password_confirmation: string
 }
 
 export default function ChangePasswordScreen() {
-  const { control, handleSubmit, errors } = useForm<Credentials>({
-    mode: "onBlur",
-  })
-
   const navigation = useNavigation()
+
+  const {
+    changePassword,
+    changePasswordLoading,
+    changePasswordError,
+    changePasswordData,
+  } = useChangePassword()
+
   const { currentUser } = useStore((state: AppStateInterface) => ({
     currentUser: state.authData.user,
   }))
 
-  const [passwordError, setPasswordError] = useState<any | null>("")
+  const { control, handleSubmit, errors, reset, watch } = useForm<Credentials>({
+    mode: "onBlur",
+  })
 
-  const changePassword = async (input: Credentials) => {
+  const onSubmit = async (credentials: Credentials) => {
     try {
-      const { register: data } = await request(
-        GRAPHQL_API_URL,
-        CHANGE_PASSWORD,
-        {
-          input: input,
-        }
-      )
-
-      if (data) {
-        navigation.navigate(screenNames.Profile)
+      const payload = {
+        password: credentials.password,
+        new_password: credentials.new_password,
       }
+      changePassword(payload)
 
-      if (input.newPassword !== input.passwordConfirmation) {
-        setPasswordError("Password confirmation must match")
-      }
-
-      if (errors) {
-        setPasswordError("something went wrong. Please check again")
+      if (changePasswordError) {
+        console.log(changePasswordError)
       }
     } catch (error) {
-      setPasswordError(error.response.errors[0].message)
+      alert(error.response.errors[0].message)
     }
   }
+
+  useEffect(() => {
+    if (changePasswordData?.changePassword?.message) {
+      alert(changePasswordData?.changePassword?.message)
+    }
+    if (changePasswordData?.changePassword?.success) {
+      reset({ password: "", new_password: "", password_confirmation: "" })
+    }
+  }, [changePasswordData])
 
   return (
     <Container>
@@ -125,97 +81,232 @@ export default function ChangePasswordScreen() {
         androidStatusBarColor={colors.black}
         style={{ backgroundColor: colors.pink }}
       >
-        <Left style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+        <Left style={{ flexDirection: "row", alignItems: "center" }}>
           <Button
             transparent
             onPress={() => navigation.navigate(screenNames.Setting)}
           >
-            <Icon name="arrow-back" style={{ color: colors.white }} />
+            <Feather name="arrow-left" color={colors.white} size={24} />
           </Button>
 
           <Text
             style={{
               fontWeight: "bold",
               color: colors.white,
-              width: 200,
             }}
           >
-            Change Password
+            Change password
           </Text>
         </Left>
+        <Right>
+          <TouchableOpacity
+            onPress={handleSubmit(onSubmit)}
+            disabled={changePasswordLoading}
+          >
+            <Text
+              style={{
+                color: colors.white,
+                fontWeight: "bold",
+              }}
+            >
+              {changePasswordLoading ? "Please wait..." : "Change"}
+            </Text>
+          </TouchableOpacity>
+        </Right>
       </Header>
-
       <Content>
-        <SafeAreaView style={styles.container}>
-          <ScrollView contentContainerStyle={styles.contentContainer}>
-            {/* <Image style={styles.image} source={TipToeLogo} /> */}
-
-            <Text style={styles.password}>Reset password</Text>
-            <Text style={styles.passwordError}>{passwordError}</Text>
-
-            <View style={styles.inputsContainer}>
-              <Controller
-                control={control}
-                render={({ onChange, onBlur, value }) => (
-                  <FormInput
-                    onBlur={onBlur}
-                    secureTextEntry
-                    autoCapitalize="none"
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    placeholder="Enter Your Current Password"
-                    error={errors.password}
-                  />
-                )}
-                name="password"
-                rules={{ required: "The current password is required" }}
-                defaultValue=""
-              />
-
-              <Controller
-                control={control}
-                render={({ onChange, onBlur, value }) => (
-                  <FormInput
-                    onBlur={onBlur}
-                    secureTextEntry
-                    autoCapitalize="none"
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    placeholder="Enter The New Password"
-                    error={errors.newPassword}
-                  />
-                )}
-                name="newPassword"
-                rules={{ required: "The new password is required" }}
-                defaultValue=""
-              />
-
-              <Controller
-                control={control}
-                render={({ onChange, onBlur, value }) => (
-                  <FormInput
-                    secureTextEntry
-                    autoCapitalize="none"
-                    onBlur={onBlur}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    placeholder="Confirm Your new Password"
-                    error={errors.passwordConfirmation}
-                  />
-                )}
-                name="passwordConfirmation"
-                rules={{ required: "The confirmation password is required" }}
-                defaultValue=""
-              />
-            </View>
-
-            <FormButton
-              btnStyle={{ marginBottom: 12 }}
-              label="Change"
-              onPress={handleSubmit(changePassword)}
+        <View style={{ padding: 12 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
+            <Thumbnail
+              large
+              source={{
+                uri: currentUser?.avatar ? currentUser?.avatar : DEFAULT_AVATAR,
+              }}
             />
-          </ScrollView>
-        </SafeAreaView>
+
+            <View
+              style={{
+                flex: 1,
+                marginLeft: 20,
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+              }}
+            >
+              <View>
+                <Text
+                  style={{
+                    fontSize: 24,
+                    fontWeight: "bold",
+                    color: colors.pink,
+                  }}
+                >
+                  {currentUser?.name}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View
+            style={{ flexDirection: "column", marginBottom: 24, marginTop: 20 }}
+          >
+            <View style={{ flexDirection: "row", marginBottom: 10 }}>
+              <Feather
+                name="phone"
+                size={20}
+                color={colors.pink}
+                style={{
+                  marginRight: 15,
+                }}
+              />
+              <Text>
+                {watch("telephone")
+                  ? watch("telephone")
+                  : currentUser?.telephone}
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <Feather
+                name="mail"
+                size={20}
+                color={colors.pink}
+                style={{
+                  marginRight: 15,
+                }}
+              />
+              <Text>{currentUser?.email}</Text>
+            </View>
+          </View>
+        </View>
+        <View
+          style={{
+            backgroundColor: colors.pink,
+            justifyContent: "center",
+            borderColor: colors.pink,
+            borderWidth: 1,
+            padding: 12,
+            borderRadius: 0,
+          }}
+        >
+          <Text style={{ color: colors.white }}>
+            Fillout this form to change your password
+          </Text>
+        </View>
+
+        <View style={styles.container}>
+          <View style={styles.infos}>
+            <Text style={styles.mediaText}>Current password</Text>
+            <Controller
+              control={control}
+              render={({ onChange, onBlur, value }) => (
+                <Input
+                  value={value}
+                  onBlur={onBlur}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  placeholder="Current Password"
+                  onChangeText={(value) => onChange(value)}
+                />
+              )}
+              name="password"
+              rules={{ required: "The current password is required" }}
+            />
+          </View>
+
+          {errors.password && (
+            <View>
+              <Text
+                style={{
+                  color: colors.error,
+                  marginBottom: 10,
+                  fontSize: 15,
+                }}
+              >
+                <FontAwesome name="warning" size={15} color={colors.error} />{" "}
+                {errors.password.message}
+              </Text>
+            </View>
+          )}
+
+          <View style={styles.infos}>
+            <Text style={styles.mediaText}>New password</Text>
+            <Controller
+              control={control}
+              render={({ onChange, onBlur, value }) => (
+                <Input
+                  value={value}
+                  placeholder="New Password"
+                  onBlur={onBlur}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  onChangeText={(value) => onChange(value)}
+                />
+              )}
+              name="new_password"
+              rules={{ required: "The new password is required" }}
+            />
+          </View>
+
+          {errors.new_password && (
+            <View>
+              <Text
+                style={{
+                  color: colors.error,
+                  marginBottom: 10,
+                  fontSize: 15,
+                }}
+              >
+                <FontAwesome name="warning" size={15} color={colors.error} />{" "}
+                {errors.new_password.message}
+              </Text>
+            </View>
+          )}
+
+          <View style={styles.infos}>
+            <Text style={styles.mediaText}>Confirm password</Text>
+            <Controller
+              control={control}
+              render={({ onChange, onBlur, value }) => (
+                <Input
+                  value={value}
+                  onBlur={onBlur}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  placeholder="Confirm Your Password"
+                  onChangeText={(value) => onChange(value)}
+                />
+              )}
+              name="password_confirmation"
+              rules={{
+                required: true,
+                validate: (value) =>
+                  value === watch("new_password") || "Passwords don't match.",
+              }}
+            />
+          </View>
+
+          {errors.password_confirmation && (
+            <View>
+              <Text
+                style={{
+                  color: colors.error,
+                  marginBottom: 10,
+                  fontSize: 15,
+                }}
+              >
+                <FontAwesome name="warning" size={15} color={colors.error} />{" "}
+                {errors.password_confirmation.message}
+              </Text>
+            </View>
+          )}
+        </View>
       </Content>
     </Container>
   )
@@ -223,33 +314,59 @@ export default function ChangePasswordScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: colors.white,
-    paddingTop: 50,
+    paddingHorizontal: 12,
   },
-  contentContainer: {
+  infos: {
+    flexDirection: "row",
     alignItems: "center",
+    borderTopColor: "#EFEFEF",
+    borderTopWidth: 0.5,
+    minHeight: 45,
   },
-  password: {
-    textTransform: "uppercase",
-    fontSize: 24,
-    marginVertical: 20,
-  },
-  passwordError: {
-    textTransform: "uppercase",
-    color: colors.red,
+  title: {
+    color: colors.pink,
+    textDecorationColor: colors.pink,
+    textDecorationStyle: "solid",
+    textDecorationLine: "underline",
     fontSize: 18,
-    marginVertical: 20,
-    paddingHorizontal: 10,
-    textAlign: "center",
+    fontWeight: "bold",
   },
-  inputsContainer: {
-    marginHorizontal: 30,
-    alignSelf: "stretch",
+  modelTouch: {
+    width: 80,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 6,
+    marginBottom: 10,
   },
-  smallText: {
-    textTransform: "uppercase",
-    // color: colors.white,
-    fontSize: 12,
+  modelName: {
+    fontWeight: "bold",
+    marginTop: 10,
+    color: colors.pink,
+  },
+  mediaText: {
+    fontWeight: "bold",
+    color: colors.pink,
+    marginRight: 20,
+    width: 150,
+  },
+  textareaContainer: {
+    height: 100,
+    padding: 5,
+    borderRadius: 5,
+    marginTop: 10,
+    borderColor: colors.pinkOpact,
+    borderWidth: 1,
+    shadowColor: colors.pink,
+    overflow: "hidden",
+    shadowRadius: 10,
+    shadowOpacity: 0.3,
+    elevation: 3,
+  },
+  textarea: {
+    textAlignVertical: "top", // hack android
+    height: 90,
+    fontSize: 18,
+    color: "#333",
   },
 })

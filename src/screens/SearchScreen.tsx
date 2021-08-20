@@ -18,7 +18,7 @@ import Modal from "react-native-modal"
 import { colors } from "../utils/colors"
 import usePhotos from "../hooks/usePhotos"
 import useHomeData from "../hooks/useHomeData"
-import PhotoCard from "../components/PhotoCard"
+import MediaCard from "../components/MediaCard"
 import PhotoInterface from "../interfaces/PhotoInterface"
 import NegativeResponse from "../components/NegativeResponse"
 import { SCREEN_WIDTH } from "../utils/constants"
@@ -39,7 +39,6 @@ export default function PublicModelProfileScreen() {
     photoData: data,
     loadMorePhotos,
     refetchPhotos: refetch,
-    subscribeToMorePhotos: subscribeToMore,
   } = usePhotos()
 
   const {
@@ -61,28 +60,15 @@ export default function PublicModelProfileScreen() {
     })
   }
 
-  useEffect(() => {
-    refetch()
-  }, [])
-
-  useEffect(() => {
-    // fetch new types of data depending on
-    // the segment that was clicked 'on
-    switch (segmentNameChosen) {
-      case "Medias":
-        refetch()
-        break
-      case "Models":
-        refetchModels()
-        break
-    }
-  }, [segmentNameChosen])
+  // useEffect(() => {
+  //   refetch()
+  // }, [])
 
   const handleSearch = (text: string) => {
     console.log(`Searching for ${text}`)
   }
 
-  console.log(data)
+  // console.log(data)
   return (
     <Container>
       <Header
@@ -196,7 +182,7 @@ export default function PublicModelProfileScreen() {
                       onBackdropPress={() => setCurrentPhoto(null)}
                     >
                       <View style={{ borderRadius: 15, overflow: "hidden" }}>
-                        <PhotoCard photo={currentPhoto} />
+                        <MediaCard asset={currentPhoto} />
                       </View>
                     </Modal>
                   )}
